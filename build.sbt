@@ -7,7 +7,7 @@ val appName = "trusts-store"
 lazy val scoverageSettings = {
   import scoverage.ScoverageKeys
   Seq(
-    ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;app.Routes.*;prod.*;testOnlyDoNotUseInProd.*;views.html.*;" +
+    ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;app.Routes.*;prod.*;testOnlyDoNotUseInProd.*;testOnlyDoNotUseInAppConf.*;" +
       "uk.gov.hmrc.BuildInfo;app.*;prod.*;config.*",
     ScoverageKeys.coverageMinimum := 100,
     ScoverageKeys.coverageFailOnMinimum := true,
