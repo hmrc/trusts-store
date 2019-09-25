@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.trustsstore.controllers.actions.IdentifierAction
 import uk.gov.hmrc.trustsstore.services.ClaimedTrustsService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -27,9 +28,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton()
 class ClaimedTrustsController @Inject()(
 	cc: ControllerComponents,
- 	service: ClaimedTrustsService)(implicit ec: ExecutionContext) extends BackendController(cc) {
+ 	service: ClaimedTrustsService,
+	authAction: IdentifierAction)(implicit ec: ExecutionContext) extends BackendController(cc) {
 
-	def get(): Action[AnyContent] = Action.async {
+	def get() = authAction.async(parse.json) {
 		implicit request =>
 
 			service.get() map {
@@ -40,7 +42,7 @@ class ClaimedTrustsController @Inject()(
 			}
 	}
 
-	def store(): Action[AnyContent] = Action.async { implicit request =>
+	def store() = authAction.async(parse.tolerantJson) { implicit request =>
 		Future.successful(NotImplemented)
 	}
 
