@@ -18,18 +18,20 @@ package uk.gov.hmrc.trustsstore
 
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfter, Inside, MustMatchers, WordSpec}
+import org.scalatest.{BeforeAndAfter, FreeSpec, MustMatchers}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.http.{MediaType, MimeTypes}
+import play.api.http.MimeTypes
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsNull, JsValue, Json}
-import play.api.mvc.AnyContentAsJson
+import play.api.libs.json.Json
+import play.api.mvc.{AnyContent, BodyParser, BodyParsers}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.CONTENT_TYPE
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.trustsstore.config.AppConfig
+import uk.gov.hmrc.trustsstore.controllers.actions.{FakeIdentifierAction, IdentifierAction}
 
-class SpecBase extends WordSpec
+class SpecBase extends FreeSpec
   with MustMatchers
   with ScalaFutures
   with MockitoSugar
@@ -57,6 +59,9 @@ class SpecBase extends WordSpec
           "auditing.enabled" -> false
         ): _*
       )
+    .overrides(
+      bind[IdentifierAction].toInstance(new FakeIdentifierAction())
+    )
   }
 
 }

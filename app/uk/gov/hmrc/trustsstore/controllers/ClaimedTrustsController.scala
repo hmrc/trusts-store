@@ -18,7 +18,6 @@ package uk.gov.hmrc.trustsstore.controllers
 
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
-import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.trustsstore.controllers.actions.IdentifierAction
 import uk.gov.hmrc.trustsstore.models.TrustClaim
@@ -28,13 +27,13 @@ import scala.concurrent.Future
 @Singleton()
 class ClaimedTrustsController @Inject()(authAction: IdentifierAction) extends BaseController {
 
-	def get(utr: String): Action[AnyContent] = Action.async { implicit request =>
+	def get(utr: String) = authAction.async(parse.json) { implicit request =>
 		val result = Json.toJson(TrustClaim("1234567890", managedByAgent = true))
 
 		Future.successful(Ok(result))
 	}
 
-	def store(utr: String): Action[AnyContent] = Action.async { implicit request =>
+	def store(utr: String) = authAction.async(parse.tolerantJson) { implicit request =>
 		Future.successful(NotImplemented)
 	}
 

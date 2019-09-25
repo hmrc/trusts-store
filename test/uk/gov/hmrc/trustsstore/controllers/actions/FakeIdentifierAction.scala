@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.trustsstore.controllers
+package uk.gov.hmrc.trustsstore.controllers.actions
 
-import play.api.http.Status
-import play.api.test.Helpers._
-import uk.gov.hmrc.trustsstore.SpecBase
+import javax.inject.Inject
+import play.api.mvc._
+import uk.gov.hmrc.trustsstore.models.requests.IdentifierRequest
 
-class ClaimedTrustsControllerControllerSpec extends SpecBase {
+import scala.concurrent.{ExecutionContext, Future}
 
-  val fakeUtr = "1234567890"
+class FakeIdentifierAction @Inject()() extends IdentifierAction {
 
-  "invoking GET /claim/:utr" - {
+  override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
+    block(IdentifierRequest(request, "id"))
 
-    "should return OK and a TrustClaim" in {
-      val controller = injector.instanceOf[ClaimedTrustsController]
-      val result = controller.get(fakeUtr)(fakeRequest)
-
-      status(result) mustBe Status.OK
-    }
-  }
-
-  "invoking POST /claim/:utr" - {
-    "should store"
-  }
+  override protected def executionContext: ExecutionContext =
+    scala.concurrent.ExecutionContext.Implicits.global
 
 }

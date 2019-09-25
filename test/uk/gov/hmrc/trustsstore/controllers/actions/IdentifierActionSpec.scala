@@ -44,9 +44,9 @@ class IdentifierActionSpec extends SpecBase {
   private val agentAffinityGroup = AffinityGroup.Agent
   private val orgAffinityGroup = AffinityGroup.Organisation
 
-  "Auth Action" when {
+  "Auth Action must" - {
 
-    "Agent user" must {
+    "when Agent user" - {
 
       "allow user to continue" in {
 
@@ -61,9 +61,9 @@ class IdentifierActionSpec extends SpecBase {
 
     }
 
-    "Organisation user" must {
+    "when Organisation user" - {
 
-      "allow user to continue" in {
+      "allow user to continue" - {
 
         val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(orgAffinityGroup)), appConfig)
         val controller = new Harness(authAction)
@@ -76,7 +76,7 @@ class IdentifierActionSpec extends SpecBase {
 
     }
 
-    "Individual user" must {
+    "when Individual user" - {
 
       "be returned an unauthorized response" in {
         
@@ -91,7 +91,7 @@ class IdentifierActionSpec extends SpecBase {
 
     }
 
-    "the user hasn't logged in" must {
+    "the user hasn't logged in" - {
 
       "be returned an unauthorized response" in {
 
@@ -105,7 +105,7 @@ class IdentifierActionSpec extends SpecBase {
       }
     }
 
-    "the user's session has expired" must {
+    "the user's session has expired" - {
 
       "be returned an unauthorized response" in {
 
