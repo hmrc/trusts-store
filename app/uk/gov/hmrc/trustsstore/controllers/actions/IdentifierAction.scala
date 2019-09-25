@@ -22,7 +22,8 @@ import play.api.mvc.Results._
 import play.api.mvc.{Request, Result, _}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.{Retrievals, ~}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.trustsstore.config.AppConfig
