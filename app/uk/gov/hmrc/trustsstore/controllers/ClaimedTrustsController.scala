@@ -16,25 +16,31 @@
 
 package uk.gov.hmrc.trustsstore.controllers
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import play.api.mvc._
-import uk.gov.hmrc.trustsstore.models.TrustClaim
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.trustsstore.services.ClaimedTrustsService
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class ClaimedTrustsController extends BaseController {
+class ClaimedTrustsController @Inject()(
+	cc: ControllerComponents,
+ 	service: ClaimedTrustsService)(implicit ec: ExecutionContext) extends BackendController(cc) {
 
-	def get(utr: String): Action[AnyContent] = Action.async { implicit request =>
-		val result = Json.toJson(TrustClaim("1234567890", managedByAgent = true))
+	def get(): Action[AnyContent] = Action.async {
+		implicit request =>
 
-		Future.successful(Ok(result))
+			service.get() map {
+				case Some(trustClaim) =>
+					Ok(Json.toJson(trustClaim))
+				case None =>
+					NotFound
+			}
 	}
 
-	def store(utr: String): Action[AnyContent] = Action.async { implicit request =>
+	def store(): Action[AnyContent] = Action.async { implicit request =>
 		Future.successful(NotImplemented)
 	}
 
