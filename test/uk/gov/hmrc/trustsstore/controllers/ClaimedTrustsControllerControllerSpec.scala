@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,26 @@
 
 package uk.gov.hmrc.trustsstore.controllers
 
-import org.scalatest.{Matchers, WordSpec}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.trustsstore.SpecBase
 
-class MicroserviceHelloWorldControllerSpec extends WordSpec with Matchers with GuiceOneAppPerSuite {
+class ClaimedTrustsControllerControllerSpec extends SpecBase {
 
-  val fakeRequest = FakeRequest("GET", "/")
+  val fakeUtr = "1234567890"
 
-  "GET /" should {
-    "return 200" in {
-      val controller = new MicroserviceHelloWorld()
-      val result = controller.hello()(fakeRequest)
-      status(result) shouldBe Status.OK
+  "invoking GET /claim/:utr" - {
+
+    "should return OK and a TrustClaim" in {
+      val controller = injector.instanceOf[ClaimedTrustsController]
+      val result = controller.get(fakeUtr)(fakeRequest)
+
+      status(result) mustBe Status.OK
     }
+  }
+
+  "invoking POST /claim/:utr" - {
+    "should store"
   }
 
 }
