@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.trustsstore.controllers
+package uk.gov.hmrc.trustsstore.models
 
-import javax.inject.Singleton
+import play.api.libs.json.{Json, OFormat}
 
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import play.api.mvc._
+case class TrustClaim(utr: String, managedByAgent: Boolean)
 
-import scala.concurrent.Future
-
-@Singleton()
-class MicroserviceHelloWorld extends BaseController {
-
-	def hello() = Action.async { implicit request =>
-		Future.successful(Ok("Hello world"))
-	}
-
+object TrustClaim {
+  implicit lazy val formats: OFormat[TrustClaim] = Json.format[TrustClaim]
 }
