@@ -38,6 +38,9 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
 
   "invoking GET /claim" - {
     "should return OK and a TrustClaim if there is one for the internal id" in {
+
+      val application = applicationBuilder().build()
+
       val request = FakeRequest(GET, routes.ClaimedTrustsController.get().url)
 
       val trustClaim = TrustClaim(utr = fakeUtr, managedByAgent = true)
@@ -47,9 +50,13 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
       val result = route(application, request).value
 
       status(result) mustBe Status.OK
+
+      application.stop()
     }
 
     "should return NOT_FOUND if there is no TrustClaim for the internal id" in {
+      val application = applicationBuilder().build()
+
       val request = FakeRequest(GET, routes.ClaimedTrustsController.get().url)
 
       when(service.get()).thenReturn(Future.successful(None))
@@ -57,6 +64,8 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
       val result = route(application, request).value
 
       status(result) mustBe Status.NOT_FOUND
+
+      application.stop()
     }
   }
 

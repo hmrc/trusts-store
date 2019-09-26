@@ -31,7 +31,7 @@ class ClaimedTrustsController @Inject()(
  	service: ClaimedTrustsService,
 	authAction: IdentifierAction)(implicit ec: ExecutionContext) extends BackendController(cc) {
 
-	def get() = authAction.async(parse.json) {
+	def get() = authAction.async {
 		implicit request =>
 
 			service.get() map {

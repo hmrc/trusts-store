@@ -54,6 +54,8 @@ class IdentifierActionSpec extends BaseSpec {
 
       "allow user to continue" in {
 
+        val application = applicationBuilder().build()
+
         val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(agentAffinityGroup)), appConfig, bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
@@ -69,6 +71,8 @@ class IdentifierActionSpec extends BaseSpec {
 
       "allow user to continue" - {
 
+        val application = applicationBuilder().build()
+
         val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(orgAffinityGroup)), appConfig, bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
@@ -83,6 +87,8 @@ class IdentifierActionSpec extends BaseSpec {
     "when Individual user" - {
 
       "be returned an unauthorized response" in {
+
+        val application = applicationBuilder().build()
         
         val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(Individual)), appConfig, bodyParsers)
         val controller = new Harness(authAction)
@@ -99,6 +105,8 @@ class IdentifierActionSpec extends BaseSpec {
 
       "be returned an unauthorized response" in {
 
+        val application = applicationBuilder().build()
+
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), appConfig, bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
@@ -112,6 +120,8 @@ class IdentifierActionSpec extends BaseSpec {
     "the user's session has expired" - {
 
       "be returned an unauthorized response" in {
+
+        val application = applicationBuilder().build()
 
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), appConfig, bodyParsers)
         val controller = new Harness(authAction)

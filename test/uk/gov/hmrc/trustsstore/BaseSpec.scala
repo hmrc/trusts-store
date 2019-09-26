@@ -43,9 +43,7 @@ class BaseSpec extends FreeSpec
 
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
-  def application: Application = applicationBuilder().build()
-
-  def injector: Injector = application.injector
+  def injector: Injector = app.injector
 
   def appConfig: AppConfig = injector.instanceOf[AppConfig]
 
@@ -57,7 +55,7 @@ class BaseSpec extends FreeSpec
 
   def injectedParsers: PlayBodyParsers = injector.instanceOf[PlayBodyParsers]
 
-  def applicationBuilder(): GuiceApplicationBuilder = {
+  protected def applicationBuilder(): GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
       .configure(
         Seq(
