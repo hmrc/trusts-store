@@ -37,7 +37,7 @@ class ClaimedTrustsController @Inject()(
 				case Some(trustClaim) =>
 					Ok(Json.toJson(trustClaim))
 				case None =>
-					NotFound
+					NotFound("No matching claims found for this internalId")
 			}
 	}
 
