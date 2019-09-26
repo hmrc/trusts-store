@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.trustsstore.controllers
 
+import org.mockito.Matchers.any
 import org.mockito.Mockito
 import org.mockito.Mockito._
-import org.mockito.Matchers.any
 import play.api.Application
 import play.api.http.Status
-import play.api.test.FakeRequest
 import play.api.inject.bind
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.trustsstore.BaseSpec
 import uk.gov.hmrc.trustsstore.models.TrustClaim

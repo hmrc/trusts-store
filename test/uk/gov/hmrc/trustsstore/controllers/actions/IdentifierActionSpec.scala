@@ -19,7 +19,6 @@ package uk.gov.hmrc.trustsstore.controllers.actions
 import akka.stream.Materializer
 import com.google.inject.Inject
 import play.api.mvc.{BodyParsers, Results}
-import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core._
@@ -27,7 +26,6 @@ import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.trustsstore.BaseSpec
-import uk.gov.hmrc.trustsstore.controllers.routes
 
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,7 +45,7 @@ class IdentifierActionSpec extends BaseSpec {
 
   private val agentAffinityGroup = AffinityGroup.Agent
   private val orgAffinityGroup = AffinityGroup.Organisation
-  
+
   "Auth Action must" - {
 
     "when Agent user" - {

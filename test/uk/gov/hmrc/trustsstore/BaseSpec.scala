@@ -16,16 +16,15 @@
 
 package uk.gov.hmrc.trustsstore
 
+import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, FreeSpec, MustMatchers, OptionValues}
-import org.scalatestplus.play.guice.{GuiceOneAppPerSuite, GuiceOneServerPerSuite}
-import play.api.Application
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.MimeTypes
-import play.api.inject.{Injector, bind}
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.inject.{Injector, bind}
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{AnyContent, BodyParser, BodyParsers, PlayBodyParsers}
+import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers.CONTENT_TYPE
 import uk.gov.hmrc.http.HeaderCarrier
