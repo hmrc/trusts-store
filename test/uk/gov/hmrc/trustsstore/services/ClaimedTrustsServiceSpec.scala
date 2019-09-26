@@ -26,13 +26,12 @@ import uk.gov.hmrc.trustsstore.repositories.ClaimedTrustsRepository
 import org.mockito.Mockito._
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito
+import uk.gov.hmrc.trustsstore.BaseSpec
 import uk.gov.hmrc.trustsstore.models.TrustClaim
 
 import scala.concurrent.Future
 
-class ClaimedTrustsServiceSpec extends FreeSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with BeforeAndAfterEach {
-
-  private val fakeUtr = "1234567890"
+class ClaimedTrustsServiceSpec extends BaseSpec {
 
   private val service = app.injector.instanceOf[ClaimedTrustsService]
 
@@ -51,7 +50,7 @@ class ClaimedTrustsServiceSpec extends FreeSpec with Matchers with GuiceOneAppPe
 
       val result = service.get()
 
-      result shouldBe trustClaim
+      result mustBe trustClaim
     }
   }
 

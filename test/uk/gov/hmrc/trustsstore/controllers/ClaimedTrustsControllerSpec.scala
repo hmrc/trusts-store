@@ -25,15 +25,14 @@ import org.mockito.Mockito._
 import org.mockito.Matchers.{eq => eqTo, _}
 import org.mockito.Mockito
 import org.scalatest.mockito.MockitoSugar
+import uk.gov.hmrc.trustsstore.BaseSpec
 import uk.gov.hmrc.trustsstore.models.TrustClaim
 import uk.gov.hmrc.trustsstore.services.ClaimedTrustsService
 
 import scala.concurrent.Future
 
-class ClaimedTrustsControllerSpec extends FreeSpec with Matchers with GuiceOneAppPerSuite with MockitoSugar with OptionValues {
 
-  val fakeRequest = FakeRequest("GET", "/")
-  val fakeUtr = "1234567890"
+class ClaimedTrustsControllerSpec extends BaseSpec {
 
   val service = mock[ClaimedTrustsService]
 
@@ -45,9 +44,9 @@ class ClaimedTrustsControllerSpec extends FreeSpec with Matchers with GuiceOneAp
 
       when(service.get()).thenReturn(Future.successful(Some(trustClaim)))
 
-      val result = route(app, request).value
+      val result = route(application, request).value
 
-      status(result) shouldBe Status.OK
+      status(result) mustBe Status.OK
     }
 
     "should return NOT_FOUND if there is no TrustClaim for the internal id" in {
@@ -55,16 +54,16 @@ class ClaimedTrustsControllerSpec extends FreeSpec with Matchers with GuiceOneAp
 
       when(service.get()).thenReturn(Future.successful(None))
 
-      val result = route(app, request).value
+      val result = route(application, request).value
 
-      status(result) shouldBe Status.NOT_FOUND
+      status(result) mustBe Status.NOT_FOUND
     }
   }
 
   "invoking POST /claim" - {
     "should return CREATED" in {
 //      val result = controller.store()(fakeRequest)
-//      status(result) shouldBe Status.CREATED
+//      status(result) mustBe Status.CREATED
     }
   }
 

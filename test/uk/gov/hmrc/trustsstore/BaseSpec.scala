@@ -18,38 +18,44 @@ package uk.gov.hmrc.trustsstore
 
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfter, FreeSpec, MustMatchers}
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, FreeSpec, MustMatchers, OptionValues}
+import org.scalatestplus.play.guice.{GuiceOneAppPerSuite, GuiceOneServerPerSuite}
+import play.api.Application
 import play.api.http.MimeTypes
-import play.api.inject.bind
+import play.api.inject.{Injector, bind}
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
-import play.api.mvc.{AnyContent, BodyParser, BodyParsers}
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.{AnyContent, BodyParser, BodyParsers, PlayBodyParsers}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.CONTENT_TYPE
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.trustsstore.config.AppConfig
 import uk.gov.hmrc.trustsstore.controllers.actions.{FakeIdentifierAction, IdentifierAction}
 
-class SpecBase extends FreeSpec
+class BaseSpec extends FreeSpec
+  with GuiceOneAppPerSuite
   with MustMatchers
-  with ScalaFutures
   with MockitoSugar
+  with OptionValues
+  with BeforeAndAfterEach
   with BeforeAndAfter
-  with GuiceOneServerPerSuite
-  with WireMockHelper {
+ {
 
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
-  def application = applicationBuilder().build()
+  def application: Application = applicationBuilder().build()
 
-  def injector = application.injector
+  def injector: Injector = application.injector
 
-  def appConfig : AppConfig = injector.instanceOf[AppConfig]
+  def appConfig: AppConfig = injector.instanceOf[AppConfig]
 
-  def fakeRequest = FakeRequest("POST", "")
+  def fakeUtr = "1234567890"
+
+  def fakeRequest: FakeRequest[JsValue] = FakeRequest("POST", "")
     .withHeaders(CONTENT_TYPE -> MimeTypes.JSON)
     .withBody(Json.parse("{}"))
+
+  def injectedParsers: PlayBodyParsers = injector.instanceOf[PlayBodyParsers]
 
   def applicationBuilder(): GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
@@ -60,7 +66,7 @@ class SpecBase extends FreeSpec
         ): _*
       )
     .overrides(
-      bind[IdentifierAction].toInstance(new FakeIdentifierAction())
+      bind[IdentifierAction].toInstance(new FakeIdentifierAction(injectedParsers))
     )
   }
 

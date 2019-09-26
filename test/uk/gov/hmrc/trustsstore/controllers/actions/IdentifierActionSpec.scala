@@ -19,24 +19,28 @@ package uk.gov.hmrc.trustsstore.controllers.actions
 import akka.stream.Materializer
 import com.google.inject.Inject
 import play.api.mvc.{BodyParsers, Results}
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.trustsstore.SpecBase
+import uk.gov.hmrc.trustsstore.BaseSpec
+import uk.gov.hmrc.trustsstore.controllers.routes
 
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.{ExecutionContext, Future}
 
-class IdentifierActionSpec extends SpecBase {
+class IdentifierActionSpec extends BaseSpec {
 
-  implicit lazy val mtrlzr = injector.instanceOf[Materializer]
+  implicit lazy val mtrlzr: Materializer = injector.instanceOf[Materializer]
 
   class Harness(authAction: IdentifierAction) {
     def onSubmit() = authAction.apply(BodyParsers.parse.json) { _ => Results.Ok }
   }
+
+  def bodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
 
   private def authRetrievals(affinityGroup: AffinityGroup) =
     Future.successful(new ~(Some("id"), Some(affinityGroup)))
@@ -50,7 +54,7 @@ class IdentifierActionSpec extends SpecBase {
 
       "allow user to continue" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(agentAffinityGroup)), appConfig)
+        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(agentAffinityGroup)), appConfig, bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
@@ -65,7 +69,7 @@ class IdentifierActionSpec extends SpecBase {
 
       "allow user to continue" - {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(orgAffinityGroup)), appConfig)
+        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(orgAffinityGroup)), appConfig, bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
@@ -80,7 +84,7 @@ class IdentifierActionSpec extends SpecBase {
 
       "be returned an unauthorized response" in {
         
-        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(Individual)), appConfig)
+        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(Individual)), appConfig, bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
@@ -95,7 +99,7 @@ class IdentifierActionSpec extends SpecBase {
 
       "be returned an unauthorized response" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), appConfig)
+        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), appConfig, bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
@@ -109,7 +113,7 @@ class IdentifierActionSpec extends SpecBase {
 
       "be returned an unauthorized response" in {
 
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), appConfig)
+        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), appConfig, bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
