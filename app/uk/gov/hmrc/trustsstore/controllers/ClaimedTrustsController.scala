@@ -18,22 +18,30 @@ package uk.gov.hmrc.trustsstore.controllers
 
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import play.api.mvc._
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.trustsstore.controllers.actions.IdentifierAction
-import uk.gov.hmrc.trustsstore.models.TrustClaim
+import uk.gov.hmrc.trustsstore.services.ClaimedTrustsService
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class ClaimedTrustsController @Inject()(authAction: IdentifierAction) extends BaseController {
+class ClaimedTrustsController @Inject()(
+	cc: ControllerComponents,
+ 	service: ClaimedTrustsService,
+	authAction: IdentifierAction)(implicit ec: ExecutionContext) extends BackendController(cc) {
 
-	def get(utr: String) = authAction.async(parse.json) { implicit request =>
-		val result = Json.toJson(TrustClaim("1234567890", managedByAgent = true))
-
-		Future.successful(Ok(result))
+	def get() = authAction.async {
+		implicit request =>
+			service.get(request.internalId) map {
+				case Some(trustClaim) =>
+					Ok(Json.toJson(trustClaim))
+				case None =>
+					NotFound("No matching claims found for this internalId")
+			}
 	}
 
-	def store(utr: String) = authAction.async(parse.tolerantJson) { implicit request =>
+	def store() = authAction.async(parse.tolerantJson) { implicit request =>
 		Future.successful(NotImplemented)
 	}
 

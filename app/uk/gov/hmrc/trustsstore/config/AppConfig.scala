@@ -17,19 +17,10 @@
 package uk.gov.hmrc.trustsstore.config
 
 import javax.inject.{Inject, Singleton}
-import play.api.Mode.Mode
-import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.config.ServicesConfig
+import play.api.Configuration
 
 @Singleton
-class AppConfig @Inject()(config: Configuration, playEnv: Environment) extends ServicesConfig {
-
-  override protected def mode: Mode = playEnv.mode
-  override protected def runModeConfiguration: Configuration = config
-
-  private def loadConfig(key: String) = runModeConfiguration.getString(key).getOrElse(
-    throw new Exception(s"Missing configuration key : $key")
-  )
-
+class AppConfig @Inject()(config: Configuration) {
+  private def loadConfig(key: String) = config.get[String](key)
 }
 

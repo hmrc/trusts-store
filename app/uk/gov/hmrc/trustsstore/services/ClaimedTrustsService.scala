@@ -14,28 +14,23 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.trustsstore.controllers
+package uk.gov.hmrc.trustsstore.services
 
-import play.api.http.Status
-import play.api.test.Helpers._
-import uk.gov.hmrc.trustsstore.SpecBase
+import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.trustsstore.models.TrustClaim
+import uk.gov.hmrc.trustsstore.repositories.ClaimedTrustsRepository
 
-class ClaimedTrustsControllerControllerSpec extends SpecBase {
+import scala.concurrent.Future
 
-  val fakeUtr = "1234567890"
+@Singleton()
+class ClaimedTrustsService @Inject()(val claimedTrustsRepository: ClaimedTrustsRepository)  {
 
-  "invoking GET /claim/:utr" - {
-
-    "should return OK and a TrustClaim" in {
-      val controller = injector.instanceOf[ClaimedTrustsController]
-      val result = controller.get(fakeUtr)(fakeRequest)
-
-      status(result) mustBe Status.OK
-    }
+  def get(internalId: String): Future[Option[TrustClaim]] = {
+    claimedTrustsRepository.get(internalId)
   }
 
-  "invoking POST /claim/:utr" - {
-    "should store"
+  def store() = {
+    claimedTrustsRepository.store()
   }
 
 }

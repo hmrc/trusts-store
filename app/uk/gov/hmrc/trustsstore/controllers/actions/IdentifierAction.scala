@@ -30,10 +30,12 @@ import uk.gov.hmrc.trustsstore.config.AppConfig
 import uk.gov.hmrc.trustsstore.models.requests.IdentifierRequest
 
 import scala.concurrent.ExecutionContext.Implicits._
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AuthenticatedIdentifierAction @Inject()(override val authConnector: AuthConnector,
-                                               config: AppConfig)
+                                               config: AppConfig,
+                                              val parser: BodyParsers.Default)
+                                             (implicit val executionContext: ExecutionContext)
   extends IdentifierAction with AuthorisedFunctions {
 
   def invokeBlock[A](request: Request[A],
@@ -65,4 +67,4 @@ class AuthenticatedIdentifierAction @Inject()(override val authConnector: AuthCo
 
 }
 
-trait IdentifierAction extends ActionBuilder[IdentifierRequest]
+trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]

@@ -1,4 +1,4 @@
 # microservice specific routes
 
-GET        /claim/:utr             uk.gov.hmrc.trustsstore.controllers.ClaimedTrustsController.get(utr: String)
-POST       /claim/:utr             uk.gov.hmrc.trustsstore.controllers.ClaimedTrustsController.store(utr: String)
+GET        /claim             uk.gov.hmrc.trustsstore.controllers.ClaimedTrustsController.get()
+POST       /claim             uk.gov.hmrc.trustsstore.controllers.ClaimedTrustsController.store()
