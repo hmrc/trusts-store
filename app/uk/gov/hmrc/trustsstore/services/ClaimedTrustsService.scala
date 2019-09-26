@@ -17,13 +17,16 @@
 package uk.gov.hmrc.trustsstore.services
 
 import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.trustsstore.models.TrustClaim
 import uk.gov.hmrc.trustsstore.repositories.ClaimedTrustsRepository
+
+import scala.concurrent.Future
 
 @Singleton()
 class ClaimedTrustsService @Inject()(val claimedTrustsRepository: ClaimedTrustsRepository)  {
 
-  def get() = {
-    claimedTrustsRepository.get("1234567890")
+  def get(internalId: String): Future[Option[TrustClaim]] = {
+    claimedTrustsRepository.get(internalId)
   }
 
   def store() = {

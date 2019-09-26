@@ -33,8 +33,7 @@ class ClaimedTrustsController @Inject()(
 
 	def get() = authAction.async {
 		implicit request =>
-
-			service.get() map {
+			service.get(request.internalId) map {
 				case Some(trustClaim) =>
 					Ok(Json.toJson(trustClaim))
 				case None =>

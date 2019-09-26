@@ -52,7 +52,6 @@ class ClaimedTrustsRepository @Inject()(mongo: ReactiveMongoApi)(implicit ec: Ex
   }
 
   def store() = {
-
   }
 
 }

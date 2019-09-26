@@ -16,41 +16,48 @@
 
 package uk.gov.hmrc.trustsstore.services
 
-import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, FreeSpec, Matchers}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.Status
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import uk.gov.hmrc.trustsstore.repositories.ClaimedTrustsRepository
-import org.mockito.Mockito._
-import org.mockito.Matchers.{eq => eqTo, _}
+import org.mockito.Matchers._
 import org.mockito.Mockito
+import org.mockito.Mockito._
+import play.api.Application
+import play.api.inject.bind
 import uk.gov.hmrc.trustsstore.BaseSpec
 import uk.gov.hmrc.trustsstore.models.TrustClaim
+import uk.gov.hmrc.trustsstore.repositories.ClaimedTrustsRepository
 
 import scala.concurrent.Future
 
 class ClaimedTrustsServiceSpec extends BaseSpec {
 
-  private val service = app.injector.instanceOf[ClaimedTrustsService]
-
   private val repository = mock[ClaimedTrustsRepository]
+
+  lazy val application: Application = applicationBuilder().overrides(
+    bind[ClaimedTrustsRepository].toInstance(repository)
+  ).build()
+
+  private val service = application.injector.instanceOf[ClaimedTrustsService]
 
   override def beforeEach(): Unit = {
     Mockito.reset(repository)
   }
 
   "invoking .get" - {
-    "should return a TrustClaim" in {
-
+    "should return a TrustClaim from the repository if there is one for the given internal id" in {
       val trustClaim = TrustClaim(utr = fakeUtr, managedByAgent = true)
 
       when(repository.get(any())).thenReturn(Future.successful(Some(trustClaim)))
 
-      val result = service.get()
+      val result = service.get("matching-internal-id").futureValue
 
-      result mustBe trustClaim
+      result mustBe Some(trustClaim)
+    }
+
+    "should return None from the repository if there is no claims for the given internal id" in {
+      when(repository.get(any())).thenReturn(Future.successful(None))
+
+      val result = service.get("unmatched-internal-id").futureValue
+
+      result mustBe None
     }
   }
 

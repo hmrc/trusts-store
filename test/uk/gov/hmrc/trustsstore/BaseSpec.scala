@@ -37,6 +37,7 @@ class BaseSpec extends FreeSpec
   with MustMatchers
   with MockitoSugar
   with OptionValues
+  with ScalaFutures
   with BeforeAndAfterEach
   with BeforeAndAfter
  {
