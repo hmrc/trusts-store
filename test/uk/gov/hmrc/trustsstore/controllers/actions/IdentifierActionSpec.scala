@@ -47,22 +47,17 @@ class IdentifierActionSpec extends BaseSpec {
 
   private val agentAffinityGroup = AffinityGroup.Agent
   private val orgAffinityGroup = AffinityGroup.Organisation
-
+  
   "Auth Action must" - {
 
     "when Agent user" - {
 
       "allow user to continue" in {
-
-        val application = applicationBuilder().build()
-
         val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(agentAffinityGroup)), appConfig, bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
         status(result) mustBe OK
-
-        application.stop()
       }
 
     }
@@ -70,16 +65,11 @@ class IdentifierActionSpec extends BaseSpec {
     "when Organisation user" - {
 
       "allow user to continue" - {
-
-        val application = applicationBuilder().build()
-
         val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(orgAffinityGroup)), appConfig, bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
         status(result) mustBe OK
-
-        application.stop()
       }
 
     }
@@ -87,16 +77,11 @@ class IdentifierActionSpec extends BaseSpec {
     "when Individual user" - {
 
       "be returned an unauthorized response" in {
-
-        val application = applicationBuilder().build()
-        
         val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(Individual)), appConfig, bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
         status(result) mustBe UNAUTHORIZED
-
-        application.stop()
       }
 
     }
@@ -104,40 +89,28 @@ class IdentifierActionSpec extends BaseSpec {
     "the user hasn't logged in" - {
 
       "be returned an unauthorized response" in {
-
-        val application = applicationBuilder().build()
-
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), appConfig, bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
         status(result) mustBe UNAUTHORIZED
-
-        application.stop()
       }
     }
 
     "the user's session has expired" - {
 
       "be returned an unauthorized response" in {
-
-        val application = applicationBuilder().build()
-
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), appConfig, bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
         status(result) mustBe UNAUTHORIZED
-
-        application.stop()
       }
     }
   }
 }
 
 class FakeFailingAuthConnector @Inject()(exceptionToReturn: Throwable) extends AuthConnector {
-  val serviceUrl: String = ""
-
   override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
     Future.failed(exceptionToReturn)
 }
