@@ -38,9 +38,7 @@ class BaseSpec extends FreeSpec
   with OptionValues
   with ScalaFutures
   with BeforeAndAfterEach
-  with BeforeAndAfter
- {
-
+  with BeforeAndAfter {
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
   def injector: Injector = app.injector
@@ -48,6 +46,8 @@ class BaseSpec extends FreeSpec
   def appConfig: AppConfig = injector.instanceOf[AppConfig]
 
   def fakeUtr = "1234567890"
+
+  def fakeInternalId = "Int-328969d0-557e-4559-96ba-074d0597107e"
 
   def fakeRequest: FakeRequest[JsValue] = FakeRequest("POST", "")
     .withHeaders(CONTENT_TYPE -> MimeTypes.JSON)
@@ -63,9 +63,9 @@ class BaseSpec extends FreeSpec
           "auditing.enabled" -> false
         ): _*
       )
-    .overrides(
-      bind[IdentifierAction].toInstance(new FakeIdentifierAction(injectedParsers))
-    )
+      .overrides(
+        bind[IdentifierAction].toInstance(new FakeIdentifierAction(injectedParsers))
+      )
   }
 
 }

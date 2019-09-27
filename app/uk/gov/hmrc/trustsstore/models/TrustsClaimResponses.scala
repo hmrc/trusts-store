@@ -16,10 +16,14 @@
 
 package uk.gov.hmrc.trustsstore.models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.JsObject
+import reactivemongo.api.commands.WriteError
 
-case class TrustClaim(internalId: String,utr: String, managedByAgent: Boolean)
+trait ClaimedTrustResponse
 
-object TrustClaim {
-  implicit lazy val formats: OFormat[TrustClaim] = Json.format[TrustClaim]
-}
+case class GetClaimFoundResponse(foundTrustClaim: TrustClaim) extends ClaimedTrustResponse
+case class GetClaimNotFoundResponse(error: JsObject) extends ClaimedTrustResponse
+
+case class StoreErrorsResponse(errors: Seq[WriteError]) extends ClaimedTrustResponse
+case class StoreSuccessResponse(storedTrustClaim: TrustClaim) extends ClaimedTrustResponse
+case class StoreParsingErrorResponse(error: JsObject) extends ClaimedTrustResponse

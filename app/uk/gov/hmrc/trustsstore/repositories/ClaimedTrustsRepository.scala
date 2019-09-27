@@ -17,8 +17,9 @@
 package uk.gov.hmrc.trustsstore.repositories
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.api.commands.{WriteError, WriteResult}
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
 import reactivemongo.play.json.collection.JSONCollection
@@ -47,11 +48,15 @@ class ClaimedTrustsRepository @Inject()(mongo: ReactiveMongoApi)(implicit ec: Ex
         } yield ()
     }
 
-  def get(internalId: String) = {
+  def get(internalId: String): Future[Option[TrustClaim]] = {
     collection.flatMap(_.find(Json.obj("internalId" -> internalId)).one[TrustClaim])
   }
 
-  def store() = {
+  def store(data: TrustClaim): Future[Either[Seq[WriteError], TrustClaim]] = {
+    collection.flatMap(_.insert(ordered = false).one[TrustClaim](data)).map {
+      case result if result.writeErrors.nonEmpty => Left(result.writeErrors)
+      case _ => Right(data)
+    }
   }
 
 }

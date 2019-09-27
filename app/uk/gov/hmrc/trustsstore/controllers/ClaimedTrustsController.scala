@@ -17,13 +17,14 @@
 package uk.gov.hmrc.trustsstore.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.trustsstore.controllers.actions.IdentifierAction
+import uk.gov.hmrc.trustsstore.models._
 import uk.gov.hmrc.trustsstore.services.ClaimedTrustsService
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton()
 class ClaimedTrustsController @Inject()(
@@ -31,18 +32,30 @@ class ClaimedTrustsController @Inject()(
  	service: ClaimedTrustsService,
 	authAction: IdentifierAction)(implicit ec: ExecutionContext) extends BackendController(cc) {
 
-	def get() = authAction.async {
+	def get(): Action[AnyContent] = authAction.async {
 		implicit request =>
 			service.get(request.internalId) map {
-				case Some(trustClaim) =>
+				case GetClaimFoundResponse(trustClaim) =>
 					Ok(Json.toJson(trustClaim))
-				case None =>
-					NotFound("No matching claims found for this internalId")
+				case GetClaimNotFoundResponse(error) =>
+					NotFound(error)
 			}
 	}
 
-	def store() = authAction.async(parse.tolerantJson) { implicit request =>
-		Future.successful(NotImplemented)
+	def store(): Action[JsValue] = authAction.async(parse.tolerantJson) {
+		implicit request =>
+			val maybeUtr = (request.body \ "utr").asOpt[String]
+			val maybeManagedByAgent = (request.body \ "managedByAgent").asOpt[Boolean]
+			val internalId = request.internalId
+
+			service.store(internalId, maybeUtr, maybeManagedByAgent) map {
+				case StoreSuccessResponse(trustClaim) =>
+					Created(Json.toJson(trustClaim))
+				case StoreParsingErrorResponse(error) =>
+					BadRequest(error)
+				case StoreErrorsResponse(errors) =>
+					InternalServerError(Json.obj("errors" -> errors.map(_.errmsg)))
+			}
 	}
 
 }
