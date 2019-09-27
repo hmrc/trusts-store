@@ -49,7 +49,7 @@ class ClaimedTrustsRepository @Inject()(mongo: ReactiveMongoApi)(implicit ec: Ex
     }
 
   def get(internalId: String): Future[Option[TrustClaim]] = {
-    collection.flatMap(_.find(Json.obj("internalId" -> internalId)).one[TrustClaim])
+    collection.flatMap(_.find(Json.obj("internalId" -> internalId), projection = None).one[TrustClaim])
   }
 
   def store(data: TrustClaim): Future[Either[StorageErrors, TrustClaim]] = {
