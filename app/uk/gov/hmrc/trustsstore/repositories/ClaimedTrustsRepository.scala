@@ -17,9 +17,9 @@
 package uk.gov.hmrc.trustsstore.repositories
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.commands.{WriteError, WriteResult}
+import reactivemongo.api.commands.WriteError
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
 import reactivemongo.play.json.collection.JSONCollection

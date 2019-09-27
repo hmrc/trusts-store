@@ -16,11 +16,9 @@
 
 package uk.gov.hmrc.trustsstore.services
 
-import akka.stream.actor.ActorPublisherMessage.Request
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.trustsstore.models._
-import uk.gov.hmrc.trustsstore.models.requests.IdentifierRequest
 import uk.gov.hmrc.trustsstore.repositories.ClaimedTrustsRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global

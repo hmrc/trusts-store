@@ -22,7 +22,7 @@ import org.mockito.Mockito._
 import play.api.Application
 import play.api.http.Status
 import play.api.inject.bind
-import play.api.libs.json.{JsArray, Json}
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import reactivemongo.api.commands.WriteError

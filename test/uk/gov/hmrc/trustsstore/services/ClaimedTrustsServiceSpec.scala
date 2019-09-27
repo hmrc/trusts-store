@@ -24,9 +24,8 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import reactivemongo.api.commands.WriteError
 import uk.gov.hmrc.trustsstore.BaseSpec
-import uk.gov.hmrc.trustsstore.models.TrustClaim
+import uk.gov.hmrc.trustsstore.models.{TrustClaim, _}
 import uk.gov.hmrc.trustsstore.repositories.ClaimedTrustsRepository
-import uk.gov.hmrc.trustsstore.models._
 
 import scala.concurrent.Future
 
