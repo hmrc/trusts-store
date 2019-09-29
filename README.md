@@ -5,7 +5,7 @@ This service is used to store claimed trusts for use within the **claim a trust*
 
 ## Endpoints 
 
-###`GET /claim`
+### `GET /claim`
 
 #### Successful
 
