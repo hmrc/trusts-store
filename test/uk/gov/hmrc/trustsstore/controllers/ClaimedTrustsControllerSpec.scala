@@ -27,7 +27,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import reactivemongo.api.commands.WriteError
 import uk.gov.hmrc.trustsstore.BaseSpec
-import uk.gov.hmrc.trustsstore.models.{TrustClaim, _}
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.repository.StorageErrors
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.responses._
 import uk.gov.hmrc.trustsstore.services.ClaimedTrustsService
 
 import scala.concurrent.Future
@@ -47,7 +49,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
   }
 
   "invoking GET /claim" - {
-    "should return OK and a TrustClaim if there is one for the internal id" in {
+    "must return OK and a TrustClaim if there is one for the internal id" in {
       val request = FakeRequest(GET, routes.ClaimedTrustsController.get().url)
 
       val trustClaim = TrustClaim(internalId = fakeInternalId, utr = fakeUtr, managedByAgent = true)
@@ -60,7 +62,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
       contentAsJson(result) mustBe Json.toJson(trustClaim)
     }
 
-    "should return NOT_FOUND if there is no TrustClaim for the internal id" in {
+    "must return NOT_FOUND if there is no TrustClaim for the internal id" in {
       val request = FakeRequest(GET, routes.ClaimedTrustsController.get().url)
 
       val responseError = Json.obj("errors" -> "No TrustClaim was found for the given for this authenticated internalId")
@@ -75,7 +77,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
   }
 
   "invoking POST /claim" - {
-    "should return CREATED and the stored TrustClaim if the service returns a StoreSuccessResponse" in {
+    "must return CREATED and the stored TrustClaim if the service returns a StoreSuccessResponse" in {
       val request = FakeRequest(POST, routes.ClaimedTrustsController.store().url)
         .withJsonBody(Json.obj(
           "utr" -> "0123456789",
@@ -92,7 +94,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
       contentAsJson(result) mustBe Json.toJson(trustClaim)
     }
 
-    "should return BAD_REQUEST and an error response if the service returns a StoreParsingErrorResponse" in {
+    "must return BAD_REQUEST and an error response if the service returns a StoreParsingErrorResponse" in {
       val request = FakeRequest(POST, routes.ClaimedTrustsController.store().url)
         .withJsonBody(Json.obj(
           "some-incorrect-key" -> "some-incorrect-value"
@@ -108,20 +110,35 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
       contentAsJson(result) mustBe responseError
     }
 
-    "should return INTERNAL_SERVER_ERROR and an error response if the service returns a StoreErrorsResponse" in {
+    "must return INTERNAL_SERVER_ERROR and an error response if the service returns a StoreErrorsResponse" in {
       val request = FakeRequest(POST, routes.ClaimedTrustsController.store().url)
         .withJsonBody(Json.obj(
           "some-incorrect-key" -> "some-incorrect-value"
         ))
 
-      val writeErrors = Seq(WriteError(0, 0, "some mongo write error!"), WriteError(1, 0, "another mongo write error!"))
+      val storageErrors = StorageErrors(
+        Seq(
+          WriteError(index = 0, code = 100, "some mongo write error!"),
+          WriteError(index = 1, code = 100, "another mongo write error!"),
+          WriteError(index = 0, code = 200, "a different mongo write error!")
+        )
+      )
 
-      when(service.store(any(), any(), any())).thenReturn(Future.successful(StoreErrorsResponse(writeErrors)))
+      val expectedJson = Json.obj("errors" ->
+        Json.obj(
+          "Index 0" ->
+          Json.arr("some mongo write error!", "a different mongo write error!"),
+          "Index 1" ->
+          Json.arr("another mongo write error!")
+        )
+      )
+
+      when(service.store(any(), any(), any())).thenReturn(Future.successful(StoreErrorsResponse(storageErrors)))
 
       val result = route(application, request).value
 
       status(result) mustBe Status.INTERNAL_SERVER_ERROR
-      contentAsJson(result) mustBe Json.obj("errors" -> Json.arr("some mongo write error!", "another mongo write error!"))
+      contentAsJson(result) mustBe expectedJson
     }
   }
 

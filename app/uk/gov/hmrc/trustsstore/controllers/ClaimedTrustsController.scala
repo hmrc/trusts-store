@@ -21,7 +21,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.trustsstore.controllers.actions.IdentifierAction
-import uk.gov.hmrc.trustsstore.models._
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.responses._
 import uk.gov.hmrc.trustsstore.services.ClaimedTrustsService
 
 import scala.concurrent.ExecutionContext
@@ -34,6 +34,7 @@ class ClaimedTrustsController @Inject()(
 
 	def get(): Action[AnyContent] = authAction.async {
 		implicit request =>
+
 			service.get(request.internalId) map {
 				case GetClaimFoundResponse(trustClaim) =>
 					Ok(Json.toJson(trustClaim))
@@ -44,6 +45,7 @@ class ClaimedTrustsController @Inject()(
 
 	def store(): Action[JsValue] = authAction.async(parse.tolerantJson) {
 		implicit request =>
+
 			val maybeUtr = (request.body \ "utr").asOpt[String]
 			val maybeManagedByAgent = (request.body \ "managedByAgent").asOpt[Boolean]
 			val internalId = request.internalId
@@ -54,7 +56,7 @@ class ClaimedTrustsController @Inject()(
 				case StoreParsingErrorResponse(error) =>
 					BadRequest(error)
 				case StoreErrorsResponse(errors) =>
-					InternalServerError(Json.obj("errors" -> errors.map(_.errmsg)))
+					InternalServerError(errors.toJson)
 			}
 	}
 

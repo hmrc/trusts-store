@@ -24,7 +24,9 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import reactivemongo.api.commands.WriteError
 import uk.gov.hmrc.trustsstore.BaseSpec
-import uk.gov.hmrc.trustsstore.models.{TrustClaim, _}
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.repository.StorageErrors
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.responses._
 import uk.gov.hmrc.trustsstore.repositories.ClaimedTrustsRepository
 
 import scala.concurrent.Future
@@ -44,7 +46,7 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
   }
 
   "invoking .get" - {
-    "should return a GetClaimFoundResponse from the repository if there is one for the given internal id" in {
+    "must return a GetClaimFoundResponse from the repository if there is one for the given internal id" in {
       val trustClaim = TrustClaim(internalId = fakeInternalId, utr = fakeUtr, managedByAgent = true)
 
       when(repository.get(any())).thenReturn(Future.successful(Some(trustClaim)))
@@ -54,7 +56,7 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
       result mustBe GetClaimFoundResponse(trustClaim)
     }
 
-    "should return a GetClaimNotFoundResponse from the repository if there is no claims for the given internal id" in {
+    "must return a GetClaimNotFoundResponse from the repository if there is no claims for the given internal id" in {
       val responseError = Json.obj("errors" -> "No TrustClaim was found for the given for this authenticated internalId")
 
       when(repository.get(any())).thenReturn(Future.successful(None))
@@ -66,7 +68,7 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
   }
 
   "invoking POST /claim" - {
-    "should return a StoreSuccessResponse from the repository if the TrustClaim is successfully stored" in {
+    "must return a StoreSuccessResponse from the repository if the TrustClaim is successfully stored" in {
 
       val trustClaim = TrustClaim(internalId = fakeInternalId, utr = fakeUtr, managedByAgent = true)
 
@@ -77,7 +79,7 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
       result mustBe StoreSuccessResponse(trustClaim)
     }
 
-    "should return a StoreParsingErrorResponse if the request body cannot be parsed into a TrustClaim" in {
+    "must return a StoreParsingErrorResponse if the request body cannot be parsed into a TrustClaim" in {
       val responseError = Json.obj("errors" ->  "Unable to parse request body into a TrustClaim")
 
       val result = service.store(fakeInternalId, None, None).futureValue
@@ -85,15 +87,15 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
       result mustBe StoreParsingErrorResponse(responseError)
     }
 
-    "should return a StoreErrorsResponse from the repository if the repository experiences WriteErrors" in {
+    "must return a StoreErrorsResponse from the repository if the repository experiences WriteErrors" in {
 
-      val writeErrors = Seq(WriteError(0, 0, "some mongo write error!"), WriteError(1, 0, "another mongo write error!"))
+      val storageErrors = StorageErrors(Seq(WriteError(0, 100, "some mongo write error!"), WriteError(1, 50, "another mongo write error!")))
 
-      when(repository.store(any())).thenReturn(Future.successful(Left(writeErrors)))
+      when(repository.store(any())).thenReturn(Future.successful(Left(storageErrors)))
 
       val result = service.store(fakeInternalId, Some(fakeUtr), Some(true)).futureValue
 
-      result mustBe StoreErrorsResponse(writeErrors)
+      result mustBe StoreErrorsResponse(storageErrors)
     }
   }
 

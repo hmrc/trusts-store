@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.trustsstore.models
+package uk.gov.hmrc.trustsstore.models.claim_a_trust
 
 import play.api.libs.json.{Json, OFormat}
 

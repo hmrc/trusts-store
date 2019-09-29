@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.trustsstore.models
+package uk.gov.hmrc.trustsstore.models.claim_a_trust.responses
 
 import play.api.libs.json.JsObject
-import reactivemongo.api.commands.WriteError
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.repository.StorageErrors
 
 trait ClaimedTrustResponse
 
 case class GetClaimFoundResponse(foundTrustClaim: TrustClaim) extends ClaimedTrustResponse
 case class GetClaimNotFoundResponse(error: JsObject) extends ClaimedTrustResponse
 
-case class StoreErrorsResponse(errors: Seq[WriteError]) extends ClaimedTrustResponse
+case class StoreErrorsResponse(errors: StorageErrors) extends ClaimedTrustResponse
 case class StoreSuccessResponse(storedTrustClaim: TrustClaim) extends ClaimedTrustResponse
 case class StoreParsingErrorResponse(error: JsObject) extends ClaimedTrustResponse
