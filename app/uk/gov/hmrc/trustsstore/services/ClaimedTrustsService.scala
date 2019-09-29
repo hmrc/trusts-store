@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.responses._
+import uk.gov.hmrc.trustsstore.models.responses.ErrorResponse
 import uk.gov.hmrc.trustsstore.repositories.ClaimedTrustsRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -30,8 +31,8 @@ class ClaimedTrustsService @Inject()(private val claimedTrustsRepository: Claime
 
   def get(internalId: String): Future[ClaimedTrustResponse] = {
     claimedTrustsRepository.get(internalId) map {
-      case Some(trustClaim) => GetClaimFoundResponse(trustClaim)
-      case None => GetClaimNotFoundResponse(Json.obj("errors" -> "No TrustClaim was found for the given for this authenticated internalId"))
+      case Some(trustClaim) => GetClaimFound(trustClaim)
+      case None => GetClaimNotFound
     }
   }
 
@@ -48,7 +49,7 @@ class ClaimedTrustsService @Inject()(private val claimedTrustsRepository: Claime
           case Left(writeErrors) => StoreErrorsResponse(writeErrors)
           case Right(storedTrustClaim) => StoreSuccessResponse(storedTrustClaim)
         }
-      case None => Future.successful(StoreParsingErrorResponse(Json.obj("errors" -> "Unable to parse request body into a TrustClaim")))
+      case None => Future.successful(StoreParsingError)
     }
   }
 

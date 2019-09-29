@@ -22,7 +22,11 @@ import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.trustsstore.controllers.actions.IdentifierAction
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.responses._
+import uk.gov.hmrc.trustsstore.models.responses.ErrorResponse
 import uk.gov.hmrc.trustsstore.services.ClaimedTrustsService
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.responses.ClaimedTrustResponse._
+import uk.gov.hmrc.trustsstore.models.responses.ErrorResponse._
+
 
 import scala.concurrent.ExecutionContext
 
@@ -36,10 +40,10 @@ class ClaimedTrustsController @Inject()(
 		implicit request =>
 
 			service.get(request.internalId) map {
-				case GetClaimFoundResponse(trustClaim) =>
+				case GetClaimFound(trustClaim) =>
 					Ok(Json.toJson(trustClaim))
-				case GetClaimNotFoundResponse(error) =>
-					NotFound(error)
+				case GetClaimNotFound =>
+					NotFound(Json.toJson(ErrorResponse(NOT_FOUND, CLAIM_TRUST_UNABLE_TO_LOCATE)))
 			}
 	}
 
@@ -53,10 +57,10 @@ class ClaimedTrustsController @Inject()(
 			service.store(internalId, maybeUtr, maybeManagedByAgent) map {
 				case StoreSuccessResponse(trustClaim) =>
 					Created(Json.toJson(trustClaim))
-				case StoreParsingErrorResponse(error) =>
-					BadRequest(error)
-				case StoreErrorsResponse(errors) =>
-					InternalServerError(errors.toJson)
+				case StoreParsingError =>
+					BadRequest(Json.toJson(ErrorResponse(BAD_REQUEST, CLAIM_TRUST_UNABLE_TO_PARSE)))
+				case StoreErrorsResponse(storageErrors) =>
+					InternalServerError(Json.toJson(ErrorResponse(INTERNAL_SERVER_ERROR, UNABLE_TO_STORE, Some(storageErrors.toJson))))
 			}
 	}
 

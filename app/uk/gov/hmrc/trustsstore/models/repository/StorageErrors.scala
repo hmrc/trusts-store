@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.trustsstore.models.claim_a_trust.repository
+package uk.gov.hmrc.trustsstore.models.repository
 
 import play.api.libs.json.{JsValue, Json}
 import reactivemongo.api.commands.WriteError
 
 case class StorageErrors(writeErrors: Seq[WriteError]) {
   def toJson: JsValue = {
-    Json.obj("errors" ->
-      Json.toJson(writeErrors.groupBy(_.index)
-        .map{ case (index, errors) => (s"Index $index", errors)}
-        .mapValues(errors => errors
-          .map(error => error.errmsg)
-        )
-      )
+    Json.toJson(writeErrors.groupBy(_.index)
+      .mapValues(errors => errors.map(error => Json.obj("code" -> error.code, "message" -> error.errmsg)))
+      .map { case (index, errors) => Json.obj(s"index $index" -> errors) }
     )
   }
 }

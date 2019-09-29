@@ -18,13 +18,18 @@ package uk.gov.hmrc.trustsstore.models.claim_a_trust.responses
 
 import play.api.libs.json.JsObject
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
-import uk.gov.hmrc.trustsstore.models.claim_a_trust.repository.StorageErrors
+import uk.gov.hmrc.trustsstore.models.repository.StorageErrors
 
 trait ClaimedTrustResponse
 
-case class GetClaimFoundResponse(foundTrustClaim: TrustClaim) extends ClaimedTrustResponse
-case class GetClaimNotFoundResponse(error: JsObject) extends ClaimedTrustResponse
+object ClaimedTrustResponse {
+  val CLAIM_TRUST_UNABLE_TO_LOCATE = "unable to locate a TrustClaim for the given requests internalId"
+  val CLAIM_TRUST_UNABLE_TO_PARSE = "Unable to parse request body into a TrustClaim"
+}
+
+case class GetClaimFound(foundTrustClaim: TrustClaim) extends ClaimedTrustResponse
+case object GetClaimNotFound extends ClaimedTrustResponse
 
 case class StoreErrorsResponse(errors: StorageErrors) extends ClaimedTrustResponse
 case class StoreSuccessResponse(storedTrustClaim: TrustClaim) extends ClaimedTrustResponse
-case class StoreParsingErrorResponse(error: JsObject) extends ClaimedTrustResponse
+case object StoreParsingError extends ClaimedTrustResponse

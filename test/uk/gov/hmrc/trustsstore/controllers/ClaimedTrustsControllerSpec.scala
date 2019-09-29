@@ -28,7 +28,7 @@ import play.api.test.Helpers._
 import reactivemongo.api.commands.WriteError
 import uk.gov.hmrc.trustsstore.BaseSpec
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
-import uk.gov.hmrc.trustsstore.models.claim_a_trust.repository.StorageErrors
+import uk.gov.hmrc.trustsstore.models.repository.StorageErrors
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.responses._
 import uk.gov.hmrc.trustsstore.services.ClaimedTrustsService
 
@@ -54,7 +54,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
 
       val trustClaim = TrustClaim(internalId = fakeInternalId, utr = fakeUtr, managedByAgent = true)
 
-      when(service.get(any())).thenReturn(Future.successful(GetClaimFoundResponse(trustClaim)))
+      when(service.get(any())).thenReturn(Future.successful(GetClaimFound(trustClaim)))
 
       val result = route(application, request).value
 
@@ -65,14 +65,21 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
     "must return NOT_FOUND if there is no TrustClaim for the internal id" in {
       val request = FakeRequest(GET, routes.ClaimedTrustsController.get().url)
 
-      val responseError = Json.obj("errors" -> "No TrustClaim was found for the given for this authenticated internalId")
+      val expectedJson = Json.parse(
+        """
+          |{
+          |  "status": 404,
+          |  "message": "unable to locate a TrustClaim for the given requests internalId"
+          |}
+        """.stripMargin
+      )
 
-      when(service.get(any())).thenReturn(Future.successful(GetClaimNotFoundResponse(responseError)))
+      when(service.get(any())).thenReturn(Future.successful(GetClaimNotFound))
 
       val result = route(application, request).value
 
       status(result) mustBe Status.NOT_FOUND
-      contentAsJson(result) mustBe responseError
+      contentAsJson(result) mustBe expectedJson
     }
   }
 
@@ -100,14 +107,21 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
           "some-incorrect-key" -> "some-incorrect-value"
         ))
 
-      val responseError = Json.obj("errors" ->  "Unable to parse request body into a TrustClaim")
+      val expectedJson = Json.parse(
+        """
+          |{
+          |  "status": 400,
+          |  "message": "Unable to parse request body into a TrustClaim"
+          |}
+        """.stripMargin
+      )
 
-      when(service.store(any(), any(), any())).thenReturn(Future.successful(StoreParsingErrorResponse(responseError)))
+      when(service.store(any(), any(), any())).thenReturn(Future.successful(StoreParsingError))
 
       val result = route(application, request).value
 
       status(result) mustBe Status.BAD_REQUEST
-      contentAsJson(result) mustBe responseError
+      contentAsJson(result) mustBe expectedJson
     }
 
     "must return INTERNAL_SERVER_ERROR and an error response if the service returns a StoreErrorsResponse" in {
@@ -124,15 +138,23 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
         )
       )
 
-      val expectedJson = Json.obj("errors" ->
-        Json.obj(
-          "Index 0" ->
-          Json.arr("some mongo write error!", "a different mongo write error!"),
-          "Index 1" ->
-          Json.arr("another mongo write error!")
-        )
+      val expectedJson = Json.parse(
+        """
+          |{
+          |  "status": 500,
+          |  "message": "unable to store to trusts store",
+          |  "errors": [
+          |    { "index 1": [{ "code": 100, "message": "another mongo write error!" }] },
+          |    {
+          |      "index 0": [
+          |        { "code": 100, "message": "some mongo write error!" },
+          |        { "code": 200, "message": "a different mongo write error!" }
+          |      ]
+          |    }
+          |  ]
+          |}
+        """.stripMargin
       )
-
       when(service.store(any(), any(), any())).thenReturn(Future.successful(StoreErrorsResponse(storageErrors)))
 
       val result = route(application, request).value

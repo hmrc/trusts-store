@@ -23,7 +23,7 @@ import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
 import reactivemongo.play.json.collection.JSONCollection
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
-import uk.gov.hmrc.trustsstore.models.claim_a_trust.repository.StorageErrors
+import uk.gov.hmrc.trustsstore.models.repository.StorageErrors
 
 import scala.concurrent.{ExecutionContext, Future}
 

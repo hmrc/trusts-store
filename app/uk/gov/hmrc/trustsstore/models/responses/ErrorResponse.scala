@@ -1,0 +1,33 @@
+/*
+ * Copyright 2019 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package uk.gov.hmrc.trustsstore.models.responses
+
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{JsPath, JsValue, OWrites}
+
+case class ErrorResponse(status: Int, message: String, errors: Option[JsValue] = None)
+
+object ErrorResponse {
+
+  val UNABLE_TO_STORE = "unable to store to trusts store"
+
+  implicit val errorResponseWrites: OWrites[ErrorResponse] = (
+    (JsPath \ "status").write[Int] and
+    (JsPath \ "message").write[String] and
+    (JsPath \ "errors").writeNullable[JsValue]
+    )(unlift(ErrorResponse.unapply))
+}

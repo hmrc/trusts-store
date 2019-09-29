@@ -25,7 +25,7 @@ import play.api.libs.json.Json
 import reactivemongo.api.commands.WriteError
 import uk.gov.hmrc.trustsstore.BaseSpec
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
-import uk.gov.hmrc.trustsstore.models.claim_a_trust.repository.StorageErrors
+import uk.gov.hmrc.trustsstore.models.repository.StorageErrors
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.responses._
 import uk.gov.hmrc.trustsstore.repositories.ClaimedTrustsRepository
 
@@ -53,17 +53,15 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
 
       val result = service.get("matching-internal-id").futureValue
 
-      result mustBe GetClaimFoundResponse(trustClaim)
+      result mustBe GetClaimFound(trustClaim)
     }
 
     "must return a GetClaimNotFoundResponse from the repository if there is no claims for the given internal id" in {
-      val responseError = Json.obj("errors" -> "No TrustClaim was found for the given for this authenticated internalId")
-
       when(repository.get(any())).thenReturn(Future.successful(None))
 
       val result = service.get("unmatched-internal-id").futureValue
 
-      result mustBe GetClaimNotFoundResponse(responseError)
+      result mustBe GetClaimNotFound
     }
   }
 
@@ -80,11 +78,9 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
     }
 
     "must return a StoreParsingErrorResponse if the request body cannot be parsed into a TrustClaim" in {
-      val responseError = Json.obj("errors" ->  "Unable to parse request body into a TrustClaim")
-
       val result = service.store(fakeInternalId, None, None).futureValue
 
-      result mustBe StoreParsingErrorResponse(responseError)
+      result mustBe StoreParsingError
     }
 
     "must return a StoreErrorsResponse from the repository if the repository experiences WriteErrors" in {

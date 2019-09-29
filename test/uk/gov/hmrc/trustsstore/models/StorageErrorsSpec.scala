@@ -19,36 +19,40 @@ package uk.gov.hmrc.trustsstore.models
 import play.api.libs.json.Json
 import reactivemongo.api.commands.WriteError
 import uk.gov.hmrc.trustsstore.BaseSpec
-import uk.gov.hmrc.trustsstore.models.claim_a_trust.repository.StorageErrors
+import uk.gov.hmrc.trustsstore.models.repository.StorageErrors
 
 class StorageErrorsSpec extends BaseSpec {
 
   "StorageErrors" - {
     "must be able to provide a json object of write errors" in {
-      val storageErrors = StorageErrors(
+
+      val storageErrorsJson = StorageErrors(
         Seq(
-          WriteError(index = 0, code = 100, "some mongo write error!"),
-          WriteError(index = 3, code = 20, "also this write error!"),
-          WriteError(index = 0, code = 200, "a second write error on index 0!"),
+          WriteError(index = 0, code = 50, "some mongo write error!"),
           WriteError(index = 1, code = 100, "another mongo write error!"),
-          WriteError(index = 2, code = 50, "a different mongo write error!")
+          WriteError(index = 2, code = 20, "a different mongo write error!"),
+          WriteError(index = 3, code = 100, "also this write error!") ,
+          WriteError(index = 3, code = 200, "a second write error on index 3!")
         )
+      ).toJson
+
+      val expectedJson = Json.parse(
+        """
+          |[
+          |  { "index 2": [{ "code": 20, "message": "a different mongo write error!" }] },
+          |  { "index 1": [{ "code": 100, "message": "another mongo write error!" }] },
+          |  {
+          |    "index 3": [
+          |      { "code": 100, "message": "also this write error!" },
+          |      { "code": 200, "message": "a second write error on index 3!" }
+          |    ]
+          |  },
+          |  { "index 0": [{ "code": 50, "message": "some mongo write error!" }] }
+          |]
+        """.stripMargin
       )
 
-      val expectedJson = Json.obj("errors" ->
-        Json.obj(
-          "Index 0" ->
-            Json.arr("some mongo write error!", "a second write error on index 0!"),
-          "Index 1" ->
-            Json.arr("another mongo write error!"),
-          "Index 2" ->
-            Json.arr("a different mongo write error!"),
-          "Index 3" ->
-            Json.arr("also this write error!")
-        )
-      )
-
-      storageErrors.toJson mustBe expectedJson
+      storageErrorsJson mustBe expectedJson
     }
   }
 }
