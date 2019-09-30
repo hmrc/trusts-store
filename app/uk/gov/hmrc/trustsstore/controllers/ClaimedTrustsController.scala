@@ -17,13 +17,18 @@
 package uk.gov.hmrc.trustsstore.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.trustsstore.controllers.actions.IdentifierAction
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.responses._
+import uk.gov.hmrc.trustsstore.models.responses.ErrorResponse
 import uk.gov.hmrc.trustsstore.services.ClaimedTrustsService
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.responses.ClaimedTrustResponse._
+import uk.gov.hmrc.trustsstore.models.responses.ErrorResponse._
 
-import scala.concurrent.{ExecutionContext, Future}
+
+import scala.concurrent.ExecutionContext
 
 @Singleton()
 class ClaimedTrustsController @Inject()(
@@ -31,18 +36,32 @@ class ClaimedTrustsController @Inject()(
  	service: ClaimedTrustsService,
 	authAction: IdentifierAction)(implicit ec: ExecutionContext) extends BackendController(cc) {
 
-	def get() = authAction.async {
+	def get(): Action[AnyContent] = authAction.async {
 		implicit request =>
+
 			service.get(request.internalId) map {
-				case Some(trustClaim) =>
+				case GetClaimFound(trustClaim) =>
 					Ok(Json.toJson(trustClaim))
-				case None =>
-					NotFound("No matching claims found for this internalId")
+				case GetClaimNotFound =>
+					NotFound(Json.toJson(ErrorResponse(NOT_FOUND, CLAIM_TRUST_UNABLE_TO_LOCATE)))
 			}
 	}
 
-	def store() = authAction.async(parse.tolerantJson) { implicit request =>
-		Future.successful(NotImplemented)
+	def store(): Action[JsValue] = authAction.async(parse.tolerantJson) {
+		implicit request =>
+
+			val maybeUtr = (request.body \ "utr").asOpt[String]
+			val maybeManagedByAgent = (request.body \ "managedByAgent").asOpt[Boolean]
+			val internalId = request.internalId
+
+			service.store(internalId, maybeUtr, maybeManagedByAgent) map {
+				case StoreSuccessResponse(trustClaim) =>
+					Created(Json.toJson(trustClaim))
+				case StoreParsingError =>
+					BadRequest(Json.toJson(ErrorResponse(BAD_REQUEST, CLAIM_TRUST_UNABLE_TO_PARSE)))
+				case StoreErrorsResponse(storageErrors) =>
+					InternalServerError(Json.toJson(ErrorResponse(INTERNAL_SERVER_ERROR, UNABLE_TO_STORE, Some(storageErrors.toJson))))
+			}
 	}
 
 }

@@ -17,20 +17,40 @@
 package uk.gov.hmrc.trustsstore.services
 
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.trustsstore.models.TrustClaim
+import play.api.libs.json.Json
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.responses._
+import uk.gov.hmrc.trustsstore.models.responses.ErrorResponse
 import uk.gov.hmrc.trustsstore.repositories.ClaimedTrustsRepository
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton()
-class ClaimedTrustsService @Inject()(val claimedTrustsRepository: ClaimedTrustsRepository)  {
+class ClaimedTrustsService @Inject()(private val claimedTrustsRepository: ClaimedTrustsRepository)  {
 
-  def get(internalId: String): Future[Option[TrustClaim]] = {
-    claimedTrustsRepository.get(internalId)
+  def get(internalId: String): Future[ClaimedTrustResponse] = {
+    claimedTrustsRepository.get(internalId) map {
+      case Some(trustClaim) => GetClaimFound(trustClaim)
+      case None => GetClaimNotFound
+    }
   }
 
-  def store() = {
-    claimedTrustsRepository.store()
+  def store(internalId: String, maybeUtr: Option[String], maybeManagedByAgent: Option[Boolean]): Future[ClaimedTrustResponse] = {
+
+    val trustClaim = (maybeUtr, maybeManagedByAgent) match {
+      case (Some(utr), Some(managedByAgent)) => Some(TrustClaim(internalId, utr, managedByAgent))
+      case _ => None
+    }
+
+    trustClaim match {
+      case Some(tc) =>
+        claimedTrustsRepository.store(tc).map {
+          case Left(writeErrors) => StoreErrorsResponse(writeErrors)
+          case Right(storedTrustClaim) => StoreSuccessResponse(storedTrustClaim)
+        }
+      case None => Future.successful(StoreParsingError)
+    }
   }
 
 }

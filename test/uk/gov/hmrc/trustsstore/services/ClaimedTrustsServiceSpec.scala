@@ -21,8 +21,12 @@ import org.mockito.Mockito
 import org.mockito.Mockito._
 import play.api.Application
 import play.api.inject.bind
+import play.api.libs.json.Json
+import reactivemongo.api.commands.WriteError
 import uk.gov.hmrc.trustsstore.BaseSpec
-import uk.gov.hmrc.trustsstore.models.TrustClaim
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
+import uk.gov.hmrc.trustsstore.models.repository.StorageErrors
+import uk.gov.hmrc.trustsstore.models.claim_a_trust.responses._
 import uk.gov.hmrc.trustsstore.repositories.ClaimedTrustsRepository
 
 import scala.concurrent.Future
@@ -42,27 +46,53 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
   }
 
   "invoking .get" - {
-    "should return a TrustClaim from the repository if there is one for the given internal id" in {
-      val trustClaim = TrustClaim(utr = fakeUtr, managedByAgent = true)
+    "must return a GetClaimFoundResponse from the repository if there is one for the given internal id" in {
+      val trustClaim = TrustClaim(internalId = fakeInternalId, utr = fakeUtr, managedByAgent = true)
 
       when(repository.get(any())).thenReturn(Future.successful(Some(trustClaim)))
 
       val result = service.get("matching-internal-id").futureValue
 
-      result mustBe Some(trustClaim)
+      result mustBe GetClaimFound(trustClaim)
     }
 
-    "should return None from the repository if there is no claims for the given internal id" in {
+    "must return a GetClaimNotFoundResponse from the repository if there is no claims for the given internal id" in {
       when(repository.get(any())).thenReturn(Future.successful(None))
 
       val result = service.get("unmatched-internal-id").futureValue
 
-      result mustBe None
+      result mustBe GetClaimNotFound
     }
   }
 
   "invoking POST /claim" - {
-    "should store"
+    "must return a StoreSuccessResponse from the repository if the TrustClaim is successfully stored" in {
+
+      val trustClaim = TrustClaim(internalId = fakeInternalId, utr = fakeUtr, managedByAgent = true)
+
+      when(repository.store(any())).thenReturn(Future.successful(Right(trustClaim)))
+
+      val result = service.store(fakeInternalId, Some(fakeUtr), Some(true)).futureValue
+
+      result mustBe StoreSuccessResponse(trustClaim)
+    }
+
+    "must return a StoreParsingErrorResponse if the request body cannot be parsed into a TrustClaim" in {
+      val result = service.store(fakeInternalId, None, None).futureValue
+
+      result mustBe StoreParsingError
+    }
+
+    "must return a StoreErrorsResponse from the repository if the repository experiences WriteErrors" in {
+
+      val storageErrors = StorageErrors(Seq(WriteError(0, 100, "some mongo write error!"), WriteError(1, 50, "another mongo write error!")))
+
+      when(repository.store(any())).thenReturn(Future.successful(Left(storageErrors)))
+
+      val result = service.store(fakeInternalId, Some(fakeUtr), Some(true)).futureValue
+
+      result mustBe StoreErrorsResponse(storageErrors)
+    }
   }
 
 }
