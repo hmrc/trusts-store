@@ -44,7 +44,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
     bind[ClaimedTrustsService].toInstance(service)
   ).build()
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
     Mockito.reset(service)
   }
 

@@ -9,7 +9,7 @@ lazy val scoverageSettings = {
   Seq(
     ScoverageKeys.coverageExcludedPackages := "<empty>;Reverse.*;app.Routes.*;prod.*;testOnlyDoNotUseInProd.*;testOnlyDoNotUseInAppConf.*;" +
       "uk.gov.hmrc.BuildInfo;app.*;prod.*;config.*",
-    ScoverageKeys.coverageMinimum := 100,
+    ScoverageKeys.coverageMinimum := 70,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true
   )
@@ -17,13 +17,26 @@ lazy val scoverageSettings = {
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  .configs(IntegrationTest)
+  .settings(inConfig(IntegrationTest)(itSettings): _*)
+  .settings(publishingSettings ++ scoverageSettings: _*)
+  .settings(resolvers += Resolver.jcenterRepo)
   .settings(
+    PlayKeys.playDefaultPort := 9783,
     majorVersion := 0,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test
   )
-  .settings(publishingSettings ++ scoverageSettings: _*)
-  .configs(IntegrationTest)
-  .settings(integrationTestSettings(): _*)
-  .settings(
-    resolvers += Resolver.jcenterRepo
+
+ lazy val itSettings = Defaults.itSettings ++ Seq(
+  unmanagedSourceDirectories   := Seq(
+    baseDirectory.value / "it"
+  ),
+  unmanagedResourceDirectories := Seq(
+    baseDirectory.value / "it" / "resources"
+  ),
+  parallelExecution            := false,
+  fork                         := true,
+  javaOptions                  ++= Seq(
+    "-Dconfig.resource=it.application.conf"
   )
+)

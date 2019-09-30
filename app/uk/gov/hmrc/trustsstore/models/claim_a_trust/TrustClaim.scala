@@ -18,7 +18,7 @@ package uk.gov.hmrc.trustsstore.models.claim_a_trust
 
 import play.api.libs.json.{Json, OFormat}
 
-case class TrustClaim(internalId: String,utr: String, managedByAgent: Boolean)
+case class TrustClaim(internalId: String, utr: String, managedByAgent: Boolean)
 
 object TrustClaim {
   implicit lazy val formats: OFormat[TrustClaim] = Json.format[TrustClaim]

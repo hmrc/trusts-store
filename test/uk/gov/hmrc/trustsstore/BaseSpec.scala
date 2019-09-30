@@ -36,7 +36,9 @@ class BaseSpec extends FreeSpec
   with MustMatchers
   with MockitoSugar
   with OptionValues
+  with EitherValues
   with ScalaFutures
+  with Inside
   with BeforeAndAfterEach
   with BeforeAndAfter {
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
