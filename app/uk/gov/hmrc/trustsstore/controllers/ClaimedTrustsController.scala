@@ -41,7 +41,7 @@ class ClaimedTrustsController @Inject()(
 
 			service.get(request.internalId) map {
 				case GetClaimFound(trustClaim) =>
-					Ok(Json.toJson(trustClaim))
+					Ok(trustClaim.toResponse)
 				case GetClaimNotFound =>
 					NotFound(Json.toJson(ErrorResponse(NOT_FOUND, CLAIM_TRUST_UNABLE_TO_LOCATE)))
 			}
@@ -56,7 +56,7 @@ class ClaimedTrustsController @Inject()(
 
 			service.store(internalId, maybeUtr, maybeManagedByAgent) map {
 				case StoreSuccessResponse(trustClaim) =>
-					Created(Json.toJson(trustClaim))
+					Created(trustClaim.toResponse)
 				case StoreParsingError =>
 					BadRequest(Json.toJson(ErrorResponse(BAD_REQUEST, CLAIM_TRUST_UNABLE_TO_PARSE)))
 				case StoreErrorsResponse(storageErrors) =>

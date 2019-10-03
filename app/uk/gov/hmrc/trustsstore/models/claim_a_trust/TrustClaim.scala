@@ -16,10 +16,37 @@
 
 package uk.gov.hmrc.trustsstore.models.claim_a_trust
 
-import play.api.libs.json.{Json, OFormat}
+import java.time.LocalDateTime
 
-case class TrustClaim(internalId: String, utr: String, managedByAgent: Boolean)
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
+import uk.gov.hmrc.trustsstore.models.MongoDateTimeFormats
 
-object TrustClaim {
-  implicit lazy val formats: OFormat[TrustClaim] = Json.format[TrustClaim]
+case class TrustClaim(internalId: String, utr: String, managedByAgent: Boolean, lastUpdated: LocalDateTime = LocalDateTime.now) {
+  def toResponse: JsObject =
+    Json.obj(
+      "internalId" -> this.internalId,
+      "utr" -> this.utr,
+      "managedByAgent" -> this.managedByAgent
+    )
+}
+
+object TrustClaim extends MongoDateTimeFormats {
+  implicit lazy val reads: Reads[TrustClaim] = {
+    (
+        (__ \ "_id").read[String] and
+        (__ \ "utr").read[String] and
+        (__ \ "managedByAgent").read[Boolean] and
+        (__ \ "lastUpdated").read[LocalDateTime]
+    ) (TrustClaim.apply _)
+  }
+
+  implicit lazy val writes: OWrites[TrustClaim] = {
+    (
+        (__ \ "_id").write[String] and
+        (__ \ "utr").write[String] and
+        (__ \ "managedByAgent").write[Boolean] and
+        (__ \ "lastUpdated").write[LocalDateTime]
+    ) (unlift(TrustClaim.unapply))
+  }
 }

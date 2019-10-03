@@ -59,7 +59,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
       val result = route(application, request).value
 
       status(result) mustBe Status.OK
-      contentAsJson(result) mustBe Json.toJson(trustClaim)
+      contentAsJson(result) mustBe trustClaim.toResponse
     }
 
     "must return NOT_FOUND if there is no TrustClaim for the internal id" in {
@@ -98,7 +98,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
       val result = route(application, request).value
 
       status(result) mustBe Status.CREATED
-      contentAsJson(result) mustBe Json.toJson(trustClaim)
+      contentAsJson(result) mustBe trustClaim.toResponse
     }
 
     "must return BAD_REQUEST and an error response if the service returns a StoreParsingErrorResponse" in {

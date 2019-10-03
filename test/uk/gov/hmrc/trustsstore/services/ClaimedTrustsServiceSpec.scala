@@ -65,7 +65,7 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
     }
   }
 
-  "invoking POST /claim" - {
+  "invoking .store" - {
     "must return a StoreSuccessResponse from the repository if the TrustClaim is successfully stored" in {
 
       val trustClaim = TrustClaim(internalId = fakeInternalId, utr = fakeUtr, managedByAgent = true)

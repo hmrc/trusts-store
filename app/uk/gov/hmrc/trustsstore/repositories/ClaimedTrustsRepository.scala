@@ -17,9 +17,11 @@
 package uk.gov.hmrc.trustsstore.repositories
 
 import javax.inject.{Inject, Singleton}
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.indexes.{Index, IndexType}
+import reactivemongo.bson.BSONDocument
 import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
 import reactivemongo.play.json.collection.JSONCollection
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
@@ -28,12 +30,20 @@ import uk.gov.hmrc.trustsstore.models.repository.StorageErrors
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class ClaimedTrustsRepository @Inject()(mongo: ReactiveMongoApi)(implicit ec: ExecutionContext) {
+class ClaimedTrustsRepository @Inject()(mongo: ReactiveMongoApi, config: Configuration)(implicit ec: ExecutionContext) {
 
   private val collectionName: String = "claimAttempts"
 
   private def collection: Future[JSONCollection] =
     mongo.database.map(_.collection[JSONCollection](collectionName))
+
+  private val expireAfterSeconds = config.get[Int]("mongodb.expireAfterSeconds")
+
+  private val lastUpdatedIndex = Index(
+    key = Seq("lastUpdated" -> IndexType.Ascending),
+    name = Some("trust-claims-last-updated-index"),
+    options = BSONDocument("expireAfterSeconds" -> expireAfterSeconds)
+  )
 
   private val internalIdIndex = Index(
     key = Seq("internalId" -> IndexType.Ascending),
@@ -44,15 +54,16 @@ class ClaimedTrustsRepository @Inject()(mongo: ReactiveMongoApi)(implicit ec: Ex
     collection.flatMap {
       coll =>
         for {
+          _ <- coll.indexesManager.ensure(lastUpdatedIndex)
           _ <- coll.indexesManager.ensure(internalIdIndex)
         } yield ()
     }
 
   def get(internalId: String): Future[Option[TrustClaim]] =
-    collection.flatMap(_.find(Json.obj("internalId" -> internalId), projection = None).one[TrustClaim])
+    collection.flatMap(_.find(Json.obj("_id" -> internalId), projection = None).one[TrustClaim])
 
   def remove(internalId: String): Future[Option[TrustClaim]] =
-    collection.flatMap(_.findAndRemove(Json.obj("internalId" -> internalId)).map(_.result[TrustClaim]))
+    collection.flatMap(_.findAndRemove(Json.obj("_id" -> internalId)).map(_.result[TrustClaim]))
 
   def store(data: TrustClaim): Future[Either[StorageErrors, TrustClaim]] = {
     collection.flatMap(_.insert(ordered = false).one[TrustClaim](data)).map {
