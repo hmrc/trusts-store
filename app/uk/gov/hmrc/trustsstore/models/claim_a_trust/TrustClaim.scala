@@ -37,7 +37,7 @@ object TrustClaim extends MongoDateTimeFormats {
         (__ \ "_id").read[String] and
         (__ \ "utr").read[String] and
         (__ \ "managedByAgent").read[Boolean] and
-        (__ \ "lastUpdated").read[LocalDateTime]
+        (__ \ "lastUpdated").read(localDateTimeRead)
     ) (TrustClaim.apply _)
   }
 
@@ -46,7 +46,7 @@ object TrustClaim extends MongoDateTimeFormats {
         (__ \ "_id").write[String] and
         (__ \ "utr").write[String] and
         (__ \ "managedByAgent").write[Boolean] and
-        (__ \ "lastUpdated").write[LocalDateTime]
+        (__ \ "lastUpdated").write(localDateTimeWrite)
     ) (unlift(TrustClaim.unapply))
   }
 }

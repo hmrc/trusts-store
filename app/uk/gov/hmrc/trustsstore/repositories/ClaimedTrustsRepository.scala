@@ -45,17 +45,11 @@ class ClaimedTrustsRepository @Inject()(mongo: ReactiveMongoApi, config: Configu
     options = BSONDocument("expireAfterSeconds" -> expireAfterSeconds)
   )
 
-  private val internalIdIndex = Index(
-    key = Seq("internalId" -> IndexType.Ascending),
-    name = Some("internal-id-index")
-  )
-
   val started: Future[Unit] =
     collection.flatMap {
       coll =>
         for {
           _ <- coll.indexesManager.ensure(lastUpdatedIndex)
-          _ <- coll.indexesManager.ensure(internalIdIndex)
         } yield ()
     }
 
