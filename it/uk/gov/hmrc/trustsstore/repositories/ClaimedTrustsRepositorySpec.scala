@@ -8,6 +8,9 @@ import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.time.{Millis, Seconds, Span}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
+import reactivemongo.api.indexes.IndexType
+import reactivemongo.bson.BSONDocument
+import reactivemongo.play.json.collection.JSONCollection
 import suite.FailOnUnindexedQueries
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
 
@@ -58,12 +61,13 @@ class ClaimedTrustsRepositorySpec extends FreeSpec with MustMatchers with FailOn
       }
     }
 
-    "must expire the internal-id-index after the configured ttl" in {
+    "must ensure indexes with the ttl" in {
 
 
       database.map(_.drop()).futureValue
 
-      val application = appBuilder.configure(Map("mongodb.expireAfterSeconds" -> 1)).build()
+      val ttl = 123
+      val application = appBuilder.configure(Map("mongodb.expireAfterSeconds" -> ttl)).build()
 
       running(application) {
 
@@ -71,13 +75,17 @@ class ClaimedTrustsRepositorySpec extends FreeSpec with MustMatchers with FailOn
 
         started(application).futureValue
 
-        val trustClaim = TrustClaim(internalId, "1234567890", managedByAgent = true)
+        val indices = database.flatMap {
+          _.collection[JSONCollection]("claimAttempts")
+            .indexesManager.list()
+        }.futureValue
 
-        repository.store(trustClaim).futureValue
-
-        eventually(timeout(Span(5, Seconds)), interval(Span(500, Millis))) {
-          repository.get(internalId).futureValue mustNot be(defined)
-        }
+        indices.find {
+          index =>
+            index.name.contains("trust-claims-last-updated-index") &&
+            index.key == Seq("lastUpdated" -> IndexType.Ascending) &&
+            index.options == BSONDocument("expireAfterSeconds" -> ttl)
+        } mustBe defined
       }
     }
   }
