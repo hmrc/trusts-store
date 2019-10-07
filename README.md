@@ -60,7 +60,7 @@ and `managedByAgent` is derived from answers in the **claim a trust** journey
 * A call is made to the `store` endpoint with valid authentication headers and a valid request body
 * The `TrustClaim` is successfully stored within the `trusts-store`
 > This trust claim will now be associated with the `internalId` within the authenticated request
-* The `201 Created` response will return a representation of what has been stored in the following form::
+* The `201 Created` response will return a representation of what has been stored in the following form:
 ```json
 {
   "internalId": "some-authenticated-internal-id",

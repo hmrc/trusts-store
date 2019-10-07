@@ -59,11 +59,19 @@ class ClaimedTrustsRepository @Inject()(mongo: ReactiveMongoApi, config: Configu
   def remove(internalId: String): Future[Option[TrustClaim]] =
     collection.flatMap(_.findAndRemove(Json.obj("_id" -> internalId)).map(_.result[TrustClaim]))
 
-  def store(data: TrustClaim): Future[Either[StorageErrors, TrustClaim]] = {
-    collection.flatMap(_.insert(ordered = false).one[TrustClaim](data)).map {
+  def store(trustClaim: TrustClaim): Future[Either[StorageErrors, TrustClaim]] = {
+
+    val selector = Json.obj(
+      "_id" -> trustClaim.internalId
+    )
+
+    val modifier = Json.obj(
+      "$set" -> trustClaim
+    )
+
+    collection.flatMap(_.update.one(q = selector, u = modifier, upsert = true, multi = false)).map {
       case result if result.writeErrors.nonEmpty => Left(StorageErrors(result.writeErrors))
-      case _ => Right(data)
+      case _ => Right(trustClaim)
     }
   }
-
 }

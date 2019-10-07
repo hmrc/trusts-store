@@ -61,6 +61,33 @@ class ClaimedTrustsRepositorySpec extends FreeSpec with MustMatchers with FailOn
       }
     }
 
+    "must be able to update a trust claim with the same auth id" in {
+
+
+      database.map(_.drop()).futureValue
+
+      val application = appBuilder.build()
+
+      running(application) {
+
+        started(application).futureValue
+
+        val repository = application.injector.instanceOf[ClaimedTrustsRepository]
+
+        started(application).futureValue
+
+        val lastUpdated = LocalDateTime.parse("2000-01-01 12:30", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+
+        val trustClaim = TrustClaim(internalId, "1234567890", managedByAgent = true, lastUpdated = lastUpdated)
+
+        repository.store(trustClaim).futureValue.right.value
+
+        val updatedClaim = repository.store(trustClaim.copy(utr = "0987654321")).futureValue
+
+        updatedClaim must be ('right)
+      }
+    }
+
     "must ensure indexes with the ttl" in {
 
 
@@ -70,9 +97,7 @@ class ClaimedTrustsRepositorySpec extends FreeSpec with MustMatchers with FailOn
       val application = appBuilder.configure(Map("mongodb.expireAfterSeconds" -> ttl)).build()
 
       running(application) {
-
-        val repository = application.injector.instanceOf[ClaimedTrustsRepository]
-
+        
         started(application).futureValue
 
         val indices = database.flatMap {
