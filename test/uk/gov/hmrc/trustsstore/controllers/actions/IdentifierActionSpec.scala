@@ -44,6 +44,10 @@ class IdentifierActionSpec extends BaseSpec {
   private def authRetrievals(affinityGroup: AffinityGroup) =
     Future.successful(new ~(Some("id"), Some(affinityGroup)))
 
+  private def insufficientAuthRetrievals =
+    Future.successful(new ~(None, None))
+
+
   private val agentAffinityGroup = AffinityGroup.Agent
   private val orgAffinityGroup = AffinityGroup.Organisation
 
@@ -106,6 +110,17 @@ class IdentifierActionSpec extends BaseSpec {
         status(result) mustBe UNAUTHORIZED
       }
     }
+
+    "handle insufficient retrievals" - {
+
+      "by returning an unauthorized response" in {
+        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(insufficientAuthRetrievals), appConfig, bodyParsers)
+        val controller = new Harness(authAction)
+        val result = controller.onSubmit()(fakeRequest)
+
+        status(result) mustBe UNAUTHORIZED
+      }
+    }
   }
 }
 
@@ -116,10 +131,8 @@ class FakeFailingAuthConnector @Inject()(exceptionToReturn: Throwable) extends A
 
 
 class FakeAuthConnector(stubbedRetrievalResult: Future[_]) extends AuthConnector {
-
   override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
     stubbedRetrievalResult.map(_.asInstanceOf[A])
   }
-
 }
 
