@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.trustsstore
 
+import java.time.LocalDateTime
+
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
@@ -36,7 +38,9 @@ class BaseSpec extends FreeSpec
   with MustMatchers
   with MockitoSugar
   with OptionValues
+  with EitherValues
   with ScalaFutures
+  with Inside
   with BeforeAndAfterEach
   with BeforeAndAfter {
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
@@ -45,9 +49,9 @@ class BaseSpec extends FreeSpec
 
   def appConfig: AppConfig = injector.instanceOf[AppConfig]
 
-  def fakeUtr = "1234567890"
+  def fakeUtr: String = "1234567890"
 
-  def fakeInternalId = "Int-328969d0-557e-4559-96ba-074d0597107e"
+  def fakeInternalId: String = "Int-328969d0-557e-4559-96ba-074d0597107e"
 
   def fakeRequest: FakeRequest[JsValue] = FakeRequest("POST", "")
     .withHeaders(CONTENT_TYPE -> MimeTypes.JSON)

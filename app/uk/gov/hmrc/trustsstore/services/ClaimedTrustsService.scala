@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.trustsstore.services
 
+import java.time.LocalDateTime
+
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.Json
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.responses._
-import uk.gov.hmrc.trustsstore.models.responses.ErrorResponse
 import uk.gov.hmrc.trustsstore.repositories.ClaimedTrustsRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global

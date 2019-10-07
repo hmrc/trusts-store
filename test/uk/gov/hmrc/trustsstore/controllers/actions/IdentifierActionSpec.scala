@@ -18,7 +18,8 @@ package uk.gov.hmrc.trustsstore.controllers.actions
 
 import akka.stream.Materializer
 import com.google.inject.Inject
-import play.api.mvc.{BodyParsers, Results}
+import play.api.libs.json.JsValue
+import play.api.mvc.{Action, BodyParsers, Results}
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core._
@@ -35,7 +36,7 @@ class IdentifierActionSpec extends BaseSpec {
   implicit lazy val mtrlzr: Materializer = injector.instanceOf[Materializer]
 
   class Harness(authAction: IdentifierAction) {
-    def onSubmit() = authAction.apply(BodyParsers.parse.json) { _ => Results.Ok }
+    def onSubmit(): Action[JsValue] = authAction.apply(BodyParsers.parse.json) { _ => Results.Ok }
   }
 
   def bodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]

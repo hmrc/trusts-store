@@ -49,7 +49,6 @@ class ErrorResponseSpec extends BaseSpec {
 
     "must be able to provide a json object of with additional storage errors" in {
 
-
       val expectedJson =
         Json.parse(
           """

@@ -17,7 +17,7 @@ object MongoSuite {
     MongoConnection.parseURI(config.get[String]("mongodb.uri"))
   }
 
-  lazy val connection =
+  lazy val connection: Future[MongoConnection] =
     parsedUri.map(MongoDriver().connection)
 }
 
