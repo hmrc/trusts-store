@@ -52,9 +52,10 @@ class ClaimedTrustsController @Inject()(
 
 			val maybeUtr = (request.body \ "utr").asOpt[String]
 			val maybeManagedByAgent = (request.body \ "managedByAgent").asOpt[Boolean]
+			val maybeTrustLocked = (request.body \ "trustLocked").asOpt[Boolean]
 			val internalId = request.internalId
 
-			service.store(internalId, maybeUtr, maybeManagedByAgent) map {
+			service.store(internalId, maybeUtr, maybeManagedByAgent, maybeTrustLocked) map {
 				case StoreSuccessResponse(trustClaim) =>
 					Created(trustClaim.toResponse)
 				case StoreParsingError =>

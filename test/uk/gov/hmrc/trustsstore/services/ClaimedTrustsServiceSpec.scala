@@ -72,13 +72,24 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
 
       when(repository.store(any())).thenReturn(Future.successful(Right(trustClaim)))
 
-      val result = service.store(fakeInternalId, Some(fakeUtr), Some(true)).futureValue
+      val result = service.store(fakeInternalId, Some(fakeUtr), Some(true), None).futureValue
+
+      result mustBe StoreSuccessResponse(trustClaim)
+    }
+
+    "must return a StoreSuccessResponse from the repository if the TrustClaim is successfully stored with trustLocked" in {
+
+      val trustClaim = TrustClaim(internalId = fakeInternalId, utr = fakeUtr, managedByAgent = true)
+
+      when(repository.store(any())).thenReturn(Future.successful(Right(trustClaim)))
+
+      val result = service.store(fakeInternalId, Some(fakeUtr), Some(true), Some(true)).futureValue
 
       result mustBe StoreSuccessResponse(trustClaim)
     }
 
     "must return a StoreParsingErrorResponse if the request body cannot be parsed into a TrustClaim" in {
-      val result = service.store(fakeInternalId, None, None).futureValue
+      val result = service.store(fakeInternalId, None, None, None).futureValue
 
       result mustBe StoreParsingError
     }
@@ -89,7 +100,7 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
 
       when(repository.store(any())).thenReturn(Future.successful(Left(storageErrors)))
 
-      val result = service.store(fakeInternalId, Some(fakeUtr), Some(true)).futureValue
+      val result = service.store(fakeInternalId, Some(fakeUtr), Some(true), Some(false)).futureValue
 
       result mustBe StoreErrorsResponse(storageErrors)
     }

@@ -36,10 +36,11 @@ class ClaimedTrustsService @Inject()(private val claimedTrustsRepository: Claime
     }
   }
 
-  def store(internalId: String, maybeUtr: Option[String], maybeManagedByAgent: Option[Boolean]): Future[ClaimedTrustResponse] = {
+  def store(internalId: String, maybeUtr: Option[String], maybeManagedByAgent: Option[Boolean], maybeTrustLocked: Option[Boolean]): Future[ClaimedTrustResponse] = {
 
-    val trustClaim = (maybeUtr, maybeManagedByAgent) match {
-      case (Some(utr), Some(managedByAgent)) => Some(TrustClaim(internalId, utr, managedByAgent))
+    val trustClaim = (maybeUtr, maybeManagedByAgent, maybeTrustLocked) match {
+      case (Some(utr), Some(managedByAgent), None) => Some(TrustClaim(internalId, utr, managedByAgent))
+      case (Some(utr), Some(managedByAgent), Some(maybeTrustLocked)) => Some(TrustClaim(internalId, utr, managedByAgent, maybeTrustLocked))
       case _ => None
     }
 
