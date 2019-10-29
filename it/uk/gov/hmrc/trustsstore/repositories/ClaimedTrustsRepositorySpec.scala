@@ -46,10 +46,11 @@ class ClaimedTrustsRepositorySpec extends FreeSpec with MustMatchers with FailOn
         val storedClaim = repository.store(trustClaim).futureValue.right.value
 
         inside(storedClaim) {
-          case TrustClaim(id, utr, mba, ldt) =>
+          case TrustClaim(id, utr, mba, tl, ldt) =>
             id mustEqual internalId
             utr mustEqual storedClaim.utr
             mba mustEqual storedClaim.managedByAgent
+            tl mustEqual storedClaim.trustLocked
             ldt mustEqual storedClaim.lastUpdated
         }
 
