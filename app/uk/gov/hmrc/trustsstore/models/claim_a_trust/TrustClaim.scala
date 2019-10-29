@@ -27,7 +27,8 @@ case class TrustClaim(internalId: String, utr: String, managedByAgent: Boolean, 
     Json.obj(
       "internalId" -> this.internalId,
       "utr" -> this.utr,
-      "managedByAgent" -> this.managedByAgent
+      "managedByAgent" -> this.managedByAgent,
+      "trustLocked" -> this.trustLocked
     )
 }
 
