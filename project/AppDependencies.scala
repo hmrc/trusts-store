@@ -7,8 +7,8 @@ object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
     ws,
-    "uk.gov.hmrc"             %% "bootstrap-play-26"        % "0.46.0",
-    "org.reactivemongo"       %% "play2-reactivemongo"      % "0.18.5-play26"
+    "uk.gov.hmrc"             %% "bootstrap-play-26"        % "1.4.0",
+    "org.reactivemongo"       %% "play2-reactivemongo"      % "0.18.8-play26"
   )
 
   val test: Seq[ModuleID] = Seq(
