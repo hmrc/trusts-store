@@ -36,13 +36,15 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
 
           val repository = application.injector.instanceOf[TasksRepository]
 
-          val task = Task(trustees = false, settlors = false, protectors = false, beneficiaries = false, other = false)
+          val task = Task(trustees = true, settlors = false, protectors = false, beneficiaries = false, other = false)
 
           val result = repository.set(internalId, "1234567890", task).futureValue
 
           result mustBe true
 
           repository.get(internalId, "1234567890").futureValue.value.task mustBe task
+
+          dropTheDatabase(connection)
         }
 
       }
