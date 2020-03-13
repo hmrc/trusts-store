@@ -51,8 +51,6 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers with FailOnUnindexe
 
         started(application).futureValue
 
-        val cache = TaskCache(internalId, "1234567890", task = Task())
-
         val task = Task(trustees = false, settlors = false, protectors = false, beneficiaries = false, other = false)
 
         val result = repository.set(internalId, "1234567890", task).futureValue

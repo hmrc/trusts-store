@@ -56,7 +56,7 @@ class TasksRepository @Inject()(mongo: ReactiveMongoApi, config: Configuration)(
     }
 
   def get(internalId: String, utr: String): Future[Option[TaskCache]] = {
-    val selector = Json.obj("_id" -> internalId, "utr" -> utr)
+    val selector = Json.obj("internalId" -> internalId, "utr" -> utr)
 
     val modifier = Json.obj(
       "$set" -> Json.obj(
@@ -75,7 +75,7 @@ class TasksRepository @Inject()(mongo: ReactiveMongoApi, config: Configuration)(
 
   def set(internalId: String, utr: String, updated: Task): Future[Boolean] = {
 
-    val selector = Json.obj("_id" -> internalId, "utr" -> utr)
+    val selector = Json.obj("internalId" -> internalId, "utr" -> utr)
 
     val insertCache = TaskCache(internalId, utr, updated)
 
