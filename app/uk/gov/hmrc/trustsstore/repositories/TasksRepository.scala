@@ -32,7 +32,9 @@ import uk.gov.hmrc.trustsstore.models.maintain.{Task, TaskCache}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class TasksRepository @Inject()(mongo: ReactiveMongoApi, config: Configuration)(implicit ec: ExecutionContext) {
+class TasksRepository @Inject()(mongo: ReactiveMongoApi,
+                                config: Configuration)
+                               (implicit ec: ExecutionContext) {
 
   private val collectionName: String = "maintainTasks"
 

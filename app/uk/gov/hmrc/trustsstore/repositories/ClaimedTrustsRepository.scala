@@ -30,7 +30,9 @@ import uk.gov.hmrc.trustsstore.models.repository.StorageErrors
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class ClaimedTrustsRepository @Inject()(mongo: ReactiveMongoApi, config: Configuration)(implicit ec: ExecutionContext) {
+class ClaimedTrustsRepository @Inject()(mongo: ReactiveMongoApi,
+                                        config: Configuration)
+                                       (implicit ec: ExecutionContext) {
 
   private val collectionName: String = "claimAttempts"
 

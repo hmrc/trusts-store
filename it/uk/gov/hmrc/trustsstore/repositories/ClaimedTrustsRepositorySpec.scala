@@ -4,24 +4,15 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 import org.scalatest._
-import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
-import org.scalatest.time.{Millis, Seconds, Span}
-import play.api.inject.guice.GuiceApplicationBuilder
+import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers._
-import reactivemongo.api.indexes.IndexType
-import reactivemongo.bson.BSONDocument
-import reactivemongo.play.json.collection.JSONCollection
-import suite.FailOnUnindexedQueries
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
+import uk.gov.hmrc.trustsstore.suite.MongoSuite
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.implicitConversions
 
-class ClaimedTrustsRepositorySpec extends FreeSpec with MustMatchers with FailOnUnindexedQueries with IntegrationPatience
-  with ScalaFutures with OptionValues with Inside with EitherValues with Eventually {
-
-  private lazy val appBuilder: GuiceApplicationBuilder =
-    new GuiceApplicationBuilder()
+class ClaimedTrustsRepositorySpec extends FreeSpec with MustMatchers
+  with ScalaFutures with OptionValues with Inside with MongoSuite with EitherValues {
 
   "a claimed trusts repository" - {
 
@@ -29,90 +20,66 @@ class ClaimedTrustsRepositorySpec extends FreeSpec with MustMatchers with FailOn
 
     "must be able to store, retrieve and remove trusts claims" in {
 
-      database.map(_.drop()).futureValue
-
-      val application = appBuilder.build()
-
       running(application) {
 
-        val repository = application.injector.instanceOf[ClaimedTrustsRepository]
+        getConnection(application).map { connection =>
 
-        started(application).futureValue
+          dropTheDatabase(connection)
 
-        val lastUpdated = LocalDateTime.parse("2000-01-01 12:30", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+          val repository = application.injector.instanceOf[ClaimedTrustsRepository]
 
-        val trustClaim = TrustClaim(internalId, "1234567890", managedByAgent = true, lastUpdated = lastUpdated)
+          val lastUpdated = LocalDateTime.parse("2000-01-01 12:30", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
 
-        val storedClaim = repository.store(trustClaim).futureValue.right.value
+          val trustClaim = TrustClaim(internalId, "1234567890", managedByAgent = true, lastUpdated = lastUpdated)
 
-        inside(storedClaim) {
-          case TrustClaim(id, utr, mba, tl, ldt) =>
-            id mustEqual internalId
-            utr mustEqual storedClaim.utr
-            mba mustEqual storedClaim.managedByAgent
-            tl mustEqual storedClaim.trustLocked
-            ldt mustEqual storedClaim.lastUpdated
+          val storedClaim = repository.store(trustClaim).futureValue.right.value
+
+          inside(storedClaim) {
+            case TrustClaim(id, utr, mba, tl, ldt) =>
+              id mustEqual internalId
+              utr mustEqual storedClaim.utr
+              mba mustEqual storedClaim.managedByAgent
+              tl mustEqual storedClaim.trustLocked
+              ldt mustEqual storedClaim.lastUpdated
+          }
+
+          repository.get(internalId).futureValue.value mustBe trustClaim
+
+          repository.remove(internalId).futureValue
+
+          repository.get(internalId).futureValue mustNot be(defined)
+
+          dropTheDatabase(connection)
         }
 
-        repository.get(internalId).futureValue.value mustBe trustClaim
-
-        repository.remove(internalId).futureValue
-
-        repository.get(internalId).futureValue mustNot be(defined)
       }
     }
 
     "must be able to update a trust claim with the same auth id" in {
 
-
-      database.map(_.drop()).futureValue
-
-      val application = appBuilder.build()
-
       running(application) {
 
-        started(application).futureValue
+        getConnection(application).map { connection =>
 
-        val repository = application.injector.instanceOf[ClaimedTrustsRepository]
+          dropTheDatabase(connection)
 
-        started(application).futureValue
+          val repository = application.injector.instanceOf[ClaimedTrustsRepository]
 
-        val lastUpdated = LocalDateTime.parse("2000-01-01 12:30", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+          val lastUpdated = LocalDateTime.parse("2000-01-01 12:30", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
 
-        val trustClaim = TrustClaim(internalId, "1234567890", managedByAgent = true, lastUpdated = lastUpdated)
+          val trustClaim = TrustClaim(internalId, "1234567890", managedByAgent = true, lastUpdated = lastUpdated)
 
-        repository.store(trustClaim).futureValue.right.value
+          repository.store(trustClaim).futureValue.right.value
 
-        val updatedClaim = repository.store(trustClaim.copy(utr = "0987654321")).futureValue
+          val updatedClaim = repository.store(trustClaim.copy(utr = "0987654321")).futureValue
 
-        updatedClaim must be ('right)
+          updatedClaim must be ('right)
+
+          dropTheDatabase(connection)
+        }
+
       }
     }
 
-    "must ensure indexes with the ttl" in {
-
-
-      database.map(_.drop()).futureValue
-
-      val ttl = 123
-      val application = appBuilder.configure(Map("mongodb.expireAfterSeconds" -> ttl)).build()
-
-      running(application) {
-        
-        started(application).futureValue
-
-        val indices = database.flatMap {
-          _.collection[JSONCollection]("claimAttempts")
-            .indexesManager.list()
-        }.futureValue
-
-        indices.find {
-          index =>
-            index.name.contains("trust-claims-last-updated-index") &&
-            index.key == Seq("lastUpdated" -> IndexType.Ascending) &&
-            index.options == BSONDocument("expireAfterSeconds" -> ttl)
-        } mustBe defined
-      }
-    }
   }
 }
