@@ -1,43 +1,47 @@
 package uk.gov.hmrc.trustsstore.suite
 
-import com.typesafe.config.ConfigFactory
 import org.scalatest.TestSuite
-import play.api.{Application, Configuration}
-import reactivemongo.api.{DefaultDB, MongoConnection, MongoDriver}
-import uk.gov.hmrc.trustsstore.repositories.ClaimedTrustsRepository
+import org.scalatest.concurrent.{IntegrationPatience, PatienceConfiguration}
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.api.{MongoConnection, MongoDriver}
 
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.duration.Duration
 
-object MongoSuite {
+trait MongoSuite extends IntegrationPatience {
+  self: TestSuite with PatienceConfiguration =>
 
-  private lazy val config = Configuration(ConfigFactory.load(System.getProperty("config.resource")))
+  // Database boilerplate
+  private val connectionString = "mongodb://localhost:27017/trusts-store-integration"
 
-  private lazy val parsedUri = Future.fromTry {
-    MongoConnection.parseURI(config.get[String]("mongodb.uri"))
+  def getDatabase(connection: MongoConnection) = {
+    connection.database("trusts-store-integration")
   }
 
-  lazy val connection: Future[MongoConnection] =
-    parsedUri.map(MongoDriver().connection)
-}
+  def getConnection(application: Application) = {
+    val mongoDriver = application.injector.instanceOf[ReactiveMongoApi]
 
-trait MongoSuite {
-  self: TestSuite =>
-
-  def started(app: Application): Future[_] = {
-
-    val claimedTrustsRepository = app.injector.instanceOf[ClaimedTrustsRepository]
-
-    val services = Seq(claimedTrustsRepository.started)
-
-    Future.sequence(services)
+    lazy val connection = for {
+      uri <- MongoConnection.parseURI(connectionString)
+      connection <- mongoDriver.driver.connection(uri, true)
+    } yield connection
+    connection
   }
 
-  def database: Future[DefaultDB] = {
-    for {
-      uri        <- MongoSuite.parsedUri
-      connection <- MongoSuite.connection
-      database   <- connection.database(uri.db.get)
-    } yield database
+  def dropTheDatabase(connection: MongoConnection): Unit = {
+    Await.result(getDatabase(connection).flatMap(_.drop()), Duration.Inf)
   }
+
+  val application : Application = new GuiceApplicationBuilder()
+    .configure(Seq(
+      "mongodb.uri" -> connectionString,
+      "metrics.enabled" -> false,
+      "auditing.enabled" -> false,
+      "mongo-async-driver.akka.log-dead-letters" -> 0
+    ): _*)
+    .build()
+
 }

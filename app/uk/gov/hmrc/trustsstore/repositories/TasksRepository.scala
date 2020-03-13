@@ -16,6 +16,9 @@
 
 package uk.gov.hmrc.trustsstore.repositories
 
+import java.sql.Timestamp
+import java.time.LocalDateTime
+
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.libs.json.Json
@@ -24,17 +27,16 @@ import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONDocument
 import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
 import reactivemongo.play.json.collection.JSONCollection
-import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
-import uk.gov.hmrc.trustsstore.models.repository.StorageErrors
+import uk.gov.hmrc.trustsstore.models.maintain.{Task, TaskCache}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class ClaimedTrustsRepository @Inject()(mongo: ReactiveMongoApi,
-                                        config: Configuration)
-                                       (implicit ec: ExecutionContext) {
+class TasksRepository @Inject()(mongo: ReactiveMongoApi,
+                                config: Configuration)
+                               (implicit ec: ExecutionContext) {
 
-  private val collectionName: String = "claimAttempts"
+  private val collectionName: String = "maintainTasks"
 
   private def collection: Future[JSONCollection] =
     mongo.database.map(_.collection[JSONCollection](collectionName))
@@ -43,7 +45,7 @@ class ClaimedTrustsRepository @Inject()(mongo: ReactiveMongoApi,
 
   private val lastUpdatedIndex = Index(
     key = Seq("lastUpdated" -> IndexType.Ascending),
-    name = Some("trust-claims-last-updated-index"),
+    name = Some("tasks-last-updated-index"),
     options = BSONDocument("expireAfterSeconds" -> expireAfterSeconds)
   )
 
@@ -55,25 +57,38 @@ class ClaimedTrustsRepository @Inject()(mongo: ReactiveMongoApi,
         } yield ()
     }
 
-  def get(internalId: String): Future[Option[TrustClaim]] =
-    collection.flatMap(_.find(Json.obj("_id" -> internalId), projection = None).one[TrustClaim])
-
-  def remove(internalId: String): Future[Option[TrustClaim]] =
-    collection.flatMap(_.findAndRemove(Json.obj("_id" -> internalId)).map(_.result[TrustClaim]))
-
-  def store(trustClaim: TrustClaim): Future[Either[StorageErrors, TrustClaim]] = {
-
-    val selector = Json.obj(
-      "_id" -> trustClaim.internalId
-    )
+  def get(internalId: String, utr: String): Future[Option[TaskCache]] = {
+    val selector = Json.obj("internalId" -> internalId, "utr" -> utr)
 
     val modifier = Json.obj(
-      "$set" -> trustClaim
+      "$set" -> Json.obj(
+        "lastUpdated" -> Json.obj(
+          "$date" -> Timestamp.valueOf(LocalDateTime.now)
+        )
+      )
     )
 
-    collection.flatMap(_.update.one(q = selector, u = modifier, upsert = true, multi = false)).map {
-      case result if result.writeErrors.nonEmpty => Left(StorageErrors(result.writeErrors))
-      case _ => Right(trustClaim)
+    collection
+      .flatMap(
+        _.findAndUpdate(selector, modifier, fetchNewObject = true)
+        .map(_.result[TaskCache])
+      )
+  }
+
+  def set(internalId: String, utr: String, updated: Task): Future[Boolean] = {
+
+    val selector = Json.obj("internalId" -> internalId, "utr" -> utr)
+
+    val insertCache = TaskCache(internalId, utr, updated)
+
+    val modifier = Json.obj(
+      "$set" -> Json.toJson(insertCache)
+    )
+
+    collection.flatMap {
+      _.update(ordered = false).one(selector, modifier, upsert = true, multi = false).map {
+        result => result.ok
+      }
     }
   }
 }
