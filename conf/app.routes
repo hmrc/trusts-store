@@ -4,8 +4,8 @@ GET        /claim             uk.gov.hmrc.trustsstore.controllers.ClaimedTrustsC
 POST       /claim             uk.gov.hmrc.trustsstore.controllers.ClaimedTrustsController.store()
 
 GET        /maintain/tasks/:utr         uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.get(utr: String)
-PUT        /maintain/tasks/trustees/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeTrustees(utr: String)
-PUT        /maintain/tasks/beneficiaries/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeBeneficiaries(utr: String)
-PUT        /maintain/tasks/protectors/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeProtectors(utr: String)
-PUT        /maintain/tasks/settlors/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeSettlors(utr: String)
-PUT        /maintain/tasks/others/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeOtherIndividuals(utr: String)
+POST        /maintain/tasks/trustees/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeTrustees(utr: String)
+POST        /maintain/tasks/beneficiaries/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeBeneficiaries(utr: String)
+POST        /maintain/tasks/protectors/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeProtectors(utr: String)
+POST        /maintain/tasks/settlors/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeSettlors(utr: String)
+POST        /maintain/tasks/others/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeOtherIndividuals(utr: String)
