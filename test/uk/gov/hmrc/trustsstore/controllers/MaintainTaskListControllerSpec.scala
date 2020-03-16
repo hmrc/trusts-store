@@ -67,7 +67,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
-  "invoking PUT /maintain/task/trustees" - {
+  "invoking POST /maintain/task/trustees" - {
 
     "must return Ok and the completed tasks" in {
       val request = FakeRequest(POST, routes.MaintainTaskListController.completeTrustees("utr").url)
