@@ -67,6 +67,39 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
+  "invoking POST /maintain/tasks" - {
+
+    "must return OK and the completed Tasks for valid tasks" in {
+      val tasks = Task(
+        trustees = true,
+        beneficiaries = false,
+        settlors = true,
+        other = false,
+        protectors = false
+      )
+
+      val request = FakeRequest(POST, routes.MaintainTaskListController.set("utr").url).withBody(Json.toJson(tasks))
+
+      when(service.set(any(), any(), any())).thenReturn(Future.successful(tasks))
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.OK
+      contentAsJson(result) mustBe Json.toJson(tasks)
+      verify(service).set("id", "utr", tasks)
+
+    }
+    "must return BAD_REQUEST for invalid JSON" in {
+
+      val request = FakeRequest(POST, routes.MaintainTaskListController.set("utr").url).withBody(Json.obj())
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.BAD_REQUEST
+    }
+
+  }
+
   "invoking POST /maintain/task/trustees" - {
 
     "must return Ok and the completed tasks" in {
