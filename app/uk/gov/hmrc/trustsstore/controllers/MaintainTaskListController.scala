@@ -17,10 +17,11 @@
 package uk.gov.hmrc.trustsstore.controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.Json
+import play.api.libs.json._
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import uk.gov.hmrc.trustsstore.controllers.actions.IdentifierAction
+import uk.gov.hmrc.trustsstore.models.maintain.Task
 import uk.gov.hmrc.trustsstore.services.TasksService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,7 +40,7 @@ class MaintainTaskListController @Inject()(
 	authAction: IdentifierAction)(implicit ec: ExecutionContext) extends BackendController(cc) {
 
 	def get(utr: String): Action[AnyContent] = authAction.async {
-		implicit request =>
+		request =>
 
 			service.get(request.internalId, utr).map {
 				task =>
@@ -47,9 +48,20 @@ class MaintainTaskListController @Inject()(
 			}
 	}
 
+	def set(utr: String): Action[JsValue] = authAction.async(parse.json) {
+		request =>
+			request.body.validate[Task] match {
+				case JsSuccess(tasks, _) =>
+					service.set(request.internalId, utr, tasks).map {
+						updated => Ok(Json.toJson(updated))
+					}
+				case _ => Future.successful(BadRequest)
+			}
+	}
+
 	private def updateTask(internalId: String, utr: String, update: UpdateOperation) = for {
 		tasks <- service.get(internalId, utr)
-		updated <- Future.successful {
+		updatedTasks <- Future.successful {
 			update match {
 				case UpdateTrustees => tasks.copy(trustees = true)
 				case UpdateBeneficiaries => tasks.copy(beneficiaries = true)
@@ -58,9 +70,9 @@ class MaintainTaskListController @Inject()(
 				case UpdateOtherIndividuals => tasks.copy(other = true)
 			}
 		}
-		_ <- service.set(internalId, utr, updated)
+		savedTasks <- service.set(internalId, utr, updatedTasks)
 	} yield {
-		Ok(Json.toJson(updated))
+		Ok(Json.toJson(savedTasks))
 	}
 
 	def completeTrustees(utr: String): Action[AnyContent] = authAction.async {
