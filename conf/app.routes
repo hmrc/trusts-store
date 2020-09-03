@@ -10,3 +10,6 @@ POST        /maintain/tasks/beneficiaries/:utr     uk.gov.hmrc.trustsstore.contr
 POST        /maintain/tasks/protectors/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeProtectors(utr: String)
 POST        /maintain/tasks/settlors/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeSettlors(utr: String)
 POST        /maintain/tasks/others/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeOtherIndividuals(utr: String)
+
+GET       /features/:flagName             uk.gov.hmrc.trustsstore.controllers.FeatureFlagController.get(flagName: FeatureFlagName)
+PUT       /features/:flagName             uk.gov.hmrc.trustsstore.controllers.FeatureFlagController.put(flagName: FeatureFlagName)
