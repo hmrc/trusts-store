@@ -40,7 +40,9 @@ class FeatureFlagControllerSpec extends FreeSpec with MustMatchers with MockitoS
       val mockService = mock[FeatureFlagService]
       when(mockService.get(MLD5)) thenReturn Future.successful(Enabled(MLD5))
 
-      val app = new GuiceApplicationBuilder().overrides(bind[FeatureFlagService].toInstance(mockService)).build()
+      val app = new GuiceApplicationBuilder()
+        .overrides(bind[FeatureFlagService].toInstance(mockService))
+        .build()
 
       running(app) {
 
@@ -62,7 +64,8 @@ class FeatureFlagControllerSpec extends FreeSpec with MustMatchers with MockitoS
       when(mockService.set(any(), any())) thenReturn Future.successful(true)
 
       val app = new GuiceApplicationBuilder()
-        .overrides(bind[FeatureFlagService].toInstance(mockService)).build()
+        .overrides(bind[FeatureFlagService].toInstance(mockService))
+        .build()
 
       running(app) {
 
