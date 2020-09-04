@@ -17,6 +17,7 @@
 package uk.gov.hmrc.trustsstore.services
 
 import javax.inject.Inject
+import uk.gov.hmrc.trustsstore.config.AppConfig
 import uk.gov.hmrc.trustsstore.models.{FeatureFlag, FeatureFlagName}
 import uk.gov.hmrc.trustsstore.models.FeatureFlag.Disabled
 import uk.gov.hmrc.trustsstore.models.FeatureFlagName.MLD5
@@ -24,7 +25,7 @@ import uk.gov.hmrc.trustsstore.repositories.FeaturesRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FeatureFlagService @Inject()(featuresRepository: FeaturesRepository)
+class FeatureFlagService @Inject()(featuresRepository: FeaturesRepository, config: AppConfig)
                                   (implicit ec: ExecutionContext) {
 
   private val defaults: Seq[FeatureFlag] = Seq(
@@ -49,7 +50,16 @@ class FeatureFlagService @Inject()(featuresRepository: FeaturesRepository)
     }
   }
 
-  def get(name: FeatureFlagName) : Future[FeatureFlag] = getAll.map { flags =>
-    flags.find(_.name == name).getOrElse(Disabled(name))
+  def get(name: FeatureFlagName) : Future[FeatureFlag] = {
+    getConfig(name) match {
+      case Some(flag) => Future.successful(FeatureFlag(name, flag))
+      case _ => getAll.map { flags =>
+        flags.find(_.name == name).getOrElse(Disabled(name))
+      }
+    }
+  }
+
+  def getConfig(name: FeatureFlagName) : Option[Boolean] = {
+    config.getFeature(name)
   }
 }

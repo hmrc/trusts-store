@@ -19,6 +19,7 @@ package uk.gov.hmrc.trustsstore.controllers
 import javax.inject.Inject
 import play.api.libs.json.{JsBoolean, Json}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.trustsstore.config.AppConfig
 import uk.gov.hmrc.trustsstore.models.FeatureFlagName
 import uk.gov.hmrc.trustsstore.services.FeatureFlagService
 
@@ -29,13 +30,12 @@ class FeatureFlagController @Inject()(ffService: FeatureFlagService,
                                      (implicit ec:ExecutionContext) extends AbstractController(cc) {
 
   def get(flagName: FeatureFlagName): Action[AnyContent] = Action.async {
-    ffService.get(flagName).map(flags => Ok(Json.toJson(flags)))
+    ffService.get(flagName).map(flag => Ok(Json.toJson(flag)))
   }
 
   def put(flagName: FeatureFlagName): Action[AnyContent] = Action.async { request =>
     request.body.asJson match {
-      case Some(JsBoolean(enabled)) =>
-        ffService.set(flagName, enabled).map(_ => NoContent)
+      case Some(JsBoolean(enabled)) => ffService.set(flagName, enabled).map(_ => NoContent)
       case _ => Future.successful(BadRequest)
     }
   }

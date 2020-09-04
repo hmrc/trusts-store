@@ -18,9 +18,13 @@ package uk.gov.hmrc.trustsstore.config
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import uk.gov.hmrc.trustsstore.models.FeatureFlagName
 
 @Singleton
 class AppConfig @Inject()(config: Configuration) {
   private def loadConfig(key: String) = config.get[String](key)
+
+  def getFeature(flagName: FeatureFlagName): Option[Boolean] =
+    config.getOptional[Boolean](s"features.${flagName.asString}")
 }
 

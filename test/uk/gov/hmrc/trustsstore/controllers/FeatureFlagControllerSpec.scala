@@ -35,23 +35,41 @@ class FeatureFlagControllerSpec extends FreeSpec with MustMatchers with MockitoS
 
   "GET" - {
 
-    "must return a the feature flag from the request" in {
+    "must return a the feature flag from the request when" - {
+      "config for the flag exists" in {
 
-      val mockService = mock[FeatureFlagService]
-      when(mockService.get(MLD5)) thenReturn Future.successful(Enabled(MLD5))
+        val app = new GuiceApplicationBuilder()
+          .configure((s"features.${MLD5.asString}", true))
+          .build()
 
-      val app = new GuiceApplicationBuilder()
-        .overrides(bind[FeatureFlagService].toInstance(mockService))
-        .build()
+        running(app) {
 
-      running(app) {
+          val request = FakeRequest(GET, routes.FeatureFlagController.get(MLD5).url)
 
-        val request = FakeRequest(GET, routes.FeatureFlagController.get(MLD5).url)
+          val result = route(app, request).value
 
-        val result = route(app, request).value
+          status(result) mustEqual OK
+          contentAsJson(result) mustEqual Json.toJson(Enabled(MLD5))
+        }
+      }
+      "config for the flag does not exist" in {
 
-        status(result) mustEqual OK
-        contentAsJson(result) mustEqual Json.toJson(Enabled(MLD5))
+        val mockService = mock[FeatureFlagService]
+        when(mockService.get(MLD5)) thenReturn Future.successful(Enabled(MLD5))
+
+        val app = new GuiceApplicationBuilder()
+          .overrides(bind[FeatureFlagService].toInstance(mockService))
+          .build()
+
+        running(app) {
+
+          val request = FakeRequest(GET, routes.FeatureFlagController.get(MLD5).url)
+
+          val result = route(app, request).value
+
+          status(result) mustEqual OK
+          contentAsJson(result) mustEqual Json.toJson(Enabled(MLD5))
+        }
       }
     }
   }
