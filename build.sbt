@@ -1,3 +1,4 @@
+import play.sbt.routes.RoutesKeys
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
 import uk.gov.hmrc.SbtArtifactory
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
@@ -21,6 +22,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(inConfig(IntegrationTest)(itSettings): _*)
   .settings(publishingSettings ++ scoverageSettings: _*)
   .settings(resolvers += Resolver.jcenterRepo)
+  .settings(RoutesKeys.routesImport += "uk.gov.hmrc.trustsstore.models.FeatureFlagName")
   .settings(
     PlayKeys.playDefaultPort := 9783,
     majorVersion := 0,
