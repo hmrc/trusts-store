@@ -20,12 +20,10 @@ import java.sql.Timestamp
 import java.time.LocalDateTime
 
 import javax.inject.{Inject, Singleton}
-import play.api.Configuration
 import play.api.libs.json.{JsObject, Json}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.BSONDocument
 import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
 import reactivemongo.play.json.collection.JSONCollection
 import uk.gov.hmrc.trustsstore.models.FeatureFlag
@@ -34,8 +32,7 @@ import uk.gov.hmrc.trustsstore.models.maintain.{Task, TaskCache}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class FeaturesRepository @Inject()(mongo: ReactiveMongoApi,
-                                   config: Configuration)
+class FeaturesRepository @Inject()(mongo: ReactiveMongoApi)
                                   (implicit ec: ExecutionContext) {
 
   private val collectionName: String = "features"
@@ -44,12 +41,9 @@ class FeaturesRepository @Inject()(mongo: ReactiveMongoApi,
   private def collection: Future[JSONCollection] =
     mongo.database.map(_.collection[JSONCollection](collectionName))
 
-  private val expireAfterSeconds = config.get[Int]("mongodb.expireAfterSeconds")
-
   private val lastUpdatedIndex = Index(
     key = Seq("lastUpdated" -> IndexType.Ascending),
-    name = Some("tasks-last-updated-index"),
-    options = BSONDocument("expireAfterSeconds" -> expireAfterSeconds)
+    name = Some("tasks-last-updated-index")
   )
 
   val started: Future[Unit] =
