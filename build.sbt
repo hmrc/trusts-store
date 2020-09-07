@@ -42,3 +42,5 @@ lazy val microservice = Project(appName, file("."))
     "-Dconfig.resource=it.application.conf"
   )
 )
+
+dependencyOverrides ++= AppDependencies.overrides
