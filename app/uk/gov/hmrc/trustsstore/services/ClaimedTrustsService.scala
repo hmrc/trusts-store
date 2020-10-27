@@ -48,7 +48,7 @@ class ClaimedTrustsService @Inject()(private val claimedTrustsRepository: Claime
         logger.info(s"[store][Session ID: ${Session.id(hc)}] TrustClaim is not locked")
         Some(TrustClaim(internalId, utr, managedByAgent))
       case (Some(utr), Some(managedByAgent), Some(maybeTrustLocked)) =>
-        logger.info(s"[store][Session ID: ${Session.id(hc)}] TrustClaim is locked")
+        if (maybeTrustLocked) {logger.info(s"[store][Session ID: ${Session.id(hc)}] TrustClaim is locked")}
         Some(TrustClaim(internalId, utr, managedByAgent, maybeTrustLocked))
       case _ => None
     }
