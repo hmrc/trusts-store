@@ -132,4 +132,131 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
+  "invoking POST /maintain/task/beneficiaries" - {
+
+    "must return Ok and the completed tasks" in {
+      val request = FakeRequest(POST, routes.MaintainTaskListController.completeBeneficiaries("utr").url)
+
+      val tasksCompletedSoFar = Task(
+        trustees = false,
+        beneficiaries = false,
+        settlors = false,
+        other = false,
+        protectors = false
+      )
+
+      val updatedTasks = Task(
+        trustees = true,
+        beneficiaries = true,
+        settlors = false,
+        other = false,
+        protectors = false
+      )
+
+      when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
+      when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.OK
+      contentAsJson(result) mustBe Json.toJson(updatedTasks)
+    }
+
+  }
+
+  "invoking POST /maintain/task/protectors" - {
+
+    "must return Ok and the completed tasks" in {
+      val request = FakeRequest(POST, routes.MaintainTaskListController.completeProtectors("utr").url)
+
+      val tasksCompletedSoFar = Task(
+        trustees = false,
+        beneficiaries = true,
+        settlors = false,
+        other = false,
+        protectors = false
+      )
+
+      val updatedTasks = Task(
+        trustees = false,
+        beneficiaries = true,
+        settlors = false,
+        other = false,
+        protectors = true
+      )
+
+      when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
+      when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.OK
+      contentAsJson(result) mustBe Json.toJson(updatedTasks)
+    }
+
+  }
+
+  "invoking POST /maintain/task/settlors" - {
+
+    "must return Ok and the completed tasks" in {
+      val request = FakeRequest(POST, routes.MaintainTaskListController.completeSettlors("utr").url)
+
+      val tasksCompletedSoFar = Task(
+        trustees = false,
+        beneficiaries = true,
+        settlors = false,
+        other = false,
+        protectors = false
+      )
+
+      val updatedTasks = Task(
+        trustees = false,
+        beneficiaries = true,
+        settlors = true,
+        other = false,
+        protectors = false
+      )
+
+      when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
+      when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.OK
+      contentAsJson(result) mustBe Json.toJson(updatedTasks)
+    }
+
+  }
+
+  "invoking POST /maintain/task/others" - {
+
+    "must return Ok and the completed tasks" in {
+      val request = FakeRequest(POST, routes.MaintainTaskListController.completeOtherIndividuals("utr").url)
+
+      val tasksCompletedSoFar = Task(
+        trustees = false,
+        beneficiaries = true,
+        settlors = false,
+        other = false,
+        protectors = false
+      )
+
+      val updatedTasks = Task(
+        trustees = false,
+        beneficiaries = true,
+        settlors = false,
+        other = true,
+        protectors = false
+      )
+
+      when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
+      when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.OK
+      contentAsJson(result) mustBe Json.toJson(updatedTasks)
+    }
+
+  }
 }

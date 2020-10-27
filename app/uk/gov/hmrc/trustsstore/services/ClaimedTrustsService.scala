@@ -19,15 +19,20 @@ package uk.gov.hmrc.trustsstore.services
 import java.time.LocalDateTime
 
 import javax.inject.{Inject, Singleton}
+import play.api.Logger
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.TrustClaim
 import uk.gov.hmrc.trustsstore.models.claim_a_trust.responses._
 import uk.gov.hmrc.trustsstore.repositories.ClaimedTrustsRepository
+import utils.Session
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton()
 class ClaimedTrustsService @Inject()(private val claimedTrustsRepository: ClaimedTrustsRepository)  {
+
+  private val logger: Logger = Logger(getClass)
 
   def get(internalId: String): Future[ClaimedTrustResponse] = {
     claimedTrustsRepository.get(internalId) map {
@@ -36,11 +41,15 @@ class ClaimedTrustsService @Inject()(private val claimedTrustsRepository: Claime
     }
   }
 
-  def store(internalId: String, maybeUtr: Option[String], maybeManagedByAgent: Option[Boolean], maybeTrustLocked: Option[Boolean]): Future[ClaimedTrustResponse] = {
+  def store(internalId: String, maybeUtr: Option[String], maybeManagedByAgent: Option[Boolean], maybeTrustLocked: Option[Boolean])(implicit hc: HeaderCarrier): Future[ClaimedTrustResponse] = {
 
     val trustClaim = (maybeUtr, maybeManagedByAgent, maybeTrustLocked) match {
-      case (Some(utr), Some(managedByAgent), None) => Some(TrustClaim(internalId, utr, managedByAgent))
-      case (Some(utr), Some(managedByAgent), Some(maybeTrustLocked)) => Some(TrustClaim(internalId, utr, managedByAgent, maybeTrustLocked))
+      case (Some(utr), Some(managedByAgent), None) =>
+        logger.info(s"[store][Session ID: ${Session.id(hc)}] TrustClaim is not locked")
+        Some(TrustClaim(internalId, utr, managedByAgent))
+      case (Some(utr), Some(managedByAgent), Some(maybeTrustLocked)) =>
+        if (maybeTrustLocked) {logger.info(s"[store][Session ID: ${Session.id(hc)}] TrustClaim is locked")}
+        Some(TrustClaim(internalId, utr, managedByAgent, maybeTrustLocked))
       case _ => None
     }
 

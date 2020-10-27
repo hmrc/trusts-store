@@ -93,7 +93,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
 
       val trustClaim = TrustClaim(internalId = fakeInternalId, utr = fakeUtr, managedByAgent = true)
 
-      when(service.store(any(), any(), any(), any())).thenReturn(Future.successful(StoreSuccessResponse(trustClaim)))
+      when(service.store(any(), any(), any(), any())(any())).thenReturn(Future.successful(StoreSuccessResponse(trustClaim)))
 
       val result = route(application, request).value
 
@@ -116,7 +116,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
         """.stripMargin
       )
 
-      when(service.store(any(), any(), any(), any())).thenReturn(Future.successful(StoreParsingError))
+      when(service.store(any(), any(), any(), any())(any())).thenReturn(Future.successful(StoreParsingError))
 
       val result = route(application, request).value
 
@@ -155,7 +155,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
           |}
         """.stripMargin
       )
-      when(service.store(any(), any(), any(), any())).thenReturn(Future.successful(StoreErrorsResponse(storageErrors)))
+      when(service.store(any(), any(), any(), any())(any())).thenReturn(Future.successful(StoreErrorsResponse(storageErrors)))
 
       val result = route(application, request).value
 
