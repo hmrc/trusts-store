@@ -28,6 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.trustsstore.config.AppConfig
 import uk.gov.hmrc.trustsstore.models.requests.IdentifierRequest
+import utils.Session
 
 import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,6 +39,8 @@ class AuthenticatedIdentifierAction @Inject()(override val authConnector: AuthCo
                                              (implicit val executionContext: ExecutionContext)
   extends IdentifierAction with AuthorisedFunctions {
 
+  private val logger: Logger = Logger(getClass)
+  
   def invokeBlock[A](request: Request[A],
                      block: IdentifierRequest[A] => Future[Result]) : Future[Result] = {
 
@@ -50,17 +53,17 @@ class AuthenticatedIdentifierAction @Inject()(override val authConnector: AuthCo
       case Some(internalId) ~ Some(affinityGroup) =>
         affinityGroup match {
           case Individual =>
-            Logger.info(s"[IdentifierAction] Unsupported affinityGroup")
+            logger.info(s"[Session ID: ${Session.id(hc)}] Unsupported affinityGroup")
             Future.successful(Unauthorized)
           case _ =>
             block(IdentifierRequest(request, internalId))
         }
       case _ =>
-        Logger.info(s"[IdentifierAction] Insufficient retrievals")
+        logger.info(s"[Session ID: ${Session.id(hc)}] Insufficient retrievals")
         Future.successful(Unauthorized)
     } recoverWith {
       case e : AuthorisationException =>
-        Logger.info(s"[IdentifierAction] AuthorisationException: ${e.reason}")
+        logger.info(s"[Session ID: ${Session.id(hc)}] AuthorisationException: ${e.reason}")
         Future.successful(Unauthorized)
     }
   }
