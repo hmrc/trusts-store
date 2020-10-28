@@ -45,10 +45,10 @@
 
     <logger name="com.google.inject" level="WARN"/>
 
-    <logger name="controllers" level="INFO"/>
-    <logger name="services" level="INFO"/>
-    <logger name="models" level="INFO"/>
-    <logger name="repositories" level="INFO"/>
+    <logger name="uk.gov.hmrc.trustsstore.controllers" level="INFO"/>
+    <logger name="uk.gov.hmrc.trustsstore.services" level="INFO"/>
+    <logger name="uk.gov.hmrc.trustsstore.models" level="INFO"/>
+    <logger name="uk.gov.hmrc.trustsstore.repositories" level="INFO"/>
 
     <root level="WARN">
         <appender-ref ref="FILE"/>
