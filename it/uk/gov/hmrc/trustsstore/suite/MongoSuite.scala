@@ -1,4 +1,4 @@
-package uk.gov.hmrc.trustsstore.suite
+package suite
 
 import org.scalatest.TestSuite
 import org.scalatest.concurrent.{IntegrationPatience, PatienceConfiguration}
