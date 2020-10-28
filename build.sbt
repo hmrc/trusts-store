@@ -22,7 +22,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(inConfig(IntegrationTest)(itSettings): _*)
   .settings(publishingSettings ++ scoverageSettings: _*)
   .settings(resolvers += Resolver.jcenterRepo)
-  .settings(RoutesKeys.routesImport += "uk.gov.hmrc.trustsstore.models.FeatureFlagName")
+  .settings(RoutesKeys.routesImport += "models.FeatureFlagName")
   .settings(
     PlayKeys.playDefaultPort := 9783,
     majorVersion := 0,

@@ -1,15 +1,15 @@
 # microservice specific routes
 
-GET        /claim             uk.gov.hmrc.trustsstore.controllers.ClaimedTrustsController.get()
-POST       /claim             uk.gov.hmrc.trustsstore.controllers.ClaimedTrustsController.store()
+GET        /claim             controllers.ClaimedTrustsController.get()
+POST       /claim             controllers.ClaimedTrustsController.store()
 
-GET        /maintain/tasks/:utr         uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.get(utr: String)
-POST        /maintain/tasks/:utr         uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.set(utr: String)
-POST        /maintain/tasks/trustees/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeTrustees(utr: String)
-POST        /maintain/tasks/beneficiaries/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeBeneficiaries(utr: String)
-POST        /maintain/tasks/protectors/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeProtectors(utr: String)
-POST        /maintain/tasks/settlors/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeSettlors(utr: String)
-POST        /maintain/tasks/others/:utr     uk.gov.hmrc.trustsstore.controllers.MaintainTaskListController.completeOtherIndividuals(utr: String)
+GET        /maintain/tasks/:utr         controllers.MaintainTaskListController.get(utr: String)
+POST        /maintain/tasks/:utr         controllers.MaintainTaskListController.set(utr: String)
+POST        /maintain/tasks/trustees/:utr     controllers.MaintainTaskListController.completeTrustees(utr: String)
+POST        /maintain/tasks/beneficiaries/:utr     controllers.MaintainTaskListController.completeBeneficiaries(utr: String)
+POST        /maintain/tasks/protectors/:utr     controllers.MaintainTaskListController.completeProtectors(utr: String)
+POST        /maintain/tasks/settlors/:utr     controllers.MaintainTaskListController.completeSettlors(utr: String)
+POST        /maintain/tasks/others/:utr     controllers.MaintainTaskListController.completeOtherIndividuals(utr: String)
 
-GET       /features/:flagName             uk.gov.hmrc.trustsstore.controllers.FeatureFlagController.get(flagName: FeatureFlagName)
-PUT       /features/:flagName             uk.gov.hmrc.trustsstore.controllers.FeatureFlagController.put(flagName: FeatureFlagName)
+GET       /features/:flagName             controllers.FeatureFlagController.get(flagName: FeatureFlagName)
+PUT       /features/:flagName             controllers.FeatureFlagController.put(flagName: FeatureFlagName)
