@@ -16,8 +16,6 @@
 
 package services
 
-import java.time.LocalDateTime
-
 import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier

@@ -19,7 +19,6 @@ package controllers
 import javax.inject.Inject
 import play.api.libs.json.{JsBoolean, Json}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
-import config.AppConfig
 import models.FeatureFlagName
 import services.FeatureFlagService
 

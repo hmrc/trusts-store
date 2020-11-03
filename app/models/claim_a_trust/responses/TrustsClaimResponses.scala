@@ -16,7 +16,6 @@
 
 package models.claim_a_trust.responses
 
-import play.api.libs.json.JsObject
 import models.claim_a_trust.TrustClaim
 import models.repository.StorageErrors
 

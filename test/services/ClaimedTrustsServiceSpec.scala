@@ -22,7 +22,6 @@ import org.mockito.Mockito
 import org.mockito.Mockito._
 import play.api.Application
 import play.api.inject.bind
-import play.api.libs.json.Json
 import reactivemongo.api.commands.WriteError
 import models.claim_a_trust.TrustClaim
 import models.repository.StorageErrors

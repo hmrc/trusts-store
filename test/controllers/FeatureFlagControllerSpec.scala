@@ -18,7 +18,7 @@ package controllers
 
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder

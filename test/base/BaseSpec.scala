@@ -20,7 +20,7 @@ import config.AppConfig
 import controllers.actions.{FakeIdentifierAction, IdentifierAction}
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.MimeTypes
 import play.api.inject.guice.GuiceApplicationBuilder

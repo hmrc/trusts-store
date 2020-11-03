@@ -26,6 +26,7 @@ import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
 import reactivemongo.play.json.collection.JSONCollection
 import models.claim_a_trust.TrustClaim
 import models.repository.StorageErrors
+import reactivemongo.api.WriteConcern
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -59,7 +60,15 @@ class ClaimedTrustsRepository @Inject()(mongo: ReactiveMongoApi,
     collection.flatMap(_.find(Json.obj("_id" -> internalId), projection = None).one[TrustClaim])
 
   def remove(internalId: String): Future[Option[TrustClaim]] =
-    collection.flatMap(_.findAndRemove(Json.obj("_id" -> internalId)).map(_.result[TrustClaim]))
+    collection.flatMap(_.findAndRemove(
+      Json.obj("_id" -> internalId),
+      None,
+      None,
+      WriteConcern.Default,
+      None,
+      None,
+      Seq.empty
+    ).map(_.result[TrustClaim]))
 
   def store(trustClaim: TrustClaim): Future[Either[StorageErrors, TrustClaim]] = {
 
