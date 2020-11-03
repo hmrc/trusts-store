@@ -80,13 +80,6 @@ class TasksServiceSpec extends BaseSpec {
 
       val task = Task(trustees = true, settlors = true, protectors = false, beneficiaries = false, other = false)
 
-      val taskCache = TaskCache(
-        "internalId",
-        "utr",
-        task,
-        LocalDateTime.now
-      )
-
       when(repository.set(any(), any(), any())).thenReturn(Future.successful(true))
 
       val result = service.set(fakeInternalId, fakeUtr, task).futureValue

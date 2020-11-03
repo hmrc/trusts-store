@@ -20,7 +20,7 @@ import akka.stream.Materializer
 import base.BaseSpec
 import com.google.inject.Inject
 import play.api.libs.json.JsValue
-import play.api.mvc.{Action, BodyParsers, Results}
+import play.api.mvc.{Action, BodyParsers, PlayBodyParsers, Results}
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core._
@@ -35,8 +35,10 @@ class IdentifierActionSpec extends BaseSpec {
 
   implicit lazy val mtrlzr: Materializer = injector.instanceOf[Materializer]
 
+  val playBodyParsers = injector.instanceOf[PlayBodyParsers]
+
   class Harness(authAction: IdentifierAction) {
-    def onSubmit(): Action[JsValue] = authAction.apply(BodyParsers.parse.json) { _ => Results.Ok }
+    def onSubmit(): Action[JsValue] = authAction.apply(playBodyParsers.json) { _ => Results.Ok }
   }
 
   def bodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
@@ -56,7 +58,7 @@ class IdentifierActionSpec extends BaseSpec {
     "when Agent user" - {
 
       "allow user to continue" in {
-        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(agentAffinityGroup)), appConfig, bodyParsers)
+        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(agentAffinityGroup)), bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
@@ -68,7 +70,7 @@ class IdentifierActionSpec extends BaseSpec {
     "when Organisation user" - {
 
       "allow user to continue" - {
-        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(orgAffinityGroup)), appConfig, bodyParsers)
+        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(orgAffinityGroup)), bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
@@ -80,7 +82,7 @@ class IdentifierActionSpec extends BaseSpec {
     "when Individual user" - {
 
       "be returned an unauthorized response" in {
-        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(Individual)), appConfig, bodyParsers)
+        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(Individual)), bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
@@ -92,7 +94,7 @@ class IdentifierActionSpec extends BaseSpec {
     "the user hasn't logged in" - {
 
       "be returned an unauthorized response" in {
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), appConfig, bodyParsers)
+        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
@@ -103,7 +105,7 @@ class IdentifierActionSpec extends BaseSpec {
     "the user's session has expired" - {
 
       "be returned an unauthorized response" in {
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), appConfig, bodyParsers)
+        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
@@ -114,7 +116,7 @@ class IdentifierActionSpec extends BaseSpec {
     "handle insufficient retrievals" - {
 
       "by returning an unauthorized response" in {
-        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(insufficientAuthRetrievals), appConfig, bodyParsers)
+        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(insufficientAuthRetrievals), bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
 
@@ -132,7 +134,7 @@ class FakeFailingAuthConnector @Inject()(exceptionToReturn: Throwable) extends A
 
 class FakeAuthConnector(stubbedRetrievalResult: Future[_]) extends AuthConnector {
   override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
-    stubbedRetrievalResult.map(_.asInstanceOf[A])
+    stubbedRetrievalResult.map(_.asInstanceOf[A])(ec)
   }
 }
 

@@ -26,18 +26,14 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
-import config.AppConfig
 import models.requests.IdentifierRequest
 import utils.Session
 
-import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthenticatedIdentifierAction @Inject()(override val authConnector: AuthConnector,
-                                               config: AppConfig,
                                               val parser: BodyParsers.Default)
-                                             (implicit val executionContext: ExecutionContext)
-  extends IdentifierAction with AuthorisedFunctions {
+                                             (implicit val executionContext: ExecutionContext) extends IdentifierAction with AuthorisedFunctions {
 
   private val logger: Logger = Logger(getClass)
   

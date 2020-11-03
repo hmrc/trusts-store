@@ -28,6 +28,7 @@ import reactivemongo.bson.BSONDocument
 import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
 import reactivemongo.play.json.collection.JSONCollection
 import models.maintain.{Task, TaskCache}
+import reactivemongo.api.WriteConcern
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -70,7 +71,17 @@ class TasksRepository @Inject()(mongo: ReactiveMongoApi,
 
     collection
       .flatMap(
-        _.findAndUpdate(selector, modifier, fetchNewObject = true)
+        _.findAndUpdate(selector = selector,
+          update = modifier,
+          fetchNewObject = true,
+          upsert = false,
+          sort = None,
+          fields = None,
+          bypassDocumentValidation = false,
+          writeConcern = WriteConcern.Default,
+          maxTime = None,
+          collation = None,
+          arrayFilters = Nil)
         .map(_.result[TaskCache])
       )
   }
