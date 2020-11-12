@@ -18,11 +18,11 @@ This service is used to store claimed trusts for use within the **claim a trust*
 ```json
 {
   "internalId": "some-authenticated-internal-id",
-  "utr": "1234567890",
+  "id": "1234567890",
   "managedByAgent": true
 }
 ```
-> the `utr` is the 10 digit tax reference associated with this `internalId` 
+> the `id` is the 10 digit UTR, or the 15 digit URN associated with the trust
 and `managedByAgent` is derived from answers in the **claim a trust** journey
 
 ### Unsuccessful
@@ -52,19 +52,19 @@ and `managedByAgent` is derived from answers in the **claim a trust** journey
 * Successful requests will contain a body in the format as follows:
 ```json
 {
-  "utr": "a string representing the tax reference to associate with this internalId",
+  "id": "a string representing the tax reference to associate with this internalId",
   "managedByAgent": "boolean derived from answers in the claim a trust journey"
 }
 ```
 #### Stored Flow `201 CREATED`
-* A call is made to the `store` endpoint with valid authentication headers and a valid request body
+* A call is made to the `store` endpoint with valid authentication header and a valid request body
 * The `TrustClaim` is successfully stored within the `trusts-store`
 > This trust claim will now be associated with the `internalId` within the authenticated request
 * The `201 Created` response will return a representation of what has been stored in the following form:
 ```json
 {
   "internalId": "some-authenticated-internal-id",
-  "utr": "1234567890",
+  "id": "1234567890",
   "managedByAgent": true
 }
 ```

@@ -34,21 +34,31 @@ class ClaimedTrustsService @Inject()(private val claimedTrustsRepository: Claime
 
   def get(internalId: String): Future[ClaimedTrustResponse] = {
     claimedTrustsRepository.get(internalId) map {
-      case Some(trustClaim) => GetClaimFound(trustClaim)
-      case None => GetClaimNotFound
+      case Some(trustClaim) =>
+        GetClaimFound(trustClaim)
+      case None =>
+        GetClaimNotFound
     }
   }
 
-  def store(internalId: String, maybeUtr: Option[String], maybeManagedByAgent: Option[Boolean], maybeTrustLocked: Option[Boolean])(implicit hc: HeaderCarrier): Future[ClaimedTrustResponse] = {
+  def store(internalId: String,
+            identifier: Option[String],
+            maybeManagedByAgent: Option[Boolean],
+            maybeTrustLocked: Option[Boolean]
+           )
+           (implicit hc: HeaderCarrier): Future[ClaimedTrustResponse] = {
 
-    val trustClaim = (maybeUtr, maybeManagedByAgent, maybeTrustLocked) match {
-      case (Some(utr), Some(managedByAgent), None) =>
+    val trustClaim = (identifier, maybeManagedByAgent, maybeTrustLocked) match {
+      case (Some(id), Some(managedByAgent), None) =>
         logger.info(s"[store][Session ID: ${Session.id(hc)}] TrustClaim is not locked")
-        Some(TrustClaim(internalId, utr, managedByAgent))
-      case (Some(utr), Some(managedByAgent), Some(maybeTrustLocked)) =>
+        Some(TrustClaim(internalId, id, managedByAgent))
+
+      case (Some(id), Some(managedByAgent), Some(maybeTrustLocked)) =>
         if (maybeTrustLocked) {logger.info(s"[store][Session ID: ${Session.id(hc)}] TrustClaim is locked")}
-        Some(TrustClaim(internalId, utr, managedByAgent, maybeTrustLocked))
-      case _ => None
+        Some(TrustClaim(internalId, id, managedByAgent, maybeTrustLocked))
+
+      case _ =>
+        None
     }
 
     trustClaim match {

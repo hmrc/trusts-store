@@ -46,7 +46,7 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
 
   "invoking .get" - {
     "must return a GetClaimFoundResponse from the repository if there is one for the given internal id" in {
-      val trustClaim = TrustClaim(internalId = fakeInternalId, utr = fakeUtr, managedByAgent = true)
+      val trustClaim = TrustClaim(internalId = fakeInternalId, identifier = fakeUtr, managedByAgent = true)
 
       when(repository.get(any())).thenReturn(Future.successful(Some(trustClaim)))
 
@@ -67,7 +67,7 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
   "invoking .store" - {
     "must return a StoreSuccessResponse from the repository if the TrustClaim is successfully stored" in {
 
-      val trustClaim = TrustClaim(internalId = fakeInternalId, utr = fakeUtr, managedByAgent = true)
+      val trustClaim = TrustClaim(internalId = fakeInternalId, identifier = fakeUtr, managedByAgent = true)
 
       when(repository.store(any())).thenReturn(Future.successful(Right(trustClaim)))
 
@@ -78,7 +78,7 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
 
     "must return a StoreSuccessResponse from the repository if the TrustClaim is successfully stored with trustLocked" in {
 
-      val trustClaim = TrustClaim(internalId = fakeInternalId, utr = fakeUtr, managedByAgent = true)
+      val trustClaim = TrustClaim(internalId = fakeInternalId, identifier = fakeUtr, managedByAgent = true)
 
       when(repository.store(any())).thenReturn(Future.successful(Right(trustClaim)))
 
