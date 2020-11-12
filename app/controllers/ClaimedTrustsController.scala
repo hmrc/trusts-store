@@ -50,12 +50,12 @@ class ClaimedTrustsController @Inject()(
 	def store(): Action[JsValue] = authAction.async(parse.tolerantJson) {
 		implicit request =>
 
-			val maybeUtr = (request.body \ "utr").asOpt[String]
+			val identifier = (request.body \ "id").asOpt[String]
 			val maybeManagedByAgent = (request.body \ "managedByAgent").asOpt[Boolean]
 			val maybeTrustLocked = (request.body \ "trustLocked").asOpt[Boolean]
 			val internalId = request.internalId
 
-			service.store(internalId, maybeUtr, maybeManagedByAgent, maybeTrustLocked) map {
+			service.store(internalId, identifier, maybeManagedByAgent, maybeTrustLocked) map {
 				case StoreSuccessResponse(trustClaim) =>
 					Created(trustClaim.toResponse)
 				case StoreParsingError =>

@@ -22,11 +22,17 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import models.MongoDateTimeFormats
 
-case class TrustClaim(internalId: String, utr: String, managedByAgent: Boolean, trustLocked: Boolean = false, lastUpdated: LocalDateTime = LocalDateTime.now) {
+case class TrustClaim(internalId: String,
+                      identifier: String,
+                      managedByAgent: Boolean,
+                      trustLocked: Boolean = false,
+                      lastUpdated: LocalDateTime = LocalDateTime.now
+                     ) {
+
   def toResponse: JsObject =
     Json.obj(
       "internalId" -> this.internalId,
-      "utr" -> this.utr,
+      "id" -> this.identifier,
       "managedByAgent" -> this.managedByAgent,
       "trustLocked" -> this.trustLocked
     )
@@ -36,7 +42,7 @@ object TrustClaim extends MongoDateTimeFormats {
   implicit lazy val reads: Reads[TrustClaim] = {
     (
         (__ \ "_id").read[String] and
-        (__ \ "utr").read[String] and
+        (__ \ "id").read[String] and
         (__ \ "managedByAgent").read[Boolean] and
         (__ \ "trustLocked").read[Boolean] and
         (__ \ "lastUpdated").read(localDateTimeRead)
@@ -46,7 +52,7 @@ object TrustClaim extends MongoDateTimeFormats {
   implicit lazy val writes: OWrites[TrustClaim] = {
     (
         (__ \ "_id").write[String] and
-        (__ \ "utr").write[String] and
+        (__ \ "id").write[String] and
         (__ \ "managedByAgent").write[Boolean] and
         (__ \ "trustLocked").write[Boolean] and
         (__ \ "lastUpdated").write(localDateTimeWrite)

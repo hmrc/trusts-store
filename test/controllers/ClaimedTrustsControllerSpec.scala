@@ -37,7 +37,6 @@ import scala.concurrent.Future
 
 class ClaimedTrustsControllerSpec extends BaseSpec {
 
-
   private val service: ClaimedTrustsService = mock[ClaimedTrustsService]
 
   lazy val application: Application = applicationBuilder().overrides(
@@ -52,7 +51,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
     "must return OK and a TrustClaim if there is one for the internal id" in {
       val request = FakeRequest(GET, routes.ClaimedTrustsController.get().url)
 
-      val trustClaim = TrustClaim(internalId = fakeInternalId, utr = fakeUtr, managedByAgent = true)
+      val trustClaim = TrustClaim(internalId = fakeInternalId, identifier = fakeUtr, managedByAgent = true)
 
       when(service.get(any())).thenReturn(Future.successful(GetClaimFound(trustClaim)))
 
@@ -84,14 +83,15 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
   }
 
   "invoking POST /claim" - {
+
     "must return CREATED and the stored TrustClaim if the service returns a StoreSuccessResponse" in {
       val request = FakeRequest(POST, routes.ClaimedTrustsController.store().url)
         .withJsonBody(Json.obj(
-          "utr" -> "0123456789",
+          "id" -> "0123456789",
           "managedByAgent" -> true
         ))
 
-      val trustClaim = TrustClaim(internalId = fakeInternalId, utr = fakeUtr, managedByAgent = true)
+      val trustClaim = TrustClaim(internalId = fakeInternalId, identifier = fakeUtr, managedByAgent = true)
 
       when(service.store(any(), any(), any(), any())(any())).thenReturn(Future.successful(StoreSuccessResponse(trustClaim)))
 

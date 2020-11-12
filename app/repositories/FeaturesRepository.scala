@@ -16,19 +16,14 @@
 
 package repositories
 
-import java.sql.Timestamp
-import java.time.LocalDateTime
-
 import javax.inject.{Inject, Singleton}
+import models.FeatureFlag
 import play.api.libs.json.{JsObject, Json}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
 import reactivemongo.play.json.collection.JSONCollection
-import models.FeatureFlag
-import models.maintain.{Task, TaskCache}
-import reactivemongo.api.WriteConcern
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,7 +39,7 @@ class FeaturesRepository @Inject()(mongo: ReactiveMongoApi)
 
   private val lastUpdatedIndex = Index(
     key = Seq("lastUpdated" -> IndexType.Ascending),
-    name = Some("tasks-last-updated-index")
+    name = Some("features-last-updated-index")
   )
 
   val started: Future[Unit] =
@@ -54,51 +49,6 @@ class FeaturesRepository @Inject()(mongo: ReactiveMongoApi)
           _ <- coll.indexesManager.ensure(lastUpdatedIndex)
         } yield ()
     }
-
-  def get(internalId: String, utr: String): Future[Option[TaskCache]] = {
-    val selector = Json.obj("internalId" -> internalId, "utr" -> utr)
-
-    val modifier = Json.obj(
-      "$set" -> Json.obj(
-        "lastUpdated" -> Json.obj(
-          "$date" -> Timestamp.valueOf(LocalDateTime.now)
-        )
-      )
-    )
-
-    collection
-      .flatMap(
-        _.findAndUpdate(selector = selector,
-          update = modifier,
-          fetchNewObject = true,
-          upsert = false,
-          sort = None,
-          fields = None,
-          bypassDocumentValidation = false,
-          writeConcern = WriteConcern.Default,
-          maxTime = None,
-          collation = None,
-          arrayFilters = Nil)
-        .map(_.result[TaskCache])
-      )
-  }
-
-  def set(internalId: String, utr: String, updated: Task): Future[Boolean] = {
-
-    val selector = Json.obj("internalId" -> internalId, "utr" -> utr)
-
-    val insertCache = TaskCache(internalId, utr, updated)
-
-    val modifier = Json.obj(
-      "$set" -> Json.toJson(insertCache)
-    )
-
-    collection.flatMap {
-      _.update(ordered = false).one(selector, modifier, upsert = true, multi = false).map {
-        result => result.ok
-      }
-    }
-  }
 
   def getFeatureFlags: Future[Seq[FeatureFlag]] =
     collection.flatMap(_.find(Json.obj("_id" -> featureFlagDocumentId), None)

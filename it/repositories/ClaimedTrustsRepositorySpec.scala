@@ -37,7 +37,7 @@ class ClaimedTrustsRepositorySpec extends FreeSpec with MustMatchers
           inside(storedClaim) {
             case TrustClaim(id, utr, mba, tl, ldt) =>
               id mustEqual internalId
-              utr mustEqual storedClaim.utr
+              utr mustEqual storedClaim.identifier
               mba mustEqual storedClaim.managedByAgent
               tl mustEqual storedClaim.trustLocked
               ldt mustEqual storedClaim.lastUpdated
@@ -71,7 +71,7 @@ class ClaimedTrustsRepositorySpec extends FreeSpec with MustMatchers
 
           repository.store(trustClaim).futureValue.right.value
 
-          val updatedClaim = repository.store(trustClaim.copy(utr = "0987654321")).futureValue
+          val updatedClaim = repository.store(trustClaim.copy(identifier = "0987654321")).futureValue
 
           updatedClaim must be ('right)
 

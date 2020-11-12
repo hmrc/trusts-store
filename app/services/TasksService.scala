@@ -26,15 +26,15 @@ import scala.concurrent.Future
 @Singleton()
 class TasksService @Inject()(tasksRepository: TasksRepository)  {
 
-  def get(internalId: String, utr: String): Future[Task] = {
-    tasksRepository.get(internalId, utr) map {
+  def get(internalId: String, identifier: String): Future[Task] = {
+    tasksRepository.get(internalId, identifier) map {
       case Some(cache) => cache.task
       case None => Task()
     }
   }
 
-  def set(internalId: String, utr: String, updated: Task) : Future[Task] = {
-    tasksRepository.set(internalId, utr, updated).map(_ => updated)
+  def set(internalId: String, identifier: String, updated: Task) : Future[Task] = {
+    tasksRepository.set(internalId, identifier, updated).map(_ => updated)
   }
 
 }

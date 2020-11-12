@@ -20,15 +20,15 @@ import java.sql.Timestamp
 import java.time.LocalDateTime
 
 import javax.inject.{Inject, Singleton}
+import models.maintain.{Task, TaskCache}
 import play.api.Configuration
 import play.api.libs.json.Json
-import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.BSONDocument
+import play.modules.reactivemongo.ReactiveMongoApi
+import reactivemongo.api.WriteConcern
+import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
 import reactivemongo.play.json.collection.JSONCollection
-import models.maintain.{Task, TaskCache}
-import reactivemongo.api.WriteConcern
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -58,8 +58,8 @@ class TasksRepository @Inject()(mongo: ReactiveMongoApi,
         } yield ()
     }
 
-  def get(internalId: String, utr: String): Future[Option[TaskCache]] = {
-    val selector = Json.obj("internalId" -> internalId, "utr" -> utr)
+  def get(internalId: String, identifier: String): Future[Option[TaskCache]] = {
+    val selector = Json.obj("internalId" -> internalId, "id" -> identifier)
 
     val modifier = Json.obj(
       "$set" -> Json.obj(
@@ -86,11 +86,11 @@ class TasksRepository @Inject()(mongo: ReactiveMongoApi,
       )
   }
 
-  def set(internalId: String, utr: String, updated: Task): Future[Boolean] = {
+  def set(internalId: String, identifier: String, updated: Task): Future[Boolean] = {
 
-    val selector = Json.obj("internalId" -> internalId, "utr" -> utr)
+    val selector = Json.obj("internalId" -> internalId, "id" -> identifier)
 
-    val insertCache = TaskCache(internalId, utr, updated)
+    val insertCache = TaskCache(internalId, identifier, updated)
 
     val modifier = Json.obj(
       "$set" -> Json.toJson(insertCache)

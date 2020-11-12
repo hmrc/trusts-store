@@ -22,7 +22,7 @@ import play.api.libs.json.{OWrites, Reads, __}
 import models.MongoDateTimeFormats
 
 case class TaskCache(internalId: String,
-                     utr: String,
+                     id: String,
                      task: Task,
                      lastUpdated: LocalDateTime = LocalDateTime.now)
 
@@ -34,7 +34,7 @@ object TaskCache extends MongoDateTimeFormats {
   implicit lazy val reads: Reads[TaskCache] = {
     (
       (__ \ "internalId").read[String] and
-        (__ \ "utr").read[String] and
+        (__ \ "id").read[String] and
         (__ \ "task").read[Task] and
         (__ \ "lastUpdated").read(localDateTimeRead)
       ) (TaskCache.apply _)
@@ -43,7 +43,7 @@ object TaskCache extends MongoDateTimeFormats {
   implicit lazy val writes: OWrites[TaskCache] = {
     (
       (__ \ "internalId").write[String] and
-        (__ \ "utr").write[String] and
+        (__ \ "id").write[String] and
         (__ \ "task").write[Task] and
         (__ \ "lastUpdated").write(localDateTimeWrite)
       ) (unlift(TaskCache.unapply))

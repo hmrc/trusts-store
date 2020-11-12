@@ -39,28 +39,28 @@ class MaintainTaskListController @Inject()(
 	service: TasksService,
 	authAction: IdentifierAction)(implicit ec: ExecutionContext) extends BackendController(cc) {
 
-	def get(utr: String): Action[AnyContent] = authAction.async {
+	def get(identifier: String): Action[AnyContent] = authAction.async {
 		request =>
 
-			service.get(request.internalId, utr).map {
+			service.get(request.internalId, identifier).map {
 				task =>
 					Ok(Json.toJson(task))
 			}
 	}
 
-	def set(utr: String): Action[JsValue] = authAction.async(parse.json) {
+	def set(identifier: String): Action[JsValue] = authAction.async(parse.json) {
 		request =>
 			request.body.validate[Task] match {
 				case JsSuccess(tasks, _) =>
-					service.set(request.internalId, utr, tasks).map {
+					service.set(request.internalId, identifier, tasks).map {
 						updated => Ok(Json.toJson(updated))
 					}
 				case _ => Future.successful(BadRequest)
 			}
 	}
 
-	private def updateTask(internalId: String, utr: String, update: UpdateOperation) = for {
-		tasks <- service.get(internalId, utr)
+	private def updateTask(internalId: String, identifier: String, update: UpdateOperation) = for {
+		tasks <- service.get(internalId, identifier)
 		updatedTasks <- Future.successful {
 			update match {
 				case UpdateTrustees => tasks.copy(trustees = true)
@@ -70,34 +70,34 @@ class MaintainTaskListController @Inject()(
 				case UpdateOtherIndividuals => tasks.copy(other = true)
 			}
 		}
-		savedTasks <- service.set(internalId, utr, updatedTasks)
+		savedTasks <- service.set(internalId, identifier, updatedTasks)
 	} yield {
 		Ok(Json.toJson(savedTasks))
 	}
 
-	def completeTrustees(utr: String): Action[AnyContent] = authAction.async {
+	def completeTrustees(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			updateTask(request.internalId, utr, UpdateTrustees)
+			updateTask(request.internalId, identifier, UpdateTrustees)
 	}
 
-	def completeBeneficiaries(utr: String): Action[AnyContent] = authAction.async {
+	def completeBeneficiaries(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			updateTask(request.internalId, utr, UpdateBeneficiaries)
+			updateTask(request.internalId, identifier, UpdateBeneficiaries)
 	}
 
-	def completeSettlors(utr: String): Action[AnyContent] = authAction.async {
+	def completeSettlors(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			updateTask(request.internalId, utr, UpdateSettlors)
+			updateTask(request.internalId, identifier, UpdateSettlors)
 	}
 
-	def completeProtectors(utr: String): Action[AnyContent] = authAction.async {
+	def completeProtectors(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			updateTask(request.internalId, utr, UpdateProtectors)
+			updateTask(request.internalId, identifier, UpdateProtectors)
 	}
 
-	def completeOtherIndividuals(utr: String): Action[AnyContent] = authAction.async {
+	def completeOtherIndividuals(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			updateTask(request.internalId, utr, UpdateOtherIndividuals)
+			updateTask(request.internalId, identifier, UpdateOtherIndividuals)
 	}
 
 }
