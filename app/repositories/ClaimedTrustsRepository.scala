@@ -31,11 +31,12 @@ import reactivemongo.api.WriteConcern
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class ClaimedTrustsRepository @Inject()(mongo: ReactiveMongoApi,
-                                        config: Configuration)
-                                       (implicit ec: ExecutionContext) {
+class ClaimedTrustsRepository @Inject()(override val mongo: ReactiveMongoApi,
+                                        override val config: Configuration)
+                                       (override implicit val ec: ExecutionContext)
+  extends IndexManager {
 
-  private val collectionName: String = "claimAttempts"
+  override val collectionName: String = "claimAttempts"
 
   private def collection: Future[JSONCollection] =
     mongo.database.map(_.collection[JSONCollection](collectionName))

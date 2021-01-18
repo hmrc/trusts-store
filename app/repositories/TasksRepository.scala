@@ -33,11 +33,11 @@ import reactivemongo.play.json.collection.JSONCollection
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class TasksRepository @Inject()(mongo: ReactiveMongoApi,
-                                config: Configuration)
-                               (implicit ec: ExecutionContext) {
+class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
+                                override val config: Configuration)
+                               (override implicit val ec: ExecutionContext) extends IndexManager {
 
-  private val collectionName: String = "maintainTasks"
+  override val collectionName: String = "maintainTasks"
 
   private def collection: Future[JSONCollection] =
     mongo.database.map(_.collection[JSONCollection](collectionName))
