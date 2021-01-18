@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import play.api.Logger
+import play.api.{Logger, Logging}
 import uk.gov.hmrc.http.HeaderCarrier
 import models.claim_a_trust.TrustClaim
 import models.claim_a_trust.responses._
@@ -28,9 +28,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton()
-class ClaimedTrustsService @Inject()(private val claimedTrustsRepository: ClaimedTrustsRepository)  {
-
-  private val logger: Logger = Logger(getClass)
+class ClaimedTrustsService @Inject()(private val claimedTrustsRepository: ClaimedTrustsRepository)
+  extends Logging {
 
   def get(internalId: String): Future[ClaimedTrustResponse] = {
     claimedTrustsRepository.get(internalId) map {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,11 +33,11 @@ import reactivemongo.play.json.collection.JSONCollection
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class TasksRepository @Inject()(mongo: ReactiveMongoApi,
-                                config: Configuration)
-                               (implicit ec: ExecutionContext) {
+class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
+                                override val config: Configuration)
+                               (override implicit val ec: ExecutionContext) extends IndexManager {
 
-  private val collectionName: String = "maintainTasks"
+  override val collectionName: String = "maintainTasks"
 
   private def collection: Future[JSONCollection] =
     mongo.database.map(_.collection[JSONCollection](collectionName))
