@@ -5,7 +5,7 @@ import org.scalatest.concurrent.{IntegrationPatience, PatienceConfiguration}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.{MongoConnection, MongoDriver}
+import reactivemongo.api.MongoConnection
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
