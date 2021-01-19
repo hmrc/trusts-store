@@ -17,11 +17,11 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import play.api.{Logger, Logging}
-import uk.gov.hmrc.http.HeaderCarrier
 import models.claim_a_trust.TrustClaim
 import models.claim_a_trust.responses._
+import play.api.Logging
 import repositories.ClaimedTrustsRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.Session
 
 import scala.concurrent.ExecutionContext.Implicits.global
