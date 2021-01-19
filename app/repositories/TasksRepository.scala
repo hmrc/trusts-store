@@ -25,7 +25,7 @@ import play.api.Configuration
 import play.api.libs.json.{JsObject, Json, OWrites}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.WriteConcern
-import reactivemongo.api.indexes.IndexType
+import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.play.json.collection.JSONCollection
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,16 +47,21 @@ class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
     expireAfterSeconds = Some(expireAfterSeconds)
   )
 
+  private val internalIdAndUtrIndex = MongoIndex(
+    key = Seq("internalId" -> IndexType.Ascending, "id" -> IndexType.Ascending),
+    name = "internal-id-and-identifier-compound-index"
+  )
+
   private def collection: Future[JSONCollection] = for {
     _ <- ensureIndexes
     col <- mongo.database.map(_.collection[JSONCollection](collectionName))
   } yield col
 
   private def ensureIndexes: Future[Boolean] = for {
-    collection <- mongo.database.map(_.collection[JSONCollection](collectionName))
-    createdLastUpdatedIndex <- collection.indexesManager.ensure(lastUpdatedIndex)
-  } yield createdLastUpdatedIndex
-
+    collection                           <- mongo.database.map(_.collection[JSONCollection](collectionName))
+    createdLastUpdatedIndex              <- collection.indexesManager.ensure(lastUpdatedIndex)
+    internalIdAndIdentifierCompoundIndex <- collection.indexesManager.ensure(internalIdAndUtrIndex)
+  } yield createdLastUpdatedIndex && internalIdAndIdentifierCompoundIndex
 
   def get(internalId: String, identifier: String): Future[Option[TaskCache]] = {
     val selector = Json.obj("internalId" -> internalId, "id" -> identifier)
