@@ -18,37 +18,41 @@ package repositories
 
 import javax.inject.{Inject, Singleton}
 import models.FeatureFlag
-import play.api.libs.json.{JsObject, Json}
+import play.api.Configuration
+import play.api.libs.json.{JsObject, Json, OWrites}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
+import reactivemongo.api.indexes.IndexType
 import reactivemongo.play.json.collection.JSONCollection
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class FeaturesRepository @Inject()(mongo: ReactiveMongoApi)
-                                  (implicit ec: ExecutionContext) {
+class FeaturesRepository @Inject()(val mongo: ReactiveMongoApi,
+                                   val config: Configuration)
+                                  (implicit val ec: ExecutionContext)
+  extends IndexManager {
 
-  private val collectionName: String = "features"
-  val featureFlagDocumentId = "feature-flags"
+  implicit final val jsObjectWrites: OWrites[JsObject] = OWrites[JsObject](identity)
 
-  private def collection: Future[JSONCollection] =
-    mongo.database.map(_.collection[JSONCollection](collectionName))
+  override val collectionName: String = "features"
 
-  private val lastUpdatedIndex = Index(
+  private val featureFlagDocumentId = "feature-flags"
+
+  private val lastUpdatedIndex = MongoIndex(
     key = Seq("lastUpdated" -> IndexType.Ascending),
-    name = Some("features-last-updated-index")
+    name = "features-last-updated-index"
   )
 
-  val started: Future[Unit] =
-    collection.flatMap {
-      coll =>
-        for {
-          _ <- coll.indexesManager.ensure(lastUpdatedIndex)
-        } yield ()
-    }
+  private def collection: Future[JSONCollection] = for {
+    _ <- ensureIndexes
+    col <- mongo.database.map(_.collection[JSONCollection](collectionName))
+  } yield col
+
+  private def ensureIndexes: Future[Boolean] = for {
+    collection <- mongo.database.map(_.collection[JSONCollection](collectionName))
+    createdLastUpdatedIndex <- collection.indexesManager.ensure(lastUpdatedIndex)
+  } yield createdLastUpdatedIndex
 
   def getFeatureFlags: Future[Seq[FeatureFlag]] =
     collection.flatMap(_.find(Json.obj("_id" -> featureFlagDocumentId), None)

@@ -22,12 +22,10 @@ import java.time.LocalDateTime
 import javax.inject.{Inject, Singleton}
 import models.maintain.{Task, TaskCache}
 import play.api.Configuration
-import play.api.libs.json.Json
-import reactivemongo.bson.BSONDocument
+import play.api.libs.json.{JsObject, Json, OWrites}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.WriteConcern
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
+import reactivemongo.api.indexes.IndexType
 import reactivemongo.play.json.collection.JSONCollection
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,26 +35,28 @@ class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
                                 override val config: Configuration)
                                (override implicit val ec: ExecutionContext) extends IndexManager {
 
+  implicit final val jsObjectWrites: OWrites[JsObject] = OWrites[JsObject](identity)
+
   override val collectionName: String = "maintainTasks"
 
-  private def collection: Future[JSONCollection] =
-    mongo.database.map(_.collection[JSONCollection](collectionName))
+  private val expireAfterSeconds = config.get[Int]("mongodb.maintainTasks.expireAfterSeconds")
 
-  private val expireAfterSeconds = config.get[Int]("mongodb.expireAfterSeconds")
-
-  private val lastUpdatedIndex = Index(
+  private val lastUpdatedIndex = MongoIndex(
     key = Seq("lastUpdated" -> IndexType.Ascending),
-    name = Some("tasks-last-updated-index"),
-    options = BSONDocument("expireAfterSeconds" -> expireAfterSeconds)
+    name = "tasks-last-updated-index",
+    expireAfterSeconds = Some(expireAfterSeconds)
   )
 
-  val started: Future[Unit] =
-    collection.flatMap {
-      coll =>
-        for {
-          _ <- coll.indexesManager.ensure(lastUpdatedIndex)
-        } yield ()
-    }
+  private def collection: Future[JSONCollection] = for {
+    _ <- ensureIndexes
+    col <- mongo.database.map(_.collection[JSONCollection](collectionName))
+  } yield col
+
+  private def ensureIndexes: Future[Boolean] = for {
+    collection <- mongo.database.map(_.collection[JSONCollection](collectionName))
+    createdLastUpdatedIndex <- collection.indexesManager.ensure(lastUpdatedIndex)
+  } yield createdLastUpdatedIndex
+
 
   def get(internalId: String, identifier: String): Future[Option[TaskCache]] = {
     val selector = Json.obj("internalId" -> internalId, "id" -> identifier)

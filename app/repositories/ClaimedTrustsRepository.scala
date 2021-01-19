@@ -17,16 +17,14 @@
 package repositories
 
 import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import play.api.libs.json.Json
-import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.BSONDocument
-import reactivemongo.play.json.ImplicitBSONHandlers.JsObjectDocumentWriter
-import reactivemongo.play.json.collection.JSONCollection
 import models.claim_a_trust.TrustClaim
 import models.repository.StorageErrors
+import play.api.Configuration
+import play.api.libs.json.{JsObject, Json, OWrites}
+import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.WriteConcern
+import reactivemongo.api.indexes.IndexType
+import reactivemongo.play.json.collection.JSONCollection
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,26 +34,27 @@ class ClaimedTrustsRepository @Inject()(override val mongo: ReactiveMongoApi,
                                        (override implicit val ec: ExecutionContext)
   extends IndexManager {
 
+  implicit final val jsObjectWrites: OWrites[JsObject] = OWrites[JsObject](identity)
+
   override val collectionName: String = "claimAttempts"
 
-  private def collection: Future[JSONCollection] =
-    mongo.database.map(_.collection[JSONCollection](collectionName))
+  private val expireAfterSeconds = config.get[Int]("mongodb.claimAttempts.expireAfterSeconds")
 
-  private val expireAfterSeconds = config.get[Int]("mongodb.expireAfterSeconds")
-
-  private val lastUpdatedIndex = Index(
+  private val lastUpdatedIndex = MongoIndex(
     key = Seq("lastUpdated" -> IndexType.Ascending),
-    name = Some("trust-claims-last-updated-index"),
-    options = BSONDocument("expireAfterSeconds" -> expireAfterSeconds)
+    name = "trust-claims-last-updated-index",
+    expireAfterSeconds = Some(expireAfterSeconds)
   )
 
-  val started: Future[Unit] =
-    collection.flatMap {
-      coll =>
-        for {
-          _ <- coll.indexesManager.ensure(lastUpdatedIndex)
-        } yield ()
-    }
+  private def collection: Future[JSONCollection] = for {
+   _ <- ensureIndexes
+   col <- mongo.database.map(_.collection[JSONCollection](collectionName))
+  } yield col
+
+  private def ensureIndexes: Future[Boolean] = for {
+    collection <- mongo.database.map(_.collection[JSONCollection](collectionName))
+    createdLastUpdatedIndex <- collection.indexesManager.ensure(lastUpdatedIndex)
+  } yield createdLastUpdatedIndex
 
   def get(internalId: String): Future[Option[TrustClaim]] =
     collection.flatMap(_.find(Json.obj("_id" -> internalId), projection = None).one[TrustClaim])
