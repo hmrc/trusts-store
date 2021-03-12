@@ -32,6 +32,7 @@ case object UpdateBeneficiaries extends UpdateOperation
 case object UpdateSettlors extends UpdateOperation
 case object UpdateProtectors extends UpdateOperation
 case object UpdateOtherIndividuals extends UpdateOperation
+case object UpdateNonEeaCompany extends UpdateOperation
 
 @Singleton()
 class MaintainTaskListController @Inject()(
@@ -68,6 +69,7 @@ class MaintainTaskListController @Inject()(
 				case UpdateProtectors => tasks.copy(protectors = true)
 				case UpdateSettlors => tasks.copy(settlors = true)
 				case UpdateOtherIndividuals => tasks.copy(other = true)
+				case UpdateNonEeaCompany => tasks.copy(nonEeaCompany = true)
 			}
 		}
 		savedTasks <- service.set(internalId, identifier, updatedTasks)
@@ -100,4 +102,8 @@ class MaintainTaskListController @Inject()(
 			updateTask(request.internalId, identifier, UpdateOtherIndividuals)
 	}
 
+	def completeNonEeaCompany(identifier: String): Action[AnyContent] = authAction.async {
+		implicit request =>
+			updateTask(request.internalId, identifier, UpdateNonEeaCompany)
+	}
 }

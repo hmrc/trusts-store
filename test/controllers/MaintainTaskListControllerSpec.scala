@@ -54,7 +54,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         beneficiaries = false,
         settlors = false,
         other = false,
-        protectors = false
+        protectors = false,
+        nonEeaCompany = false
       )
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasks))
@@ -75,7 +76,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         beneficiaries = false,
         settlors = true,
         other = false,
-        protectors = false
+        protectors = false,
+        nonEeaCompany = false
       )
 
       val request = FakeRequest(POST, routes.MaintainTaskListController.set("utr").url).withBody(Json.toJson(tasks))
@@ -110,7 +112,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         beneficiaries = true,
         settlors = false,
         other = false,
-        protectors = false
+        protectors = false,
+        nonEeaCompany = false
       )
 
       val updatedTasks = Task(
@@ -118,7 +121,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         beneficiaries = true,
         settlors = false,
         other = false,
-        protectors = false
+        protectors = false,
+        nonEeaCompany = false
       )
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
@@ -142,7 +146,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         beneficiaries = false,
         settlors = false,
         other = false,
-        protectors = false
+        protectors = false,
+        nonEeaCompany = false
       )
 
       val updatedTasks = Task(
@@ -150,7 +155,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         beneficiaries = true,
         settlors = false,
         other = false,
-        protectors = false
+        protectors = false,
+        nonEeaCompany = false
       )
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
@@ -174,7 +180,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         beneficiaries = true,
         settlors = false,
         other = false,
-        protectors = false
+        protectors = false,
+        nonEeaCompany = false
       )
 
       val updatedTasks = Task(
@@ -182,7 +189,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         beneficiaries = true,
         settlors = false,
         other = false,
-        protectors = true
+        protectors = true,
+        nonEeaCompany = false
       )
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
@@ -206,7 +214,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         beneficiaries = true,
         settlors = false,
         other = false,
-        protectors = false
+        protectors = false,
+        nonEeaCompany = false
       )
 
       val updatedTasks = Task(
@@ -214,7 +223,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         beneficiaries = true,
         settlors = true,
         other = false,
-        protectors = false
+        protectors = false,
+        nonEeaCompany = false
       )
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
@@ -238,7 +248,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         beneficiaries = true,
         settlors = false,
         other = false,
-        protectors = false
+        protectors = false,
+        nonEeaCompany = false
       )
 
       val updatedTasks = Task(
@@ -246,7 +257,42 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         beneficiaries = true,
         settlors = false,
         other = true,
-        protectors = false
+        protectors = false,
+        nonEeaCompany = false
+      )
+
+      when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
+      when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.OK
+      contentAsJson(result) mustBe Json.toJson(updatedTasks)
+    }
+
+  }
+
+  "invoking POST /maintain/tasks/nonEeaCompany" - {
+
+    "must return Ok and the completed tasks" in {
+      val request = FakeRequest(POST, routes.MaintainTaskListController.completeNonEeaCompany("utr").url)
+
+      val tasksCompletedSoFar = Task(
+        trustees = false,
+        beneficiaries = true,
+        settlors = false,
+        other = false,
+        protectors = false,
+        nonEeaCompany = false
+      )
+
+      val updatedTasks = Task(
+        trustees = false,
+        beneficiaries = true,
+        settlors = false,
+        other = false,
+        protectors = false,
+        nonEeaCompany = true
       )
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
