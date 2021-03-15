@@ -5,9 +5,9 @@ import org.scalatest.concurrent.{IntegrationPatience, PatienceConfiguration}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.MongoConnection
+import reactivemongo.api.{DefaultDB, MongoConnection}
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 
@@ -17,16 +17,16 @@ trait MongoSuite extends IntegrationPatience {
   // Database boilerplate
   private val connectionString = "mongodb://localhost:27017/trusts-store-integration"
 
-  def getDatabase(connection: MongoConnection) = {
+  def getDatabase(connection: MongoConnection): Future[DefaultDB] = {
     connection.database("trusts-store-integration")
   }
 
-  def getConnection(application: Application) = {
+  def getConnection(application: Application): Future[MongoConnection] = {
     val mongoDriver = application.injector.instanceOf[ReactiveMongoApi]
 
     lazy val connection = for {
-      uri <- MongoConnection.parseURI(connectionString)
-      connection <- mongoDriver.driver.connection(uri, true)
+      uri <- MongoConnection.fromString(connectionString)
+      connection <- mongoDriver.asyncDriver.connect(uri)
     } yield connection
     connection
   }

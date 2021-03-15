@@ -42,7 +42,7 @@ object FeatureFlagName {
   implicit val writes: Writes[FeatureFlagName] =
     Writes(value => JsString(value.asString))
 
-  implicit def pathBinder(implicit stringBinder: PathBindable[String]): PathBindable[FeatureFlagName] =
+  implicit val pathBinder: PathBindable[FeatureFlagName] =
     new PathBindable[FeatureFlagName] {
       override def bind(key: String, value: String): Either[String, FeatureFlagName] = {
         JsString(value).validate[FeatureFlagName] match {
@@ -58,8 +58,8 @@ object FeatureFlagName {
 }
 
 object FeatureFlag {
-  case class Enabled(name:FeatureFlagName) extends FeatureFlag {val isEnabled = true}
-  case class Disabled(name:FeatureFlagName) extends FeatureFlag {val isEnabled = false}
+  case class Enabled(name: FeatureFlagName) extends FeatureFlag {val isEnabled = true}
+  case class Disabled(name: FeatureFlagName) extends FeatureFlag {val isEnabled = false}
 
   def apply(name: FeatureFlagName, enabled: Boolean): FeatureFlag = {
     if (enabled) {
@@ -69,13 +69,13 @@ object FeatureFlag {
     }
   }
 
-  implicit val reads : Reads[FeatureFlag] =
+  implicit val reads: Reads[FeatureFlag] =
     (__ \ "isEnabled").read[Boolean].flatMap {
       case true  => (__ \ "name").read[FeatureFlagName].map(Enabled(_).asInstanceOf[FeatureFlag])
       case false => (__ \ "name").read[FeatureFlagName].map(Disabled(_).asInstanceOf[FeatureFlag])
     }
 
-  implicit val writes : Writes[FeatureFlag] =
+  implicit val writes: Writes[FeatureFlag] =
     ((__ \ "name").write[FeatureFlagName] and
       (__ \ "isEnabled").write[Boolean]).apply(ff => (ff.name, ff.isEnabled))
 }
