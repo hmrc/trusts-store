@@ -9,7 +9,7 @@ lazy val scoverageSettings = {
   Seq(
     ScoverageKeys.coverageExcludedPackages := "<empty>;.*Reverse.*;.*.Routes.*;prod.*;testOnlyDoNotUseInProd.*;testOnlyDoNotUseInAppConf.*;" +
       ".*BuildInfo.*;app.*;prod.*;config.*;.*ClaimedTrustsRepository;.*AppConfig;utils.*",
-    ScoverageKeys.coverageMinimum := 65,
+    ScoverageKeys.coverageMinimum := 40,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true
   )
