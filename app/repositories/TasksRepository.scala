@@ -16,18 +16,17 @@
 
 package repositories
 
-import java.sql.Timestamp
-import java.time.LocalDateTime
-
-import javax.inject.{Inject, Singleton}
 import models.maintain.{Task, TaskCache}
 import play.api.Configuration
 import play.api.libs.json.{JsObject, Json, OWrites}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.WriteConcern
-import reactivemongo.api.indexes.{Index, IndexType}
+import reactivemongo.api.indexes.IndexType
 import reactivemongo.play.json.collection.JSONCollection
 
+import java.sql.Timestamp
+import java.time.LocalDateTime
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()

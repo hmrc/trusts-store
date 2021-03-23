@@ -1,15 +1,14 @@
 package repositories
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
+import models.claim_a_trust.TrustClaim
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers._
-import models.claim_a_trust.TrustClaim
 import suite.MongoSuite
 
-import scala.language.implicitConversions
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import scala.concurrent.ExecutionContext.Implicits._
 
 class ClaimedTrustsRepositorySpec extends FreeSpec with MustMatchers
   with ScalaFutures with OptionValues with Inside with MongoSuite with EitherValues {

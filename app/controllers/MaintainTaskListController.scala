@@ -16,22 +16,24 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
-import play.api.libs.json._
-import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import controllers.actions.IdentifierAction
 import models.maintain.Task
+import play.api.libs.json._
+import play.api.mvc._
 import services.TasksService
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 sealed trait UpdateOperation
+case object UpdateTrustDetails extends UpdateOperation
 case object UpdateTrustees extends UpdateOperation
 case object UpdateBeneficiaries extends UpdateOperation
 case object UpdateSettlors extends UpdateOperation
 case object UpdateProtectors extends UpdateOperation
 case object UpdateOtherIndividuals extends UpdateOperation
+case object UpdateNonEeaCompany extends UpdateOperation
 
 @Singleton()
 class MaintainTaskListController @Inject()(
@@ -59,20 +61,27 @@ class MaintainTaskListController @Inject()(
 			}
 	}
 
-	private def updateTask(internalId: String, identifier: String, update: UpdateOperation) = for {
+	private def updateTask(internalId: String, identifier: String, update: UpdateOperation): Future[Result] = for {
 		tasks <- service.get(internalId, identifier)
 		updatedTasks <- Future.successful {
 			update match {
+				case UpdateTrustDetails => tasks.copy(trustDetails = true)
 				case UpdateTrustees => tasks.copy(trustees = true)
 				case UpdateBeneficiaries => tasks.copy(beneficiaries = true)
 				case UpdateProtectors => tasks.copy(protectors = true)
 				case UpdateSettlors => tasks.copy(settlors = true)
 				case UpdateOtherIndividuals => tasks.copy(other = true)
+				case UpdateNonEeaCompany => tasks.copy(nonEeaCompany = true)
 			}
 		}
 		savedTasks <- service.set(internalId, identifier, updatedTasks)
 	} yield {
 		Ok(Json.toJson(savedTasks))
+	}
+
+	def completeTrustDetails(identifier: String): Action[AnyContent] = authAction.async {
+		implicit request =>
+			updateTask(request.internalId, identifier, UpdateTrustDetails)
 	}
 
 	def completeTrustees(identifier: String): Action[AnyContent] = authAction.async {
@@ -100,4 +109,8 @@ class MaintainTaskListController @Inject()(
 			updateTask(request.internalId, identifier, UpdateOtherIndividuals)
 	}
 
+	def completeNonEeaCompany(identifier: String): Action[AnyContent] = authAction.async {
+		implicit request =>
+			updateTask(request.internalId, identifier, UpdateNonEeaCompany)
+	}
 }

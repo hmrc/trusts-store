@@ -47,7 +47,7 @@ class TasksServiceSpec extends BaseSpec {
 
     "must return a Task from the repository if there is one for the given internal id and utr" in {
 
-      val task = Task(trustees = true, settlors = false, protectors = false, beneficiaries = false, other = false)
+      val task = Task()
 
       val taskCache = TaskCache(
         "internalId",
@@ -64,7 +64,7 @@ class TasksServiceSpec extends BaseSpec {
     }
 
     "must return a Task from the repository if there is not one for the given internal id and utr" in {
-      val task = Task(trustees = false, settlors = false, protectors = false, beneficiaries = false, other = false)
+      val task = Task()
 
       when(repository.get(mEq("internalId"), mEq("utr"))).thenReturn(Future.successful(None))
 
@@ -78,7 +78,15 @@ class TasksServiceSpec extends BaseSpec {
 
     "must set an updated Task" in {
 
-      val task = Task(trustees = true, settlors = true, protectors = false, beneficiaries = false, other = false)
+      val task = Task(
+        trustDetails = false,
+        trustees = true,
+        settlors = true,
+        protectors = false,
+        beneficiaries = false,
+        other = false,
+        nonEeaCompany = false
+      )
 
       when(repository.set(any(), any(), any())).thenReturn(Future.successful(true))
 
