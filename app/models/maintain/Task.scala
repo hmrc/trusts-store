@@ -16,28 +16,29 @@
 
 package models.maintain
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
-case class Task(trustDetails: Boolean,
-                trustees: Boolean,
-                beneficiaries: Boolean,
-                settlors: Boolean,
-                protectors: Boolean,
-                other: Boolean,
-                nonEeaCompany: Boolean)
+case class Task(trustDetails: Boolean = false,
+                trustees: Boolean = false,
+                beneficiaries: Boolean = false,
+                settlors: Boolean = false,
+                protectors: Boolean = false,
+                other: Boolean = false,
+                nonEeaCompany: Boolean = false)
 
 object Task {
 
-  def apply(): Task = Task(
-    trustDetails = false,
-    trustees = false,
-    beneficiaries = false,
-    settlors = false,
-    protectors = false,
-    other = false,
-    nonEeaCompany = false
-  )
+  implicit val reads: Reads[Task] = (
+    (__ \ 'trustDetails).readWithDefault[Boolean](true) and
+      (__ \ 'trustees).read[Boolean] and
+      (__ \ 'beneficiaries).read[Boolean] and
+      (__ \ 'settlors).read[Boolean] and
+      (__ \ 'protectors).read[Boolean] and
+      (__ \ 'other).read[Boolean] and
+      (__ \ 'nonEeaCompany).readWithDefault[Boolean](true)
+    )(Task.apply _)
 
-  implicit val formats: Format[Task] = Json.format[Task]
+  implicit val writes: Writes[Task] = Json.writes[Task]
 
 }
