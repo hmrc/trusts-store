@@ -17,7 +17,7 @@
 package models
 
 import base.BaseSpec
-import models.FeatureFlagName.{NonTaxable, `5MLD`}
+import models.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
 import play.api.libs.json.{JsError, JsString, JsSuccess, Json}
 
 class FeatureFlagNameSpec extends BaseSpec {
@@ -34,9 +34,9 @@ class FeatureFlagNameSpec extends BaseSpec {
       }
 
       "NonTaxable feature flag" in {
-        val json = JsString("non-taxable")
+        val json = JsString("non-taxable.access-code")
         val result = json.validate[FeatureFlagName]
-        result mustBe JsSuccess(NonTaxable)
+        result mustBe JsSuccess(NonTaxableAccessCode)
         Json.toJson(result.get) mustBe json
       }
 

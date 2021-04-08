@@ -18,7 +18,7 @@ package models
 
 import base.BaseSpec
 import models.FeatureFlag.{Disabled, Enabled}
-import models.FeatureFlagName.{NonTaxable, `5MLD`}
+import models.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
 import play.api.libs.json.Json
 
 class FeatureFlagSpec extends BaseSpec {
@@ -64,13 +64,13 @@ class FeatureFlagSpec extends BaseSpec {
           val json = Json.parse(
             """
               |{
-              |  "name": "non-taxable",
+              |  "name": "non-taxable.access-code",
               |  "isEnabled": true
               |}
               |""".stripMargin
           )
           val result = json.as[FeatureFlag]
-          result mustBe Enabled(NonTaxable)
+          result mustBe Enabled(NonTaxableAccessCode)
           Json.toJson(result) mustBe json
         }
 
@@ -78,13 +78,13 @@ class FeatureFlagSpec extends BaseSpec {
           val json = Json.parse(
             """
               |{
-              |  "name": "non-taxable",
+              |  "name": "non-taxable.access-code",
               |  "isEnabled": false
               |}
               |""".stripMargin
           )
           val result = json.as[FeatureFlag]
-          result mustBe Disabled(NonTaxable)
+          result mustBe Disabled(NonTaxableAccessCode)
           Json.toJson(result) mustBe json
         }
       }
