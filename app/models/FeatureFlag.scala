@@ -36,8 +36,13 @@ object FeatureFlagName {
     override val asString: String = "5mld"
   }
 
+  case object NonTaxable extends FeatureFlagName {
+    override val asString: String = "non-taxable"
+  }
+
   implicit val reads: Reads[FeatureFlagName] = Reads {
     case JsString(`5MLD`.asString) => JsSuccess(`5MLD`)
+    case JsString(NonTaxable.asString) => JsSuccess(NonTaxable)
     case _ => JsError("Unrecognised feature flag name")
   }
 

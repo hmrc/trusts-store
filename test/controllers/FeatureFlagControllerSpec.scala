@@ -16,26 +16,25 @@
 
 package controllers
 
+import base.BaseSpec
+import models.FeatureFlag.Enabled
+import models.FeatureFlagName.`5MLD`
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsBoolean, JsString, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import models.FeatureFlag.Enabled
-import models.FeatureFlagName.`5MLD`
 import services.FeatureFlagService
 
 import scala.concurrent.Future
 
-class FeatureFlagControllerSpec extends FreeSpec with MustMatchers with MockitoSugar with OptionValues {
+class FeatureFlagControllerSpec extends BaseSpec {
 
   "GET" - {
 
-    "must return a the feature flag from the request when" - {
+    "must return the feature flag from the request when" - {
       "config for the flag exists" in {
 
         val app = new GuiceApplicationBuilder()
@@ -87,9 +86,8 @@ class FeatureFlagControllerSpec extends FreeSpec with MustMatchers with MockitoS
 
       running(app) {
 
-        val request =
-          FakeRequest(PUT, routes.FeatureFlagController.put(`5MLD`).url)
-            .withJsonBody(JsBoolean(true))
+        val request = FakeRequest(PUT, routes.FeatureFlagController.put(`5MLD`).url)
+          .withJsonBody(JsBoolean(true))
 
         val result = route(app, request).value
 
@@ -107,9 +105,8 @@ class FeatureFlagControllerSpec extends FreeSpec with MustMatchers with MockitoS
 
       running(app) {
 
-        val request =
-          FakeRequest(PUT, routes.FeatureFlagController.put(`5MLD`).url)
-            .withJsonBody(JsString("foo"))
+        val request = FakeRequest(PUT, routes.FeatureFlagController.put(`5MLD`).url)
+          .withJsonBody(JsString("foo"))
 
         val result = route(app, request).value
 

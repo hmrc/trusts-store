@@ -20,7 +20,7 @@ import javax.inject.Inject
 import config.AppConfig
 import models.{FeatureFlag, FeatureFlagName}
 import models.FeatureFlag.Disabled
-import models.FeatureFlagName.`5MLD`
+import models.FeatureFlagName.{NonTaxable, `5MLD`}
 import repositories.FeaturesRepository
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,16 +50,18 @@ class FeatureFlagService @Inject()(
   }
 
   private def getAll: Future[Seq[FeatureFlag]] = {
+
+    def addDefaultFlagsIfNotPresent(storedFlags: Seq[FeatureFlag]): Seq[FeatureFlag] = {
+      val defaultFlags: Seq[FeatureFlag] = Seq(
+        Disabled(`5MLD`),
+        Disabled(NonTaxable)
+      )
+
+      val missingFlags = defaultFlags.filterNot(defaultFlag => storedFlags.exists(_.name == defaultFlag.name))
+      storedFlags ++ missingFlags
+    }
+
     featuresRepository.getFeatureFlags.map(addDefaultFlagsIfNotPresent)
-  }
-
-  private def addDefaultFlagsIfNotPresent(storedFlags: Seq[FeatureFlag]): Seq[FeatureFlag] = {
-    val defaultFlags: Seq[FeatureFlag] = Seq(
-      Disabled(`5MLD`)
-    )
-
-    val missingFlags = defaultFlags.filterNot(defaultFlag => storedFlags.exists(_.name == defaultFlag.name))
-    storedFlags ++ missingFlags
   }
 
 }
