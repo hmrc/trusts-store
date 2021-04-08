@@ -27,12 +27,14 @@ sealed trait FeatureFlag {
 }
 
 sealed trait FeatureFlagName {
-  def asString: String
+  val asString: String
 }
 
 object FeatureFlagName {
 
-  case object MLD5 extends FeatureFlagName {val asString = "5mld"}
+  case object MLD5 extends FeatureFlagName {
+    override val asString: String = "5mld"
+  }
 
   implicit val reads: Reads[FeatureFlagName] = Reads {
     case JsString(MLD5.asString) => JsSuccess(MLD5)
@@ -42,24 +44,29 @@ object FeatureFlagName {
   implicit val writes: Writes[FeatureFlagName] =
     Writes(value => JsString(value.asString))
 
-  implicit val pathBinder: PathBindable[FeatureFlagName] =
-    new PathBindable[FeatureFlagName] {
-      override def bind(key: String, value: String): Either[String, FeatureFlagName] = {
-        JsString(value).validate[FeatureFlagName] match {
-          case JsSuccess(name, _) => Right(name)
-          case _                  => Left("invalid feature flag name")
-        }
+  implicit val pathBinder: PathBindable[FeatureFlagName] = new PathBindable[FeatureFlagName] {
+    override def bind(key: String, value: String): Either[String, FeatureFlagName] = {
+      JsString(value).validate[FeatureFlagName] match {
+        case JsSuccess(name, _) => Right(name)
+        case _ => Left("invalid feature flag name")
       }
-      override def unbind(key: String, value: FeatureFlagName): String = {
-        value.asString
-      }
+    }
+    override def unbind(key: String, value: FeatureFlagName): String = {
+      value.asString
+    }
   }
 
 }
 
 object FeatureFlag {
-  case class Enabled(name: FeatureFlagName) extends FeatureFlag {val isEnabled = true}
-  case class Disabled(name: FeatureFlagName) extends FeatureFlag {val isEnabled = false}
+
+  case class Enabled(name: FeatureFlagName) extends FeatureFlag {
+    override val isEnabled = true
+  }
+
+  case class Disabled(name: FeatureFlagName) extends FeatureFlag {
+    override val isEnabled = false
+  }
 
   def apply(name: FeatureFlagName, enabled: Boolean): FeatureFlag = {
     if (enabled) {
@@ -75,7 +82,9 @@ object FeatureFlag {
       case false => (__ \ "name").read[FeatureFlagName].map(Disabled(_).asInstanceOf[FeatureFlag])
     }
 
-  implicit val writes: Writes[FeatureFlag] =
-    ((__ \ "name").write[FeatureFlagName] and
-      (__ \ "isEnabled").write[Boolean]).apply(ff => (ff.name, ff.isEnabled))
+  implicit val writes: Writes[FeatureFlag] = (
+    (__ \ "name").write[FeatureFlagName] and
+      (__ \ "isEnabled").write[Boolean]
+    ).apply(ff => (ff.name, ff.isEnabled))
+
 }

@@ -25,41 +25,41 @@ import repositories.FeaturesRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FeatureFlagService @Inject()(featuresRepository: FeaturesRepository, config: AppConfig)
-                                  (implicit ec: ExecutionContext) {
+class FeatureFlagService @Inject()(
+                                    featuresRepository: FeaturesRepository,
+                                    config: AppConfig
+                                  )(implicit ec: ExecutionContext) {
 
-  private val defaults: Seq[FeatureFlag] = Seq(
-    Disabled(MLD5)
-  )
-
-  private def addDefaults(fromDb: Seq[FeatureFlag]): Seq[FeatureFlag] = {
-    val toAdd = defaults.filterNot(d => fromDb.exists(fdb => fdb.name == d.name))
-    fromDb ++ toAdd
-  }
-
-  def getAll:Future[Seq[FeatureFlag]] = {
-    featuresRepository.getFeatureFlags.map(addDefaults)
-  }
-
-  def set(flagName: FeatureFlagName, enabled: Boolean) : Future[Boolean] = {
-    getAll.flatMap {
-      currentFlags =>
-        val newFlags = currentFlags.filterNot(f => f.name == flagName) :+ FeatureFlag(flagName, enabled)
-
-        featuresRepository.setFeatureFlags(newFlags)
+  def get(name: FeatureFlagName): Future[FeatureFlag] = {
+    config.getFeature(name) match {
+      case Some(flag) =>
+        Future.successful(FeatureFlag(name, flag))
+      case _ =>
+        getAll.map { flags =>
+          lazy val defaultFlag = Disabled(name)
+          flags.find(_.name == name).getOrElse(defaultFlag)
+        }
     }
   }
 
-  def get(name: FeatureFlagName) : Future[FeatureFlag] = {
-    getConfig(name) match {
-      case Some(flag) => Future.successful(FeatureFlag(name, flag))
-      case _ => getAll.map { flags =>
-        flags.find(_.name == name).getOrElse(Disabled(name))
-      }
+  def set(flagName: FeatureFlagName, enabled: Boolean): Future[Boolean] = {
+    getAll.flatMap { currentFlags =>
+      val updatedFlags = currentFlags.filterNot(_.name == flagName) :+ FeatureFlag(flagName, enabled)
+      featuresRepository.setFeatureFlags(updatedFlags)
     }
   }
 
-  def getConfig(name: FeatureFlagName) : Option[Boolean] = {
-    config.getFeature(name)
+  private def getAll: Future[Seq[FeatureFlag]] = {
+    featuresRepository.getFeatureFlags.map(addDefaultFlagsIfNotPresent)
   }
+
+  private def addDefaultFlagsIfNotPresent(storedFlags: Seq[FeatureFlag]): Seq[FeatureFlag] = {
+    val defaultFlags: Seq[FeatureFlag] = Seq(
+      Disabled(MLD5)
+    )
+
+    val missingFlags = defaultFlags.filterNot(defaultFlag => storedFlags.exists(_.name == defaultFlag.name))
+    storedFlags ++ missingFlags
+  }
+
 }
