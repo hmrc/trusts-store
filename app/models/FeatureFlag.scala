@@ -18,49 +18,11 @@ package models
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import play.api.mvc.PathBindable
 
 sealed trait FeatureFlag {
   def name: FeatureFlagName
   def isEnabled: Boolean
   def isDisabled: Boolean = !isEnabled
-}
-
-sealed trait FeatureFlagName {
-  val asString: String
-}
-
-object FeatureFlagName {
-
-  case object `5MLD` extends FeatureFlagName {
-    override val asString: String = "5mld"
-  }
-
-  case object NonTaxable extends FeatureFlagName {
-    override val asString: String = "non-taxable"
-  }
-
-  implicit val reads: Reads[FeatureFlagName] = Reads {
-    case JsString(`5MLD`.asString) => JsSuccess(`5MLD`)
-    case JsString(NonTaxable.asString) => JsSuccess(NonTaxable)
-    case _ => JsError("Unrecognised feature flag name")
-  }
-
-  implicit val writes: Writes[FeatureFlagName] =
-    Writes(value => JsString(value.asString))
-
-  implicit val pathBinder: PathBindable[FeatureFlagName] = new PathBindable[FeatureFlagName] {
-    override def bind(key: String, value: String): Either[String, FeatureFlagName] = {
-      JsString(value).validate[FeatureFlagName] match {
-        case JsSuccess(name, _) => Right(name)
-        case _ => Left("invalid feature flag name")
-      }
-    }
-    override def unbind(key: String, value: FeatureFlagName): String = {
-      value.asString
-    }
-  }
-
 }
 
 object FeatureFlag {

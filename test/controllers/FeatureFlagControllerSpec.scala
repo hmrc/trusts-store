@@ -22,7 +22,6 @@ import models.FeatureFlagName.`5MLD`
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsBoolean, JsString, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -37,7 +36,7 @@ class FeatureFlagControllerSpec extends BaseSpec {
     "must return the feature flag from the request when" - {
       "config for the flag exists" in {
 
-        val app = new GuiceApplicationBuilder()
+        val app = applicationBuilder()
           .configure((s"features.${`5MLD`.asString}", true))
           .build()
 
@@ -51,12 +50,13 @@ class FeatureFlagControllerSpec extends BaseSpec {
           contentAsJson(result) mustEqual Json.toJson(Enabled(`5MLD`))
         }
       }
+
       "config for the flag does not exist" in {
 
         val mockService = mock[FeatureFlagService]
         when(mockService.get(`5MLD`)) thenReturn Future.successful(Enabled(`5MLD`))
 
-        val app = new GuiceApplicationBuilder()
+        val app = applicationBuilder()
           .overrides(bind[FeatureFlagService].toInstance(mockService))
           .build()
 
@@ -80,7 +80,7 @@ class FeatureFlagControllerSpec extends BaseSpec {
       val mockService = mock[FeatureFlagService]
       when(mockService.set(any(), any())) thenReturn Future.successful(true)
 
-      val app = new GuiceApplicationBuilder()
+      val app = applicationBuilder()
         .overrides(bind[FeatureFlagService].toInstance(mockService))
         .build()
 
@@ -101,7 +101,9 @@ class FeatureFlagControllerSpec extends BaseSpec {
       val mockService = mock[FeatureFlagService]
       when(mockService.set(any(), any())) thenReturn Future.successful(true)
 
-      val app = new GuiceApplicationBuilder().overrides(bind[FeatureFlagService].toInstance(mockService)).build()
+      val app = applicationBuilder()
+        .overrides(bind[FeatureFlagService].toInstance(mockService))
+        .build()
 
       running(app) {
 
