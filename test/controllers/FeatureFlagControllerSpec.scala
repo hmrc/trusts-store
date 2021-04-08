@@ -16,59 +16,58 @@
 
 package controllers
 
+import base.BaseSpec
+import models.FeatureFlag.Enabled
+import models.FeatureFlagName.`5MLD`
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsBoolean, JsString, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import models.FeatureFlag.Enabled
-import models.FeatureFlagName.MLD5
 import services.FeatureFlagService
 
 import scala.concurrent.Future
 
-class FeatureFlagControllerSpec extends FreeSpec with MustMatchers with MockitoSugar with OptionValues {
+class FeatureFlagControllerSpec extends BaseSpec {
 
   "GET" - {
 
-    "must return a the feature flag from the request when" - {
+    "must return the feature flag from the request when" - {
       "config for the flag exists" in {
 
-        val app = new GuiceApplicationBuilder()
-          .configure((s"features.${MLD5.asString}", true))
+        val app = applicationBuilder()
+          .configure((s"features.${`5MLD`.asString}", true))
           .build()
 
         running(app) {
 
-          val request = FakeRequest(GET, routes.FeatureFlagController.get(MLD5).url)
+          val request = FakeRequest(GET, routes.FeatureFlagController.get(`5MLD`).url)
 
           val result = route(app, request).value
 
           status(result) mustEqual OK
-          contentAsJson(result) mustEqual Json.toJson(Enabled(MLD5))
+          contentAsJson(result) mustEqual Json.toJson(Enabled(`5MLD`))
         }
       }
+
       "config for the flag does not exist" in {
 
         val mockService = mock[FeatureFlagService]
-        when(mockService.get(MLD5)) thenReturn Future.successful(Enabled(MLD5))
+        when(mockService.get(`5MLD`)) thenReturn Future.successful(Enabled(`5MLD`))
 
-        val app = new GuiceApplicationBuilder()
+        val app = applicationBuilder()
           .overrides(bind[FeatureFlagService].toInstance(mockService))
           .build()
 
         running(app) {
 
-          val request = FakeRequest(GET, routes.FeatureFlagController.get(MLD5).url)
+          val request = FakeRequest(GET, routes.FeatureFlagController.get(`5MLD`).url)
 
           val result = route(app, request).value
 
           status(result) mustEqual OK
-          contentAsJson(result) mustEqual Json.toJson(Enabled(MLD5))
+          contentAsJson(result) mustEqual Json.toJson(Enabled(`5MLD`))
         }
       }
     }
@@ -81,20 +80,19 @@ class FeatureFlagControllerSpec extends FreeSpec with MustMatchers with MockitoS
       val mockService = mock[FeatureFlagService]
       when(mockService.set(any(), any())) thenReturn Future.successful(true)
 
-      val app = new GuiceApplicationBuilder()
+      val app = applicationBuilder()
         .overrides(bind[FeatureFlagService].toInstance(mockService))
         .build()
 
       running(app) {
 
-        val request =
-          FakeRequest(PUT, routes.FeatureFlagController.put(MLD5).url)
-            .withJsonBody(JsBoolean(true))
+        val request = FakeRequest(PUT, routes.FeatureFlagController.put(`5MLD`).url)
+          .withJsonBody(JsBoolean(true))
 
         val result = route(app, request).value
 
         status(result) mustEqual NO_CONTENT
-        verify(mockService, times(1)).set(MLD5, enabled = true)
+        verify(mockService, times(1)).set(`5MLD`, enabled = true)
       }
     }
 
@@ -103,13 +101,14 @@ class FeatureFlagControllerSpec extends FreeSpec with MustMatchers with MockitoS
       val mockService = mock[FeatureFlagService]
       when(mockService.set(any(), any())) thenReturn Future.successful(true)
 
-      val app = new GuiceApplicationBuilder().overrides(bind[FeatureFlagService].toInstance(mockService)).build()
+      val app = applicationBuilder()
+        .overrides(bind[FeatureFlagService].toInstance(mockService))
+        .build()
 
       running(app) {
 
-        val request =
-          FakeRequest(PUT, routes.FeatureFlagController.put(MLD5).url)
-            .withJsonBody(JsString("foo"))
+        val request = FakeRequest(PUT, routes.FeatureFlagController.put(`5MLD`).url)
+          .withJsonBody(JsString("foo"))
 
         val result = route(app, request).value
 
