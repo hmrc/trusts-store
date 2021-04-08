@@ -32,12 +32,12 @@ sealed trait FeatureFlagName {
 
 object FeatureFlagName {
 
-  case object MLD5 extends FeatureFlagName {
+  case object `5MLD` extends FeatureFlagName {
     override val asString: String = "5mld"
   }
 
   implicit val reads: Reads[FeatureFlagName] = Reads {
-    case JsString(MLD5.asString) => JsSuccess(MLD5)
+    case JsString(`5MLD`.asString) => JsSuccess(`5MLD`)
     case _ => JsError("Unrecognised feature flag name")
   }
 
