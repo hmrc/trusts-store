@@ -33,7 +33,7 @@ class FeatureFlagNameSpec extends BaseSpec {
         Json.toJson(result.get) mustBe json
       }
 
-      "NonTaxable feature flag" in {
+      "NonTaxableAccessCode feature flag" in {
         val json = JsString("non-taxable.access-code")
         val result = json.validate[FeatureFlagName]
         result mustBe JsSuccess(NonTaxableAccessCode)

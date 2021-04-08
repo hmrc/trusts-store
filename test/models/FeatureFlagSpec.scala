@@ -58,7 +58,7 @@ class FeatureFlagSpec extends BaseSpec {
         }
       }
 
-      "NonTaxable" - {
+      "NonTaxableAccessCode" - {
 
         "enabled" in {
           val json = Json.parse(
