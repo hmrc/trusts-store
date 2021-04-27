@@ -28,6 +28,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 sealed trait UpdateOperation
 case object UpdateTrustDetails extends UpdateOperation
+case object UpdateAssets extends UpdateOperation
+case object UpdateTaxLiability extends UpdateOperation
 case object UpdateTrustees extends UpdateOperation
 case object UpdateBeneficiaries extends UpdateOperation
 case object UpdateSettlors extends UpdateOperation
@@ -66,6 +68,8 @@ class MaintainTaskListController @Inject()(
 		updatedTasks <- Future.successful {
 			update match {
 				case UpdateTrustDetails => tasks.copy(trustDetails = true)
+				case UpdateAssets => tasks.copy(assets = true)
+				case UpdateTaxLiability => tasks.copy(taxLiability = true)
 				case UpdateTrustees => tasks.copy(trustees = true)
 				case UpdateBeneficiaries => tasks.copy(beneficiaries = true)
 				case UpdateProtectors => tasks.copy(protectors = true)
@@ -84,6 +88,15 @@ class MaintainTaskListController @Inject()(
 			updateTask(request.internalId, identifier, UpdateTrustDetails)
 	}
 
+	def completeAssets(identifier: String): Action[AnyContent] = authAction.async {
+		implicit request =>
+			updateTask(request.internalId, identifier, UpdateAssets)
+	}
+
+	def completeTaxLiability(identifier: String): Action[AnyContent] = authAction.async {
+		implicit request =>
+			updateTask(request.internalId, identifier, UpdateTaxLiability)
+	}
 	def completeTrustees(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
 			updateTask(request.internalId, identifier, UpdateTrustees)

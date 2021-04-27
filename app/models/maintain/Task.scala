@@ -19,6 +19,8 @@ package models.maintain
 import play.api.libs.json.{Format, Json}
 
 case class Task(trustDetails: Boolean,
+                assets: Boolean,
+                taxLiability: Boolean,
                 trustees: Boolean,
                 beneficiaries: Boolean,
                 settlors: Boolean,
@@ -30,6 +32,8 @@ object Task {
 
   def apply(): Task = Task(
     trustDetails = false,
+    assets = false,
+    taxLiability = false,
     trustees = false,
     beneficiaries = false,
     settlors = false,

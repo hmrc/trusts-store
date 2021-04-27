@@ -80,6 +80,8 @@ class TasksServiceSpec extends BaseSpec {
 
       val task = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = true,
         settlors = true,
         protectors = false,
