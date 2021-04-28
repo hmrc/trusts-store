@@ -51,6 +51,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val tasks = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = true,
         beneficiaries = false,
         settlors = false,
@@ -74,6 +76,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
     "must return OK and the completed Tasks for valid tasks" in {
       val tasks = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = true,
         beneficiaries = false,
         settlors = true,
@@ -111,6 +115,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val tasksCompletedSoFar = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = false,
         beneficiaries = true,
         settlors = false,
@@ -121,6 +127,88 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val updatedTasks = Task(
         trustDetails = true,
+        assets = false,
+        taxLiability = false,
+        trustees = false,
+        beneficiaries = true,
+        settlors = false,
+        other = false,
+        protectors = false,
+        nonEeaCompany = false
+      )
+
+      when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
+      when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.OK
+      contentAsJson(result) mustBe Json.toJson(updatedTasks)
+    }
+
+  }
+
+  "invoking POST /maintain/task/assets" - {
+
+    "must return Ok and the completed tasks" in {
+      val request = FakeRequest(POST, routes.MaintainTaskListController.completeAssets("urn").url)
+
+      val tasksCompletedSoFar = Task(
+        trustDetails = false,
+        assets = false,
+        taxLiability = false,
+        trustees = false,
+        beneficiaries = true,
+        settlors = false,
+        other = false,
+        protectors = false,
+        nonEeaCompany = false
+      )
+
+      val updatedTasks = Task(
+        trustDetails = false,
+        assets = true,
+        taxLiability = false,
+        trustees = false,
+        beneficiaries = true,
+        settlors = false,
+        other = false,
+        protectors = false,
+        nonEeaCompany = false
+      )
+
+      when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
+      when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.OK
+      contentAsJson(result) mustBe Json.toJson(updatedTasks)
+    }
+
+  }
+
+  "invoking POST /maintain/task/tax-liability" - {
+
+    "must return Ok and the completed tasks" in {
+      val request = FakeRequest(POST, routes.MaintainTaskListController.completeTaxLiability("urn").url)
+
+      val tasksCompletedSoFar = Task(
+        trustDetails = false,
+        assets = false,
+        taxLiability = false,
+        trustees = false,
+        beneficiaries = true,
+        settlors = false,
+        other = false,
+        protectors = false,
+        nonEeaCompany = false
+      )
+
+      val updatedTasks = Task(
+        trustDetails = false,
+        assets = false,
+        taxLiability = true,
         trustees = false,
         beneficiaries = true,
         settlors = false,
@@ -147,6 +235,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val tasksCompletedSoFar = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = false,
         beneficiaries = true,
         settlors = false,
@@ -157,6 +247,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val updatedTasks = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = true,
         beneficiaries = true,
         settlors = false,
@@ -183,6 +275,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val tasksCompletedSoFar = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = false,
         beneficiaries = false,
         settlors = false,
@@ -193,6 +287,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val updatedTasks = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = true,
         beneficiaries = true,
         settlors = false,
@@ -219,6 +315,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val tasksCompletedSoFar = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = false,
         beneficiaries = true,
         settlors = false,
@@ -229,6 +327,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val updatedTasks = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = false,
         beneficiaries = true,
         settlors = false,
@@ -255,6 +355,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val tasksCompletedSoFar = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = false,
         beneficiaries = true,
         settlors = false,
@@ -265,6 +367,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val updatedTasks = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = false,
         beneficiaries = true,
         settlors = true,
@@ -291,6 +395,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val tasksCompletedSoFar = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = false,
         beneficiaries = true,
         settlors = false,
@@ -301,6 +407,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val updatedTasks = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = false,
         beneficiaries = true,
         settlors = false,
@@ -327,6 +435,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val tasksCompletedSoFar = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = false,
         beneficiaries = true,
         settlors = false,
@@ -337,6 +447,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val updatedTasks = Task(
         trustDetails = false,
+        assets = false,
+        taxLiability = false,
         trustees = false,
         beneficiaries = true,
         settlors = false,

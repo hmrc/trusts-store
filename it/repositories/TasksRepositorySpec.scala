@@ -38,6 +38,8 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
 
           val task = Task(
             trustDetails = false,
+            assets = false,
+            taxLiability = false,
             trustees = true,
             settlors = false,
             protectors = false,
