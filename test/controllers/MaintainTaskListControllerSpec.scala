@@ -108,6 +108,23 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
+  "invoking DELETE /maintain/tasks" - {
+
+    "must return OK" in {
+      
+      val request = FakeRequest(DELETE, routes.MaintainTaskListController.reset("utr").url)
+
+      when(service.reset(any(), any())).thenReturn(Future.successful(true))
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.OK
+      verify(service).reset("id", "utr")
+
+    }
+
+  }
+
   "invoking POST /maintain/task/trust-details" - {
 
     "must return Ok and the completed tasks" in {

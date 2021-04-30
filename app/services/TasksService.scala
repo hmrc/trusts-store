@@ -33,8 +33,12 @@ class TasksService @Inject()(tasksRepository: TasksRepository)  {
     }
   }
 
-  def set(internalId: String, identifier: String, updated: Task) : Future[Task] = {
+  def set(internalId: String, identifier: String, updated: Task): Future[Task] = {
     tasksRepository.set(internalId, identifier, updated).map(_ => updated)
+  }
+
+  def reset(internalId: String, identifier: String): Future[Boolean] = {
+    tasksRepository.reset(internalId, identifier)
   }
 
 }

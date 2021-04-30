@@ -63,6 +63,11 @@ class MaintainTaskListController @Inject()(
 			}
 	}
 
+	def reset(identifier: String): Action[AnyContent] = authAction.async {
+		request =>
+			service.reset(request.internalId, identifier).map(_ => Ok)
+	}
+
 	private def updateTask(internalId: String, identifier: String, update: UpdateOperation): Future[Result] = for {
 		tasks <- service.get(internalId, identifier)
 		updatedTasks <- Future.successful {

@@ -96,8 +96,18 @@ class TasksServiceSpec extends BaseSpec {
 
       result mustBe task
     }
+  }
 
+  "invoking .reset" - {
 
+    "must reset task list" in {
+
+      when(repository.reset(any(), any())).thenReturn(Future.successful(true))
+
+      val result = service.reset(fakeInternalId, fakeUtr).futureValue
+
+      result mustBe true
+    }
   }
 
 }
