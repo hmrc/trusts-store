@@ -14,6 +14,7 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
   "a tasks repository" - {
 
     val internalId = "Int-328969d0-557e-4559-96ba-074d0597107e"
+    val identifier = "1234567890"
 
     "must return None when no cache exists" in {
       running(application) {
@@ -23,7 +24,7 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
 
           val repository = application.injector.instanceOf[TasksRepository]
 
-          repository.get(internalId, "utr").futureValue mustBe None
+          repository.get(internalId, identifier).futureValue mustBe None
         }
       }
     }
@@ -48,11 +49,11 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
             nonEeaCompany = false
           )
 
-          val result = repository.set(internalId, "1234567890", task).futureValue
+          val result = repository.set(internalId, identifier, task).futureValue
 
           result mustBe true
 
-          repository.get(internalId, "1234567890").futureValue.value.task mustBe task
+          repository.get(internalId, identifier).futureValue.value.task mustBe task
 
           dropTheDatabase(connection)
         }
@@ -60,5 +61,40 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
       }
     }
 
+    "must reset the task list so every task is incomplete" in {
+      running(application) {
+
+        getConnection(application).map { connection =>
+          dropTheDatabase(connection)
+
+          val repository = application.injector.instanceOf[TasksRepository]
+
+          val allTasksComplete = Task(
+            trustDetails = true,
+            assets = true,
+            taxLiability = true,
+            trustees = true,
+            settlors = true,
+            protectors = true,
+            beneficiaries = true,
+            other = true,
+            nonEeaCompany = true
+          )
+
+          repository.set(internalId, identifier, allTasksComplete).futureValue
+
+          repository.get(internalId, identifier).futureValue.value.task mustBe allTasksComplete
+
+          val result = repository.reset(internalId, identifier).futureValue
+
+          result mustBe true
+
+          repository.get(internalId, identifier).futureValue.value.task mustBe Task()
+
+          dropTheDatabase(connection)
+        }
+
+      }
+    }
   }
 }
