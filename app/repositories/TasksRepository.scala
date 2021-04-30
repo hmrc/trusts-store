@@ -62,7 +62,7 @@ class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
     internalIdAndIdentifierCompoundIndex <- collection.indexesManager.ensure(internalIdAndUtrIndex)
   } yield createdLastUpdatedIndex && internalIdAndIdentifierCompoundIndex
 
-  def selector(internalId: String, identifier: String): JsObject =
+  private def selector(internalId: String, identifier: String): JsObject =
     Json.obj("internalId" -> internalId, "id" -> identifier)
 
   def get(internalId: String, identifier: String): Future[Option[TaskCache]] = {

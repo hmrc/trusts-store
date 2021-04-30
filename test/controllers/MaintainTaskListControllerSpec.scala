@@ -111,7 +111,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
   "invoking DELETE /maintain/tasks" - {
 
     "must return OK" in {
-      
+
       val request = FakeRequest(DELETE, routes.MaintainTaskListController.reset("utr").url)
 
       when(service.reset(any(), any())).thenReturn(Future.successful(true))
