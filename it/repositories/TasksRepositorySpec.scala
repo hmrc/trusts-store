@@ -81,6 +81,18 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
             nonEeaCompany = true
           )
 
+          val allTasksIncomplete = Task(
+            trustDetails = false,
+            assets = false,
+            taxLiability = false,
+            trustees = false,
+            settlors = false,
+            protectors = false,
+            beneficiaries = false,
+            other = false,
+            nonEeaCompany = false
+          )
+
           repository.set(internalId, identifier, allTasksComplete).futureValue
 
           repository.get(internalId, identifier).futureValue.value.task mustBe allTasksComplete
@@ -89,7 +101,7 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
 
           result mustBe true
 
-          repository.get(internalId, identifier).futureValue.value.task mustBe Task()
+          repository.get(internalId, identifier).futureValue.value.task mustBe allTasksIncomplete
 
           dropTheDatabase(connection)
         }
