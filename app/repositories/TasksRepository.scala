@@ -62,9 +62,10 @@ class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
     internalIdAndIdentifierCompoundIndex <- collection.indexesManager.ensure(internalIdAndUtrIndex)
   } yield createdLastUpdatedIndex && internalIdAndIdentifierCompoundIndex
 
-  def get(internalId: String, identifier: String): Future[Option[TaskCache]] = {
-    val selector = Json.obj("internalId" -> internalId, "id" -> identifier)
+  private def selector(internalId: String, identifier: String): JsObject =
+    Json.obj("internalId" -> internalId, "id" -> identifier)
 
+  def get(internalId: String, identifier: String): Future[Option[TaskCache]] = {
     val modifier = Json.obj(
       "$set" -> Json.obj(
         "lastUpdated" -> Json.obj(
@@ -75,7 +76,7 @@ class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
 
     collection
       .flatMap(
-        _.findAndUpdate(selector = selector,
+        _.findAndUpdate(selector = selector(internalId, identifier),
           update = modifier,
           fetchNewObject = true,
           upsert = false,
@@ -92,8 +93,6 @@ class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
 
   def set(internalId: String, identifier: String, updated: Task): Future[Boolean] = {
 
-    val selector = Json.obj("internalId" -> internalId, "id" -> identifier)
-
     val insertCache = TaskCache(internalId, identifier, updated)
 
     val modifier = Json.obj(
@@ -101,9 +100,13 @@ class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
     )
 
     collection.flatMap {
-      _.update(ordered = false).one(selector, modifier, upsert = true, multi = false).map {
+      _.update(ordered = false).one(selector(internalId, identifier), modifier, upsert = true, multi = false).map {
         result => result.ok
       }
     }
+  }
+
+  def reset(internalId: String, identifier: String): Future[Boolean] = {
+    set(internalId, identifier, Task())
   }
 }

@@ -5,6 +5,7 @@ POST       /claim             controllers.ClaimedTrustsController.store()
 
 GET        /maintain/tasks/:identifier                      controllers.MaintainTaskListController.get(identifier: String)
 POST       /maintain/tasks/:identifier                      controllers.MaintainTaskListController.set(identifier: String)
+DELETE     /maintain/tasks/:identifier                      controllers.MaintainTaskListController.reset(identifier: String)
 POST       /maintain/tasks/trust-details/:identifier        controllers.MaintainTaskListController.completeTrustDetails(identifier: String)
 POST       /maintain/tasks/assets/:identifier               controllers.MaintainTaskListController.completeAssets(identifier: String)
 POST       /maintain/tasks/tax-liability/:identifier        controllers.MaintainTaskListController.completeTaxLiability(identifier: String)
