@@ -25,8 +25,7 @@ case class Task(trustDetails: Boolean,
                 beneficiaries: Boolean,
                 settlors: Boolean,
                 protectors: Boolean,
-                other: Boolean,
-                nonEeaCompany: Boolean)
+                other: Boolean)
 
 object Task {
 
@@ -38,8 +37,7 @@ object Task {
     beneficiaries = false,
     settlors = false,
     protectors = false,
-    other = false,
-    nonEeaCompany = false
+    other = false
   )
 
   implicit val formats: Format[Task] = Json.format[Task]
