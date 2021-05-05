@@ -14,7 +14,6 @@ POST       /maintain/tasks/beneficiaries/:identifier        controllers.Maintain
 POST       /maintain/tasks/protectors/:identifier           controllers.MaintainTaskListController.completeProtectors(identifier: String)
 POST       /maintain/tasks/settlors/:identifier             controllers.MaintainTaskListController.completeSettlors(identifier: String)
 POST       /maintain/tasks/others/:identifier               controllers.MaintainTaskListController.completeOtherIndividuals(identifier: String)
-POST       /maintain/tasks/non-eea-company/:identifier      controllers.MaintainTaskListController.completeNonEeaCompany(identifier: String)
 
 GET        /features/:flagName             controllers.FeatureFlagController.get(flagName: FeatureFlagName)
 PUT        /features/:flagName             controllers.FeatureFlagController.put(flagName: FeatureFlagName)

@@ -86,8 +86,7 @@ class TasksServiceSpec extends BaseSpec {
         settlors = true,
         protectors = false,
         beneficiaries = false,
-        other = false,
-        nonEeaCompany = false
+        other = false
       )
 
       when(repository.set(any(), any(), any())).thenReturn(Future.successful(true))

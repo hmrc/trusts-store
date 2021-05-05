@@ -45,8 +45,7 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
             settlors = false,
             protectors = false,
             beneficiaries = false,
-            other = false,
-            nonEeaCompany = false
+            other = false
           )
 
           val result = repository.set(internalId, identifier, task).futureValue
@@ -77,8 +76,7 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
             settlors = true,
             protectors = true,
             beneficiaries = true,
-            other = true,
-            nonEeaCompany = true
+            other = true
           )
 
           val allTasksIncomplete = Task(
@@ -89,8 +87,7 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
             settlors = false,
             protectors = false,
             beneficiaries = false,
-            other = false,
-            nonEeaCompany = false
+            other = false
           )
 
           repository.set(internalId, identifier, allTasksComplete).futureValue
