@@ -17,7 +17,9 @@
 package controllers
 
 import controllers.actions.IdentifierAction
-import models.maintain.Task
+import models.Operation.{Complete, InProgress}
+import models.Task
+import models.maintain.Tasks
 import play.api.libs.json._
 import play.api.mvc._
 import services.TasksService
@@ -26,15 +28,7 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-sealed trait UpdateOperation
-case object UpdateTrustDetails extends UpdateOperation
-case object UpdateAssets extends UpdateOperation
-case object UpdateTaxLiability extends UpdateOperation
-case object UpdateTrustees extends UpdateOperation
-case object UpdateBeneficiaries extends UpdateOperation
-case object UpdateSettlors extends UpdateOperation
-case object UpdateProtectors extends UpdateOperation
-case object UpdateOtherIndividuals extends UpdateOperation
+
 
 @Singleton()
 class MaintainTaskListController @Inject()(
@@ -53,7 +47,7 @@ class MaintainTaskListController @Inject()(
 
 	def set(identifier: String): Action[JsValue] = authAction.async(parse.json) {
 		request =>
-			request.body.validate[Task] match {
+			request.body.validate[Tasks] match {
 				case JsSuccess(tasks, _) =>
 					service.set(request.internalId, identifier, tasks).map {
 						updated => Ok(Json.toJson(updated))
@@ -67,61 +61,48 @@ class MaintainTaskListController @Inject()(
 			service.reset(request.internalId, identifier).map(_ => Ok)
 	}
 
-	private def updateTask(internalId: String, identifier: String, update: UpdateOperation): Future[Result] = for {
-		tasks <- service.get(internalId, identifier)
-		updatedTasks <- Future.successful {
-			update match {
-				case UpdateTrustDetails => tasks.copy(trustDetails = true)
-				case UpdateAssets => tasks.copy(assets = true)
-				case UpdateTaxLiability => tasks.copy(taxLiability = true)
-				case UpdateTrustees => tasks.copy(trustees = true)
-				case UpdateBeneficiaries => tasks.copy(beneficiaries = true)
-				case UpdateProtectors => tasks.copy(protectors = true)
-				case UpdateSettlors => tasks.copy(settlors = true)
-				case UpdateOtherIndividuals => tasks.copy(other = true)
-			}
-		}
-		savedTasks <- service.set(internalId, identifier, updatedTasks)
-	} yield {
-		Ok(Json.toJson(savedTasks))
-	}
-
 	def completeTrustDetails(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			updateTask(request.internalId, identifier, UpdateTrustDetails)
+			service.modifyTask(request.internalId, identifier, Task.TrustDetails, Complete).map(Ok(_))
 	}
 
 	def completeAssets(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			updateTask(request.internalId, identifier, UpdateAssets)
+			service.modifyTask(request.internalId, identifier, Task.Assets, Complete).map(Ok(_))
 	}
 
 	def completeTaxLiability(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			updateTask(request.internalId, identifier, UpdateTaxLiability)
+			service.modifyTask(request.internalId, identifier, Task.TaxLiability, Complete).map(Ok(_))
 	}
+
 	def completeTrustees(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			updateTask(request.internalId, identifier, UpdateTrustees)
+			service.modifyTask(request.internalId, identifier, Task.Trustees, Complete).map(Ok(_))
 	}
 
 	def completeBeneficiaries(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			updateTask(request.internalId, identifier, UpdateBeneficiaries)
+			service.modifyTask(request.internalId, identifier, Task.Beneficiaries, Complete).map(Ok(_))
 	}
 
 	def completeSettlors(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			updateTask(request.internalId, identifier, UpdateSettlors)
+			service.modifyTask(request.internalId, identifier, Task.Settlors, Complete).map(Ok(_))
 	}
 
 	def completeProtectors(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			updateTask(request.internalId, identifier, UpdateProtectors)
+			service.modifyTask(request.internalId, identifier, Task.Protectors, Complete).map(Ok(_))
 	}
 
 	def completeOtherIndividuals(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			updateTask(request.internalId, identifier, UpdateOtherIndividuals)
+			service.modifyTask(request.internalId, identifier, Task.OtherIndividuals, Complete).map(Ok(_))
+	}
+
+	def inProgressAssets(identifier: String): Action[AnyContent] = authAction.async {
+		implicit request =>
+			service.modifyTask(request.internalId, identifier, Task.Assets, InProgress).map(Ok(_))
 	}
 }

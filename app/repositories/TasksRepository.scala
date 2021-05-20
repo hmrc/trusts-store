@@ -16,7 +16,7 @@
 
 package repositories
 
-import models.maintain.{Task, TaskCache}
+import models.maintain.{Tasks, TaskCache}
 import play.api.Configuration
 import play.api.libs.json.{JsObject, Json, OWrites}
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -91,7 +91,7 @@ class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
       )
   }
 
-  def set(internalId: String, identifier: String, updated: Task): Future[Boolean] = {
+  def set(internalId: String, identifier: String, updated: Tasks): Future[Boolean] = {
 
     val insertCache = TaskCache(internalId, identifier, updated)
 
@@ -107,6 +107,6 @@ class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
   }
 
   def reset(internalId: String, identifier: String): Future[Boolean] = {
-    set(internalId, identifier, Task())
+    set(internalId, identifier, Tasks())
   }
 }

@@ -1,6 +1,6 @@
 package repositories
 
-import models.maintain.Task
+import models.maintain.Tasks
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers._
@@ -37,7 +37,7 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
 
           val repository = application.injector.instanceOf[TasksRepository]
 
-          val task = Task(
+          val task = Tasks(
             trustDetails = false,
             assets = false,
             taxLiability = false,
@@ -68,7 +68,7 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
 
           val repository = application.injector.instanceOf[TasksRepository]
 
-          val allTasksComplete = Task(
+          val allTasksComplete = Tasks(
             trustDetails = true,
             assets = true,
             taxLiability = true,
@@ -79,7 +79,7 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
             other = true
           )
 
-          val allTasksIncomplete = Task(
+          val allTasksIncomplete = Tasks(
             trustDetails = false,
             assets = false,
             taxLiability = false,

@@ -17,8 +17,11 @@
 package controllers
 
 import base.BaseSpec
+import models.Operation.{Complete, InProgress}
+import models.Task
+import models.Task.TrustDetails
 import org.mockito.Matchers.any
-import org.mockito.Mockito
+import org.mockito.{Matchers, Mockito}
 import org.mockito.Mockito._
 import play.api.Application
 import play.api.http.Status
@@ -26,7 +29,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import models.maintain.Task
+import models.maintain.Tasks
 import services.TasksService
 
 import scala.concurrent.Future
@@ -49,7 +52,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
     "must return OK and the completed Tasks" in {
       val request = FakeRequest(GET, routes.MaintainTaskListController.get("utr").url)
 
-      val tasks = Task(
+      val tasks = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,
@@ -73,7 +76,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
   "invoking POST /maintain/tasks" - {
 
     "must return OK and the completed Tasks for valid tasks" in {
-      val tasks = Task(
+      val tasks = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,
@@ -128,7 +131,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
     "must return Ok and the completed tasks" in {
       val request = FakeRequest(POST, routes.MaintainTaskListController.completeTrustDetails("utr").url)
 
-      val tasksCompletedSoFar = Task(
+      val tasksCompletedSoFar = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,
@@ -139,7 +142,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         protectors = false
       )
 
-      val updatedTasks = Task(
+      val updatedTasks = Tasks(
         trustDetails = true,
         assets = false,
         taxLiability = false,
@@ -152,6 +155,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+      when(service.modifyTask(any(), any(), Matchers.eq(TrustDetails), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -166,7 +170,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
     "must return Ok and the completed tasks" in {
       val request = FakeRequest(POST, routes.MaintainTaskListController.completeAssets("urn").url)
 
-      val tasksCompletedSoFar = Task(
+      val tasksCompletedSoFar = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,
@@ -177,7 +181,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         protectors = false
       )
 
-      val updatedTasks = Task(
+      val updatedTasks = Tasks(
         trustDetails = false,
         assets = true,
         taxLiability = false,
@@ -190,6 +194,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.Assets), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -204,7 +209,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
     "must return Ok and the completed tasks" in {
       val request = FakeRequest(POST, routes.MaintainTaskListController.completeTaxLiability("urn").url)
 
-      val tasksCompletedSoFar = Task(
+      val tasksCompletedSoFar = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,
@@ -215,7 +220,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         protectors = false
       )
 
-      val updatedTasks = Task(
+      val updatedTasks = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = true,
@@ -228,6 +233,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.TaxLiability), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -242,7 +248,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
     "must return Ok and the completed tasks" in {
       val request = FakeRequest(POST, routes.MaintainTaskListController.completeTrustees("utr").url)
 
-      val tasksCompletedSoFar = Task(
+      val tasksCompletedSoFar = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,
@@ -253,7 +259,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         protectors = false
       )
 
-      val updatedTasks = Task(
+      val updatedTasks = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,
@@ -266,6 +272,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.Trustees), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -280,7 +287,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
     "must return Ok and the completed tasks" in {
       val request = FakeRequest(POST, routes.MaintainTaskListController.completeBeneficiaries("utr").url)
 
-      val tasksCompletedSoFar = Task(
+      val tasksCompletedSoFar = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,
@@ -291,7 +298,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         protectors = false
       )
 
-      val updatedTasks = Task(
+      val updatedTasks = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,
@@ -304,6 +311,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.Beneficiaries), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -318,7 +326,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
     "must return Ok and the completed tasks" in {
       val request = FakeRequest(POST, routes.MaintainTaskListController.completeProtectors("utr").url)
 
-      val tasksCompletedSoFar = Task(
+      val tasksCompletedSoFar = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,
@@ -329,7 +337,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         protectors = false
       )
 
-      val updatedTasks = Task(
+      val updatedTasks = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,
@@ -342,6 +350,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.Protectors), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -356,7 +365,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
     "must return Ok and the completed tasks" in {
       val request = FakeRequest(POST, routes.MaintainTaskListController.completeSettlors("utr").url)
 
-      val tasksCompletedSoFar = Task(
+      val tasksCompletedSoFar = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,
@@ -367,7 +376,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         protectors = false
       )
 
-      val updatedTasks = Task(
+      val updatedTasks = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,
@@ -380,6 +389,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.Settlors), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -394,7 +404,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
     "must return Ok and the completed tasks" in {
       val request = FakeRequest(POST, routes.MaintainTaskListController.completeOtherIndividuals("utr").url)
 
-      val tasksCompletedSoFar = Task(
+      val tasksCompletedSoFar = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,
@@ -405,7 +415,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         protectors = false
       )
 
-      val updatedTasks = Task(
+      val updatedTasks = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,
@@ -418,6 +428,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.OtherIndividuals), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -425,5 +436,42 @@ class MaintainTaskListControllerSpec extends BaseSpec {
       contentAsJson(result) mustBe Json.toJson(updatedTasks)
     }
 
+  }
+
+  "invoking POST /maintain/task/reset/assets" - {
+    "must return Ok and reset the specified task" in {
+      val request = FakeRequest(POST, routes.MaintainTaskListController.inProgressAssets("utr").url)
+
+      val tasksCompletedSoFar = Tasks(
+        trustDetails = false,
+        assets = true,
+        taxLiability = false,
+        trustees = false,
+        beneficiaries = true,
+        settlors = false,
+        other = false,
+        protectors = false
+      )
+
+      val updatedTasks = Tasks(
+        trustDetails = false,
+        assets = false,
+        taxLiability = false,
+        trustees = false,
+        beneficiaries = true,
+        settlors = false,
+        other = false,
+        protectors = false
+      )
+
+      when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
+      when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.Assets), Matchers.eq(InProgress))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.OK
+      contentAsJson(result) mustBe Json.toJson(updatedTasks)
+    }
   }
 }
