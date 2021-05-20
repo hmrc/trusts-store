@@ -24,7 +24,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito._
 import play.api.Application
 import play.api.inject.bind
-import models.maintain.{Task, TaskCache}
+import models.maintain.{Tasks, TaskCache}
 import repositories.TasksRepository
 
 import scala.concurrent.Future
@@ -47,7 +47,7 @@ class TasksServiceSpec extends BaseSpec {
 
     "must return a Task from the repository if there is one for the given internal id and utr" in {
 
-      val task = Task()
+      val task = Tasks()
 
       val taskCache = TaskCache(
         "internalId",
@@ -64,7 +64,7 @@ class TasksServiceSpec extends BaseSpec {
     }
 
     "must return a Task from the repository if there is not one for the given internal id and utr" in {
-      val task = Task()
+      val task = Tasks()
 
       when(repository.get(mEq("internalId"), mEq("utr"))).thenReturn(Future.successful(None))
 
@@ -78,7 +78,7 @@ class TasksServiceSpec extends BaseSpec {
 
     "must set an updated Task" in {
 
-      val task = Task(
+      val task = Tasks(
         trustDetails = false,
         assets = false,
         taxLiability = false,

@@ -18,18 +18,18 @@ package models.maintain
 
 import play.api.libs.json.{Format, Json}
 
-case class Task(trustDetails: Boolean,
-                assets: Boolean,
-                taxLiability: Boolean,
-                trustees: Boolean,
-                beneficiaries: Boolean,
-                settlors: Boolean,
-                protectors: Boolean,
-                other: Boolean)
+case class Tasks(trustDetails: Boolean,
+                 assets: Boolean,
+                 taxLiability: Boolean,
+                 trustees: Boolean,
+                 beneficiaries: Boolean,
+                 settlors: Boolean,
+                 protectors: Boolean,
+                 other: Boolean)
 
-object Task {
+object Tasks {
 
-  def apply(): Task = Task(
+  def apply(): Tasks = Tasks(
     trustDetails = false,
     assets = false,
     taxLiability = false,
@@ -40,6 +40,6 @@ object Task {
     other = false
   )
 
-  implicit val formats: Format[Task] = Json.format[Task]
+  implicit val formats: Format[Tasks] = Json.format[Tasks]
 
 }
