@@ -17,7 +17,7 @@
 package controllers
 
 import base.BaseSpec
-import models.Operation.{Complete, Reset}
+import models.Operation.{Complete, InProgress}
 import models.Task
 import models.Task.TrustDetails
 import org.mockito.Matchers.any
@@ -438,9 +438,9 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
-  "invoking POST /maintain/task/assets/reset" - {
+  "invoking POST /maintain/task/reset/assets" - {
     "must return Ok and reset the specified task" in {
-      val request = FakeRequest(POST, routes.MaintainTaskListController.resetAssets("utr").url)
+      val request = FakeRequest(POST, routes.MaintainTaskListController.inProgressAssets("utr").url)
 
       val tasksCompletedSoFar = Tasks(
         trustDetails = false,
@@ -466,7 +466,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.Assets), Matchers.eq(Reset))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.Assets), Matchers.eq(InProgress))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 

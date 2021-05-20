@@ -20,11 +20,11 @@ object Operation {
   sealed trait Operation {
     val value : Boolean = this match {
       case Complete => true
-      case Reset => false
+      case InProgress => false
     }
   }
 
   case object Complete extends Operation
-  case object Reset extends Operation
+  case object InProgress extends Operation
 
 }
