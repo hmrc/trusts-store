@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions.IdentifierAction
-import models.Operation.Complete
+import models.Operation.{Complete, Reset}
 import models.Task
 import models.maintain.Tasks
 import play.api.libs.json._
@@ -101,8 +101,8 @@ class MaintainTaskListController @Inject()(
 			service.modifyTask(request.internalId, identifier, Task.OtherIndividuals, Complete).map(Ok(_))
 	}
 
-//	def resetTrustDetails(identifier: String): Action[AnyContent] = authAction.async {
-//		implicit request =>
-//
-//	}
+	def resetAssets(identifier: String): Action[AnyContent] = authAction.async {
+		implicit request =>
+			service.modifyTask(request.internalId, identifier, Task.Assets, Reset).map(Ok(_))
+	}
 }

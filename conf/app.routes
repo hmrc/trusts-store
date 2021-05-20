@@ -15,5 +15,7 @@ POST       /maintain/tasks/protectors/:identifier           controllers.Maintain
 POST       /maintain/tasks/settlors/:identifier             controllers.MaintainTaskListController.completeSettlors(identifier: String)
 POST       /maintain/tasks/others/:identifier               controllers.MaintainTaskListController.completeOtherIndividuals(identifier: String)
 
+POST       /maintain/tasks/reset/assets/:identifier               controllers.MaintainTaskListController.resetAssets(identifier: String)
+
 GET        /features/:flagName             controllers.FeatureFlagController.get(flagName: FeatureFlagName)
 PUT        /features/:flagName             controllers.FeatureFlagController.put(flagName: FeatureFlagName)

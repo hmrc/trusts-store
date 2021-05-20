@@ -17,7 +17,7 @@
 package controllers
 
 import base.BaseSpec
-import models.Operation.Complete
+import models.Operation.{Complete, Reset}
 import models.Task
 import models.Task.TrustDetails
 import org.mockito.Matchers.any
@@ -438,39 +438,40 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
-//  "invoking POST /maintain/task/trust-details/reset" - {
-//    "must return Ok and reset the specified task" in {
-//      val request = FakeRequest(POST, routes.MaintainTaskListController.resetTrustDetails("utr").url)
-//
-//      val tasksCompletedSoFar = Tasks(
-//        trustDetails = true,
-//        assets = false,
-//        taxLiability = false,
-//        trustees = false,
-//        beneficiaries = true,
-//        settlors = false,
-//        other = false,
-//        protectors = false
-//      )
-//
-//      val updatedTasks = Tasks(
-//        trustDetails = false,
-//        assets = false,
-//        taxLiability = false,
-//        trustees = false,
-//        beneficiaries = true,
-//        settlors = false,
-//        other = false,
-//        protectors = false
-//      )
-//
-//      when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
-//      when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-//
-//      val result = route(application, request).value
-//
-//      status(result) mustBe Status.OK
-//      contentAsJson(result) mustBe Json.toJson(updatedTasks)
-//    }
-//  }
+  "invoking POST /maintain/task/assets/reset" - {
+    "must return Ok and reset the specified task" in {
+      val request = FakeRequest(POST, routes.MaintainTaskListController.resetAssets("utr").url)
+
+      val tasksCompletedSoFar = Tasks(
+        trustDetails = false,
+        assets = true,
+        taxLiability = false,
+        trustees = false,
+        beneficiaries = true,
+        settlors = false,
+        other = false,
+        protectors = false
+      )
+
+      val updatedTasks = Tasks(
+        trustDetails = false,
+        assets = false,
+        taxLiability = false,
+        trustees = false,
+        beneficiaries = true,
+        settlors = false,
+        other = false,
+        protectors = false
+      )
+
+      when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
+      when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.Assets), Matchers.eq(Reset))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.OK
+      contentAsJson(result) mustBe Json.toJson(updatedTasks)
+    }
+  }
 }
