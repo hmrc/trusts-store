@@ -21,7 +21,7 @@ import config.AppConfig
 import models.FeatureFlag
 import models.FeatureFlag.{Disabled, Enabled}
 import models.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import play.api.Application
 import play.api.inject.bind

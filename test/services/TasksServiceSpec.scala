@@ -19,7 +19,7 @@ package services
 import java.time.LocalDateTime
 
 import base.BaseSpec
-import org.mockito.Matchers.{eq => mEq, _}
+import org.mockito.ArgumentMatchers.{eq => mEq, _}
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import play.api.Application

@@ -17,7 +17,7 @@
 package services
 
 import base.BaseSpec
-import org.mockito.Matchers._
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import play.api.Application

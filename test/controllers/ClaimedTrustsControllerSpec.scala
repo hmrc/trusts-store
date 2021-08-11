@@ -17,7 +17,7 @@
 package controllers
 
 import base.BaseSpec
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import play.api.Application

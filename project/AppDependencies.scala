@@ -7,17 +7,19 @@ object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
     ws,
-    "uk.gov.hmrc"             %% "bootstrap-backend-play-27"     % "5.8.0",
-    "org.reactivemongo"       %% "play2-reactivemongo"           % "0.20.13-play27"
+    "uk.gov.hmrc"             %% "bootstrap-backend-play-28"     % "5.10.0",
+    "org.reactivemongo"       %% "play2-reactivemongo"           % "0.20.13-play28"
   )
 
   val test: Seq[ModuleID] = Seq(
+    "com.typesafe.play"         %% "play-test"              % current                 % "test",
     "org.scalatest"           %% "scalatest"                % "3.0.9"                 % "test",
-    "com.typesafe.play"       %% "play-test"                % current                 % "test",
+    "org.scalatestplus"       %% "mockito-3-4"              % "3.3.0.0-SNAP3"         % "test, it",
     "org.pegdown"             %  "pegdown"                  % "1.6.0"                 % "test, it",
-    "uk.gov.hmrc"             %% "service-integration-test" % "0.13.0-play-27"        % "test, it",
+    "uk.gov.hmrc"             %% "service-integration-test" % "1.1.0-play-28"         % "test, it",
     "com.github.tomakehurst"  %  "wiremock-standalone"      % "2.27.2"                % "test, it",
     "org.scalatestplus.play"  %% "scalatestplus-play"       % "4.0.3"                 % "test, it",
+    "com.vladsch.flexmark"    % "flexmark-all"              % "0.35.10"               % "test, it",
     "org.mockito"             %  "mockito-core"             % "1.10.19"               % "test, it"
   )
 

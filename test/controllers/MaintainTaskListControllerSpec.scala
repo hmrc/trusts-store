@@ -20,8 +20,8 @@ import base.BaseSpec
 import models.Operation.{Complete, InProgress}
 import models.Task
 import models.Task.TrustDetails
-import org.mockito.Matchers.any
-import org.mockito.{Matchers, Mockito}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.{ArgumentMatchers, Mockito}
 import org.mockito.Mockito._
 import play.api.Application
 import play.api.http.Status
@@ -155,7 +155,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(TrustDetails), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), ArgumentMatchers.eq(TrustDetails), ArgumentMatchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -194,7 +194,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.Assets), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), ArgumentMatchers.eq(Task.Assets), ArgumentMatchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -233,7 +233,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.TaxLiability), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), ArgumentMatchers.eq(Task.TaxLiability), ArgumentMatchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -272,7 +272,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.Trustees), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), ArgumentMatchers.eq(Task.Trustees), ArgumentMatchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -311,7 +311,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.Beneficiaries), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), ArgumentMatchers.eq(Task.Beneficiaries), ArgumentMatchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -350,7 +350,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.Protectors), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), ArgumentMatchers.eq(Task.Protectors), ArgumentMatchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -389,7 +389,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.Settlors), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), ArgumentMatchers.eq(Task.Settlors), ArgumentMatchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -428,7 +428,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.OtherIndividuals), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), ArgumentMatchers.eq(Task.OtherIndividuals), ArgumentMatchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -466,7 +466,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.Assets), Matchers.eq(InProgress))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), ArgumentMatchers.eq(Task.Assets), ArgumentMatchers.eq(InProgress))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
