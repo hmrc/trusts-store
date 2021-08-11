@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions.IdentifierAction
-import models.Status.{Complete, InProgress}
+import models.Status.{Completed, InProgress}
 import models.Task
 import models.maintain.Tasks
 import play.api.libs.json._
@@ -61,42 +61,42 @@ class MaintainTaskListController @Inject()(
 
 	def completeTrustDetails(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.TrustDetails, Complete).map(Ok(_))
+			service.modifyTask(request.internalId, identifier, Task.TrustDetails, Completed).map(Ok(_))
 	}
 
 	def completeAssets(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.Assets, Complete).map(Ok(_))
+			service.modifyTask(request.internalId, identifier, Task.Assets, Completed).map(Ok(_))
 	}
 
 	def completeTaxLiability(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.TaxLiability, Complete).map(Ok(_))
+			service.modifyTask(request.internalId, identifier, Task.TaxLiability, Completed).map(Ok(_))
 	}
 
 	def completeTrustees(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.Trustees, Complete).map(Ok(_))
+			service.modifyTask(request.internalId, identifier, Task.Trustees, Completed).map(Ok(_))
 	}
 
 	def completeBeneficiaries(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.Beneficiaries, Complete).map(Ok(_))
+			service.modifyTask(request.internalId, identifier, Task.Beneficiaries, Completed).map(Ok(_))
 	}
 
 	def completeSettlors(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.Settlors, Complete).map(Ok(_))
+			service.modifyTask(request.internalId, identifier, Task.Settlors, Completed).map(Ok(_))
 	}
 
 	def completeProtectors(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.Protectors, Complete).map(Ok(_))
+			service.modifyTask(request.internalId, identifier, Task.Protectors, Completed).map(Ok(_))
 	}
 
 	def completeOtherIndividuals(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.OtherIndividuals, Complete).map(Ok(_))
+			service.modifyTask(request.internalId, identifier, Task.OtherIndividuals, Completed).map(Ok(_))
 	}
 
 	def inProgressAssets(identifier: String): Action[AnyContent] = authAction.async {

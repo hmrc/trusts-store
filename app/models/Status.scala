@@ -22,14 +22,17 @@ object Status extends Enumeration {
 
   type Status = Value
 
-  val Complete: Value = Value("complete")
-  val InProgress: Value = Value("inProgress")
+  val Completed: Value = Value("completed")
+  val InProgress: Value = Value("in-progress")
+  val NotStarted: Value = Value("not-started")
+  val CannotStartYet: Value = Value("cannot-start-yet")
+  val NoActionNeeded: Value = Value("no-action-needed")
 
   implicit val reads: Reads[Value] = JsPath.read[Boolean].map {
-    case true => Complete
+    case true => Completed
     case false => InProgress
   } orElse Reads.enumNameReads(Status)
-  
+
   implicit val writes: Writes[Value] = Writes.enumNameWrites
   implicit val formats: Format[Value] = Format.apply(reads, writes)
 

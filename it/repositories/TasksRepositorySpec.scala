@@ -1,5 +1,6 @@
 package repositories
 
+import models.Status._
 import models.maintain.Tasks
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
@@ -38,14 +39,14 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
           val repository = application.injector.instanceOf[TasksRepository]
 
           val task = Tasks(
-            trustDetails = false,
-            assets = false,
-            taxLiability = false,
-            trustees = true,
-            settlors = false,
-            protectors = false,
-            beneficiaries = false,
-            other = false
+            trustDetails = InProgress,
+            assets = InProgress,
+            taxLiability = InProgress,
+            trustees = Completed,
+            settlors = InProgress,
+            protectors = InProgress,
+            beneficiaries = InProgress,
+            other = InProgress
           )
 
           val result = repository.set(internalId, identifier, task).futureValue
@@ -69,25 +70,25 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
           val repository = application.injector.instanceOf[TasksRepository]
 
           val allTasksComplete = Tasks(
-            trustDetails = true,
-            assets = true,
-            taxLiability = true,
-            trustees = true,
-            settlors = true,
-            protectors = true,
-            beneficiaries = true,
-            other = true
+            trustDetails = Completed,
+            assets = Completed,
+            taxLiability = Completed,
+            trustees = Completed,
+            settlors = Completed,
+            protectors = Completed,
+            beneficiaries = Completed,
+            other = Completed
           )
 
           val allTasksIncomplete = Tasks(
-            trustDetails = false,
-            assets = false,
-            taxLiability = false,
-            trustees = false,
-            settlors = false,
-            protectors = false,
-            beneficiaries = false,
-            other = false
+            trustDetails = InProgress,
+            assets = InProgress,
+            taxLiability = InProgress,
+            trustees = InProgress,
+            settlors = InProgress,
+            protectors = InProgress,
+            beneficiaries = InProgress,
+            other = InProgress
           )
 
           repository.set(internalId, identifier, allTasksComplete).futureValue

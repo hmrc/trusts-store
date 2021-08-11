@@ -55,7 +55,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         trustDetails = InProgress,
         assets = InProgress,
         taxLiability = InProgress,
-        trustees = Complete,
+        trustees = Completed,
         beneficiaries = InProgress,
         settlors = InProgress,
         other = InProgress,
@@ -79,9 +79,9 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         trustDetails = InProgress,
         assets = InProgress,
         taxLiability = InProgress,
-        trustees = Complete,
+        trustees = Completed,
         beneficiaries = InProgress,
-        settlors = Complete,
+        settlors = Completed,
         other = InProgress,
         protectors = InProgress
       )
@@ -135,18 +135,18 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         assets = InProgress,
         taxLiability = InProgress,
         trustees = InProgress,
-        beneficiaries = Complete,
+        beneficiaries = Completed,
         settlors = InProgress,
         other = InProgress,
         protectors = InProgress
       )
 
       val updatedTasks = Tasks(
-        trustDetails = Complete,
+        trustDetails = Completed,
         assets = InProgress,
         taxLiability = InProgress,
         trustees = InProgress,
-        beneficiaries = Complete,
+        beneficiaries = Completed,
         settlors = InProgress,
         other = InProgress,
         protectors = InProgress
@@ -154,7 +154,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(TrustDetails), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), Matchers.eq(TrustDetails), Matchers.eq(Completed))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -174,7 +174,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         assets = InProgress,
         taxLiability = InProgress,
         trustees = InProgress,
-        beneficiaries = Complete,
+        beneficiaries = Completed,
         settlors = InProgress,
         other = InProgress,
         protectors = InProgress
@@ -182,10 +182,10 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val updatedTasks = Tasks(
         trustDetails = InProgress,
-        assets = Complete,
+        assets = Completed,
         taxLiability = InProgress,
         trustees = InProgress,
-        beneficiaries = Complete,
+        beneficiaries = Completed,
         settlors = InProgress,
         other = InProgress,
         protectors = InProgress
@@ -193,7 +193,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.Assets), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.Assets), Matchers.eq(Completed))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -213,7 +213,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         assets = InProgress,
         taxLiability = InProgress,
         trustees = InProgress,
-        beneficiaries = Complete,
+        beneficiaries = Completed,
         settlors = InProgress,
         other = InProgress,
         protectors = InProgress
@@ -222,9 +222,9 @@ class MaintainTaskListControllerSpec extends BaseSpec {
       val updatedTasks = Tasks(
         trustDetails = InProgress,
         assets = InProgress,
-        taxLiability = Complete,
+        taxLiability = Completed,
         trustees = InProgress,
-        beneficiaries = Complete,
+        beneficiaries = Completed,
         settlors = InProgress,
         other = InProgress,
         protectors = InProgress
@@ -232,7 +232,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.TaxLiability), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.TaxLiability), Matchers.eq(Completed))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -252,7 +252,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         assets = InProgress,
         taxLiability = InProgress,
         trustees = InProgress,
-        beneficiaries = Complete,
+        beneficiaries = Completed,
         settlors = InProgress,
         other = InProgress,
         protectors = InProgress
@@ -262,8 +262,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         trustDetails = InProgress,
         assets = InProgress,
         taxLiability = InProgress,
-        trustees = Complete,
-        beneficiaries = Complete,
+        trustees = Completed,
+        beneficiaries = Completed,
         settlors = InProgress,
         other = InProgress,
         protectors = InProgress
@@ -271,7 +271,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.Trustees), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.Trustees), Matchers.eq(Completed))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -301,8 +301,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         trustDetails = InProgress,
         assets = InProgress,
         taxLiability = InProgress,
-        trustees = Complete,
-        beneficiaries = Complete,
+        trustees = Completed,
+        beneficiaries = Completed,
         settlors = InProgress,
         other = InProgress,
         protectors = InProgress
@@ -310,7 +310,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.Beneficiaries), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.Beneficiaries), Matchers.eq(Completed))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -330,7 +330,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         assets = InProgress,
         taxLiability = InProgress,
         trustees = InProgress,
-        beneficiaries = Complete,
+        beneficiaries = Completed,
         settlors = InProgress,
         other = InProgress,
         protectors = InProgress
@@ -341,15 +341,15 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         assets = InProgress,
         taxLiability = InProgress,
         trustees = InProgress,
-        beneficiaries = Complete,
+        beneficiaries = Completed,
         settlors = InProgress,
         other = InProgress,
-        protectors = Complete
+        protectors = Completed
       )
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.Protectors), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.Protectors), Matchers.eq(Completed))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -369,7 +369,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         assets = InProgress,
         taxLiability = InProgress,
         trustees = InProgress,
-        beneficiaries = Complete,
+        beneficiaries = Completed,
         settlors = InProgress,
         other = InProgress,
         protectors = InProgress
@@ -380,15 +380,15 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         assets = InProgress,
         taxLiability = InProgress,
         trustees = InProgress,
-        beneficiaries = Complete,
-        settlors = Complete,
+        beneficiaries = Completed,
+        settlors = Completed,
         other = InProgress,
         protectors = InProgress
       )
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.Settlors), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.Settlors), Matchers.eq(Completed))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -408,7 +408,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         assets = InProgress,
         taxLiability = InProgress,
         trustees = InProgress,
-        beneficiaries = Complete,
+        beneficiaries = Completed,
         settlors = InProgress,
         other = InProgress,
         protectors = InProgress
@@ -419,15 +419,15 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         assets = InProgress,
         taxLiability = InProgress,
         trustees = InProgress,
-        beneficiaries = Complete,
+        beneficiaries = Completed,
         settlors = InProgress,
-        other = Complete,
+        other = Completed,
         protectors = InProgress
       )
 
       when(service.get(any(), any())).thenReturn(Future.successful(tasksCompletedSoFar))
       when(service.set(any(), any(), any())).thenReturn(Future.successful(updatedTasks))
-      when(service.modifyTask(any(), any(), Matchers.eq(Task.OtherIndividuals), Matchers.eq(Complete))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
+      when(service.modifyTask(any(), any(), Matchers.eq(Task.OtherIndividuals), Matchers.eq(Completed))).thenReturn(Future.successful(Json.toJson(updatedTasks)))
 
       val result = route(application, request).value
 
@@ -443,10 +443,10 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val tasksCompletedSoFar = Tasks(
         trustDetails = InProgress,
-        assets = Complete,
+        assets = Completed,
         taxLiability = InProgress,
         trustees = InProgress,
-        beneficiaries = Complete,
+        beneficiaries = Completed,
         settlors = InProgress,
         other = InProgress,
         protectors = InProgress
@@ -457,7 +457,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         assets = InProgress,
         taxLiability = InProgress,
         trustees = InProgress,
-        beneficiaries = Complete,
+        beneficiaries = Completed,
         settlors = InProgress,
         other = InProgress,
         protectors = InProgress

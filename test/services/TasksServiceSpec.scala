@@ -82,8 +82,8 @@ class TasksServiceSpec extends BaseSpec {
         trustDetails = InProgress,
         assets = InProgress,
         taxLiability = InProgress,
-        trustees = Complete,
-        settlors = Complete,
+        trustees = Completed,
+        settlors = Completed,
         protectors = InProgress,
         beneficiaries = InProgress,
         other = InProgress
