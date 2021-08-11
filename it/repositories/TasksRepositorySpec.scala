@@ -5,11 +5,12 @@ import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers._
 import suite.MongoSuite
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.freespec.AnyFreeSpec
 
 import scala.concurrent.ExecutionContext.Implicits._
 
-class TasksRepositorySpec extends FreeSpec with MustMatchers
-  with ScalaFutures with OptionValues with MongoSuite {
+class TasksRepositorySpec extends AnyFreeSpec with Matchers with ScalaFutures with OptionValues with MongoSuite {
 
   "a tasks repository" - {
 
