@@ -18,7 +18,7 @@ package controllers
 
 import base.BaseSpec
 import models.tasks.TaskStatus._
-import models.tasks.{Task, TaskStatus, Tasks}
+import models.tasks.{Task, Tasks}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.mockito.{Matchers, Mockito}
@@ -128,7 +128,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 
@@ -166,7 +166,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 
@@ -204,7 +204,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 
@@ -242,7 +242,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 
@@ -280,7 +280,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 
@@ -318,7 +318,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 
@@ -356,7 +356,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 
@@ -394,7 +394,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 

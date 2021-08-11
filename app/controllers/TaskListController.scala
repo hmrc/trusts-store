@@ -18,7 +18,8 @@ package controllers
 
 import controllers.actions.IdentifierAction
 import models.tasks.Task.Task
-import models.tasks.{Task, TaskStatus, Tasks}
+import models.tasks.TaskStatus.TaskStatus
+import models.tasks.{Task, Tasks}
 import play.api.Logging
 import play.api.libs.json._
 import play.api.mvc._
@@ -68,7 +69,7 @@ abstract class TaskListController(cc: ControllerComponents) extends BackendContr
 
 	private def updateTaskStatus(identifier: String, task: Task): Action[JsValue] = authAction.async(parse.json) {
 		implicit request =>
-			request.body.validate[TaskStatus.Value] match {
+			request.body.validate[TaskStatus] match {
 				case JsSuccess(taskStatus, _) =>
 					tasksService.modifyTask(request.internalId, identifier, task, taskStatus).map(Ok(_))
 				case JsError(errors) =>

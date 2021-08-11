@@ -17,11 +17,12 @@
 package generators
 
 import models.tasks.TaskStatus
+import models.tasks.TaskStatus.TaskStatus
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
-  implicit lazy val arbitraryTaskStatus: Arbitrary[TaskStatus.Value] = Arbitrary {
+  implicit lazy val arbitraryTaskStatus: Arbitrary[TaskStatus] = Arbitrary {
     Gen.oneOf(TaskStatus.values)
   }
 

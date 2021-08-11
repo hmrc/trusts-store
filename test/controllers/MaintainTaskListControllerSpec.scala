@@ -478,7 +478,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 
@@ -516,7 +516,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 
@@ -554,7 +554,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 
@@ -592,7 +592,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 
@@ -630,7 +630,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 
@@ -668,7 +668,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 
@@ -706,7 +706,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 
@@ -744,7 +744,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
     "must return Ok and the updated tasks" in {
 
-      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+      forAll(arbitrary[TaskStatus]) { taskStatus =>
 
         reset(service)
 
