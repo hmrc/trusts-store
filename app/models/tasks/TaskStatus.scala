@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.tasks
 
 import play.api.libs.json.{Format, JsPath, Reads, Writes}
 

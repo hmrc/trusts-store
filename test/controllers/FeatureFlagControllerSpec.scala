@@ -17,8 +17,8 @@
 package controllers
 
 import base.BaseSpec
-import models.FeatureFlag.Enabled
-import models.FeatureFlagName.`5MLD`
+import models.flags.FeatureFlag.Enabled
+import models.flags.FeatureFlagName.`5MLD`
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import play.api.inject.bind

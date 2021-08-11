@@ -16,7 +16,7 @@
 
 package repositories
 
-import models.maintain.{TaskCache, Tasks}
+import models.tasks.{TaskCache, Tasks}
 import play.api.libs.json.{JsObject, Json, OWrites}
 import reactivemongo.api.WriteConcern
 import reactivemongo.api.indexes.IndexType

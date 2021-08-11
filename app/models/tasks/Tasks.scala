@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package models.maintain
+package models.tasks
 
-import models.TaskStatus.{NotStarted, Status}
+import models.tasks.TaskStatus.{NotStarted, Status}
 import play.api.libs.json.{Format, Json}
 
 case class Tasks(trustDetails: Status,

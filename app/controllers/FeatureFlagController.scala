@@ -16,12 +16,12 @@
 
 package controllers
 
-import javax.inject.Inject
+import models.flags.FeatureFlagName
 import play.api.libs.json.{JsBoolean, Json}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
-import models.FeatureFlagName
 import services.FeatureFlagService
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class FeatureFlagController @Inject()(ffService: FeatureFlagService,

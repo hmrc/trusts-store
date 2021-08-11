@@ -16,10 +16,10 @@
 
 package models
 
-import java.time.{LocalDate, LocalDateTime}
-
 import base.BaseSpec
 import play.api.libs.json.Json
+
+import java.time.{LocalDate, LocalDateTime}
 
 class MongoDateTimeFormatsSpec extends BaseSpec with MongoDateTimeFormats {
 

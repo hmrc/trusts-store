@@ -16,10 +16,9 @@
 
 package services
 
-import models.Task
-import models.Task.Task
-import models.TaskStatus.Status
-import models.maintain.Tasks
+import models.tasks.Task.Task
+import models.tasks.TaskStatus.Status
+import models.tasks.{Task, Tasks}
 import play.api.libs.json.{JsValue, Json}
 import repositories.TasksRepository
 

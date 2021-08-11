@@ -1,7 +1,7 @@
 package repositories
 
-import models.TaskStatus._
-import models.maintain.Tasks
+import models.tasks.TaskStatus._
+import models.tasks.Tasks
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers._

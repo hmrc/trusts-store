@@ -17,15 +17,15 @@
 package services
 
 import base.BaseSpec
+import models.claim_a_trust.TrustClaim
+import models.claim_a_trust.responses._
+import models.repository.StorageErrors
 import org.mockito.Matchers._
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import play.api.Application
 import play.api.inject.bind
 import reactivemongo.api.commands.WriteError
-import models.claim_a_trust.TrustClaim
-import models.repository.StorageErrors
-import models.claim_a_trust.responses._
 import repositories.ClaimedTrustsRepository
 
 import scala.concurrent.Future

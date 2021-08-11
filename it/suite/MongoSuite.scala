@@ -7,9 +7,9 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.{DefaultDB, MongoConnection}
 
-import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 
 trait MongoSuite extends IntegrationPatience {
   self: TestSuite with PatienceConfiguration =>

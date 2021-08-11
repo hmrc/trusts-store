@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package models.maintain
+package models.tasks
 
 import base.BaseSpec
-import models.TaskStatus._
+import models.tasks.TaskStatus._
 import play.api.libs.json.Json
 
 class TasksSpec extends BaseSpec {

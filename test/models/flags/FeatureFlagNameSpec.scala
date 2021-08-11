@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package models
+package models.flags
 
 import base.BaseSpec
-import models.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
+import models.flags.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
 import play.api.libs.json.{JsError, JsString, JsSuccess, Json}
 
 class FeatureFlagNameSpec extends BaseSpec {

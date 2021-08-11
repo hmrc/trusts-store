@@ -16,7 +16,7 @@
 
 package generators
 
-import models.TaskStatus
+import models.tasks.TaskStatus
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {

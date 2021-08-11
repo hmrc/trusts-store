@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models.maintain
+package models.tasks
+
+import models.MongoDateTimeFormats
+import play.api.libs.json.{OWrites, Reads, __}
 
 import java.time.LocalDateTime
-
-import play.api.libs.json.{OWrites, Reads, __}
-import models.MongoDateTimeFormats
 
 case class TaskCache(internalId: String,
                      id: String,

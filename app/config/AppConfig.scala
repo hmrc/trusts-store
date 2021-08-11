@@ -16,9 +16,10 @@
 
 package config
 
-import javax.inject.{Inject, Singleton}
+import models.flags.FeatureFlagName
 import play.api.Configuration
-import models.FeatureFlagName
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AppConfig @Inject()(config: Configuration) {

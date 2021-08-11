@@ -16,9 +16,9 @@
 
 package repositories
 
+import play.api.{Configuration, Logging}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.play.json.collection.JSONCollection
-import play.api.{Configuration, Logging}
 
 import scala.concurrent.{ExecutionContext, Future}
 

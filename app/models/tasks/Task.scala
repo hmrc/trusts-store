@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.tasks
 
 object Task {
   sealed trait Task

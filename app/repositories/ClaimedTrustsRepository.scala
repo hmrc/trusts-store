@@ -16,7 +16,6 @@
 
 package repositories
 
-import javax.inject.{Inject, Singleton}
 import models.claim_a_trust.TrustClaim
 import models.repository.StorageErrors
 import play.api.Configuration
@@ -26,6 +25,7 @@ import reactivemongo.api.WriteConcern
 import reactivemongo.api.indexes.IndexType
 import reactivemongo.play.json.collection.JSONCollection
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()

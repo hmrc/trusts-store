@@ -17,8 +17,8 @@
 package controllers
 
 import controllers.actions.IdentifierAction
-import models.Task
-import models.TaskStatus.{Completed, InProgress}
+import models.tasks.Task
+import models.tasks.TaskStatus.{Completed, InProgress}
 import play.api.mvc._
 import services.MaintainTasksService
 

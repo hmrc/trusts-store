@@ -17,20 +17,19 @@
 package controllers
 
 import controllers.actions.IdentifierAction
-import models.Task.Task
-import models.maintain.Tasks
-import models.{Task, TaskStatus}
+import models.tasks.Task.Task
+import models.tasks.{Task, TaskStatus, Tasks}
 import play.api.Logging
 import play.api.libs.json._
 import play.api.mvc._
 import services.TasksService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-abstract class TaskListController @Inject()(cc: ControllerComponents) extends BackendController(cc) with Logging {
+abstract class TaskListController(cc: ControllerComponents) extends BackendController(cc) with Logging {
 
 	val tasksService: TasksService
 	val authAction: IdentifierAction

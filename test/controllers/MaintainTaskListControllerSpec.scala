@@ -17,10 +17,9 @@
 package controllers
 
 import base.BaseSpec
-import models.Task._
-import models.TaskStatus._
-import models.maintain.Tasks
-import models.{Task, TaskStatus}
+import models.tasks.Task._
+import models.tasks.TaskStatus._
+import models.tasks.{Task, TaskStatus, Tasks}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.mockito.{Matchers, Mockito}
