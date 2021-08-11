@@ -21,14 +21,14 @@ import models.Task
 import models.Task.Task
 import models.maintain.Tasks
 import play.api.libs.json.{JsValue, Json}
-import repositories.TasksRepository
+import repositories.MaintainTasksRepository
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton()
-class TasksService @Inject()(tasksRepository: TasksRepository)  {
+class MaintainTasksService @Inject()(tasksRepository: MaintainTasksRepository)  {
 
   def get(internalId: String, identifier: String): Future[Tasks] = {
     tasksRepository.get(internalId, identifier) map {

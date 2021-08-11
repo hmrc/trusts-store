@@ -24,20 +24,20 @@ import org.mockito.Mockito
 import org.mockito.Mockito._
 import play.api.Application
 import play.api.inject.bind
-import repositories.TasksRepository
+import repositories.MaintainTasksRepository
 
 import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class TasksServiceSpec extends BaseSpec {
+class MaintainTasksServiceSpec extends BaseSpec {
 
-  private val repository = mock[TasksRepository]
+  private val repository = mock[MaintainTasksRepository]
 
   lazy val application: Application = applicationBuilder().overrides(
-    bind[TasksRepository].toInstance(repository)
+    bind[MaintainTasksRepository].toInstance(repository)
   ).build()
 
-  private val service = application.injector.instanceOf[TasksService]
+  private val service = application.injector.instanceOf[MaintainTasksService]
 
   override def beforeEach(): Unit = {
     Mockito.reset(repository)

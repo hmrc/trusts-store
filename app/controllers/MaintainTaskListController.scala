@@ -24,18 +24,17 @@ import models.{Task, TaskStatus}
 import play.api.Logging
 import play.api.libs.json._
 import play.api.mvc._
-import services.TasksService
+import services.MaintainTasksService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class MaintainTaskListController @Inject()(
-																						cc: ControllerComponents,
-																						service: TasksService,
-																						authAction: IdentifierAction
-																					)(implicit ec: ExecutionContext) extends BackendController(cc) with Logging {
+class MaintainTaskListController @Inject()(cc: ControllerComponents,
+																					 service: MaintainTasksService,
+																					 authAction: IdentifierAction)
+																					(implicit ec: ExecutionContext) extends BackendController(cc) with Logging {
 
 	def get(identifier: String): Action[AnyContent] = authAction.async {
 		request =>

@@ -9,10 +9,10 @@ import suite.MongoSuite
 
 import scala.concurrent.ExecutionContext.Implicits._
 
-class TasksRepositorySpec extends FreeSpec with MustMatchers
+class MaintainTasksRepositorySpec extends FreeSpec with MustMatchers
   with ScalaFutures with OptionValues with MongoSuite {
 
-  "a tasks repository" - {
+  "a maintain tasks repository" - {
 
     val internalId = "Int-328969d0-557e-4559-96ba-074d0597107e"
     val identifier = "1234567890"
@@ -23,7 +23,7 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
         getConnection(application).map{ connection =>
           dropTheDatabase(connection)
 
-          val repository = application.injector.instanceOf[TasksRepository]
+          val repository = application.injector.instanceOf[MaintainTasksRepository]
 
           repository.get(internalId, identifier).futureValue mustBe None
         }
@@ -36,18 +36,9 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
         getConnection(application).map { connection =>
           dropTheDatabase(connection)
 
-          val repository = application.injector.instanceOf[TasksRepository]
+          val repository = application.injector.instanceOf[MaintainTasksRepository]
 
-          val task = Tasks(
-            trustDetails = InProgress,
-            assets = InProgress,
-            taxLiability = InProgress,
-            trustees = Completed,
-            settlors = InProgress,
-            protectors = InProgress,
-            beneficiaries = InProgress,
-            other = InProgress
-          )
+          val task = Tasks()
 
           val result = repository.set(internalId, identifier, task).futureValue
 
@@ -67,9 +58,9 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
         getConnection(application).map { connection =>
           dropTheDatabase(connection)
 
-          val repository = application.injector.instanceOf[TasksRepository]
+          val repository = application.injector.instanceOf[MaintainTasksRepository]
 
-          val allTasksComplete = Tasks(
+          val tasksCompleted = Tasks(
             trustDetails = Completed,
             assets = Completed,
             taxLiability = Completed,
@@ -80,26 +71,15 @@ class TasksRepositorySpec extends FreeSpec with MustMatchers
             other = Completed
           )
 
-          val allTasksIncomplete = Tasks(
-            trustDetails = InProgress,
-            assets = InProgress,
-            taxLiability = InProgress,
-            trustees = InProgress,
-            settlors = InProgress,
-            protectors = InProgress,
-            beneficiaries = InProgress,
-            other = InProgress
-          )
+          repository.set(internalId, identifier, tasksCompleted).futureValue
 
-          repository.set(internalId, identifier, allTasksComplete).futureValue
-
-          repository.get(internalId, identifier).futureValue.value.task mustBe allTasksComplete
+          repository.get(internalId, identifier).futureValue.value.task mustBe tasksCompleted
 
           val result = repository.reset(internalId, identifier).futureValue
 
           result mustBe true
 
-          repository.get(internalId, identifier).futureValue.value.task mustBe allTasksIncomplete
+          repository.get(internalId, identifier).futureValue.value.task mustBe Tasks()
 
           dropTheDatabase(connection)
         }

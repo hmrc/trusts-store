@@ -31,16 +31,16 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.TasksService
+import services.MaintainTasksService
 
 import scala.concurrent.Future
 
 class MaintainTaskListControllerSpec extends BaseSpec {
 
-  private val service: TasksService = mock[TasksService]
+  private val service: MaintainTasksService = mock[MaintainTasksService]
 
   lazy val application: Application = applicationBuilder().overrides(
-    bind[TasksService].toInstance(service)
+    bind[MaintainTasksService].toInstance(service)
   ).build()
 
   override def beforeEach(): Unit = {
