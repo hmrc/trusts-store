@@ -16,13 +16,13 @@
 
 package services
 
-import repositories.{MaintainTasksRepository, TasksRepository}
+import repositories.{RegisterTasksRepository, TasksRepository}
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton()
-class MaintainTasksService @Inject()(maintainTasksRepository: MaintainTasksRepository) extends TasksService {
+class RegisterTasksService @Inject()(registerTasksRepository: RegisterTasksRepository) extends TasksService {
 
-  override val tasksRepository: TasksRepository = maintainTasksRepository
+  override val tasksRepository: TasksRepository = registerTasksRepository
 
 }
