@@ -1,23 +1,23 @@
 # microservice specific routes
 
-GET        /claim             controllers.ClaimedTrustsController.get()
-POST       /claim             controllers.ClaimedTrustsController.store()
+GET        /claim                                                   controllers.ClaimedTrustsController.get()
+POST       /claim                                                   controllers.ClaimedTrustsController.store()
 
-GET        /maintain/tasks/:identifier                      controllers.MaintainTaskListController.get(identifier: String)
-POST       /maintain/tasks/:identifier                      controllers.MaintainTaskListController.set(identifier: String)
-DELETE     /maintain/tasks/:identifier                      controllers.MaintainTaskListController.reset(identifier: String)
+GET        /maintain/tasks/:identifier                              controllers.MaintainTaskListController.get(identifier: String)
+POST       /maintain/tasks/:identifier                              controllers.MaintainTaskListController.set(identifier: String)
+DELETE     /maintain/tasks/:identifier                              controllers.MaintainTaskListController.reset(identifier: String)
 
 ##########
 # TODO - delete once new endpoints are in production
-POST       /maintain/tasks/trust-details/:identifier        controllers.MaintainTaskListController.completeTrustDetails(identifier: String)
-POST       /maintain/tasks/assets/:identifier               controllers.MaintainTaskListController.completeAssets(identifier: String)
-POST       /maintain/tasks/tax-liability/:identifier        controllers.MaintainTaskListController.completeTaxLiability(identifier: String)
-POST       /maintain/tasks/trustees/:identifier             controllers.MaintainTaskListController.completeTrustees(identifier: String)
-POST       /maintain/tasks/beneficiaries/:identifier        controllers.MaintainTaskListController.completeBeneficiaries(identifier: String)
-POST       /maintain/tasks/protectors/:identifier           controllers.MaintainTaskListController.completeProtectors(identifier: String)
-POST       /maintain/tasks/settlors/:identifier             controllers.MaintainTaskListController.completeSettlors(identifier: String)
-POST       /maintain/tasks/others/:identifier               controllers.MaintainTaskListController.completeOtherIndividuals(identifier: String)
-POST       /maintain/tasks/reset/assets/:identifier               controllers.MaintainTaskListController.inProgressAssets(identifier: String)
+POST       /maintain/tasks/trust-details/:identifier                controllers.MaintainTaskListController.completeTrustDetails(identifier: String)
+POST       /maintain/tasks/assets/:identifier                       controllers.MaintainTaskListController.completeAssets(identifier: String)
+POST       /maintain/tasks/tax-liability/:identifier                controllers.MaintainTaskListController.completeTaxLiability(identifier: String)
+POST       /maintain/tasks/trustees/:identifier                     controllers.MaintainTaskListController.completeTrustees(identifier: String)
+POST       /maintain/tasks/beneficiaries/:identifier                controllers.MaintainTaskListController.completeBeneficiaries(identifier: String)
+POST       /maintain/tasks/protectors/:identifier                   controllers.MaintainTaskListController.completeProtectors(identifier: String)
+POST       /maintain/tasks/settlors/:identifier                     controllers.MaintainTaskListController.completeSettlors(identifier: String)
+POST       /maintain/tasks/others/:identifier                       controllers.MaintainTaskListController.completeOtherIndividuals(identifier: String)
+POST       /maintain/tasks/reset/assets/:identifier                 controllers.MaintainTaskListController.inProgressAssets(identifier: String)
 ##########
 
 POST       /maintain/tasks/update-trust-details/:identifier         controllers.MaintainTaskListController.updateTrustDetailsStatus(identifier: String)
@@ -29,5 +29,18 @@ POST       /maintain/tasks/update-protectors/:identifier            controllers.
 POST       /maintain/tasks/update-settlors/:identifier              controllers.MaintainTaskListController.updateSettlorsStatus(identifier: String)
 POST       /maintain/tasks/update-other-individuals/:identifier     controllers.MaintainTaskListController.updateOtherIndividualsStatus(identifier: String)
 
-GET        /features/:flagName             controllers.FeatureFlagController.get(flagName: FeatureFlagName)
-PUT        /features/:flagName             controllers.FeatureFlagController.put(flagName: FeatureFlagName)
+GET        /register/tasks/:identifier                              controllers.RegisterTaskListController.get(identifier: String)
+POST       /register/tasks/:identifier                              controllers.RegisterTaskListController.set(identifier: String)
+DELETE     /register/tasks/:identifier                              controllers.RegisterTaskListController.reset(identifier: String)
+
+POST       /register/tasks/update-trust-details/:identifier         controllers.RegisterTaskListController.updateTrustDetailsStatus(identifier: String)
+POST       /register/tasks/update-assets/:identifier                controllers.RegisterTaskListController.updateAssetsStatus(identifier: String)
+POST       /register/tasks/update-tax-liability/:identifier         controllers.RegisterTaskListController.updateTaxLiabilityStatus(identifier: String)
+POST       /register/tasks/update-trustees/:identifier              controllers.RegisterTaskListController.updateTrusteesStatus(identifier: String)
+POST       /register/tasks/update-beneficiaries/:identifier         controllers.RegisterTaskListController.updateBeneficiariesStatus(identifier: String)
+POST       /register/tasks/update-protectors/:identifier            controllers.RegisterTaskListController.updateProtectorsStatus(identifier: String)
+POST       /register/tasks/update-settlors/:identifier              controllers.RegisterTaskListController.updateSettlorsStatus(identifier: String)
+POST       /register/tasks/update-other-individuals/:identifier     controllers.RegisterTaskListController.updateOtherIndividualsStatus(identifier: String)
+
+GET        /features/:flagName                                      controllers.FeatureFlagController.get(flagName: FeatureFlagName)
+PUT        /features/:flagName                                      controllers.FeatureFlagController.put(flagName: FeatureFlagName)
