@@ -20,7 +20,7 @@ import play.api.libs.json.{Format, JsPath, Reads, Writes}
 
 object TaskStatus extends Enumeration {
 
-  type Status = Value
+  type TaskStatus = Value
 
   val Completed: Value = Value("completed")
   val InProgress: Value = Value("in-progress")

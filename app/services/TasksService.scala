@@ -17,7 +17,7 @@
 package services
 
 import models.tasks.Task.Task
-import models.tasks.TaskStatus.Status
+import models.tasks.TaskStatus.TaskStatus
 import models.tasks.{Task, Tasks}
 import play.api.libs.json.{JsValue, Json}
 import repositories.TasksRepository
@@ -44,19 +44,19 @@ trait TasksService {
     tasksRepository.reset(internalId, identifier)
   }
 
-  def modifyTask(internalId: String, identifier: String, update: Task, status: Status): Future[JsValue] = {
+  def modifyTask(internalId: String, identifier: String, update: Task, taskStatus: TaskStatus): Future[JsValue] = {
     for {
       tasks <- get(internalId, identifier)
       updatedTasks <- Future.successful {
         update match {
-          case Task.TrustDetails => tasks.copy(trustDetails = status)
-          case Task.Assets => tasks.copy(assets = status)
-          case Task.TaxLiability => tasks.copy(taxLiability = status)
-          case Task.Trustees => tasks.copy(trustees = status)
-          case Task.Beneficiaries => tasks.copy(beneficiaries = status)
-          case Task.Protectors => tasks.copy(protectors = status)
-          case Task.Settlors => tasks.copy(settlors = status)
-          case Task.OtherIndividuals => tasks.copy(other = status)
+          case Task.TrustDetails => tasks.copy(trustDetails = taskStatus)
+          case Task.Assets => tasks.copy(assets = taskStatus)
+          case Task.TaxLiability => tasks.copy(taxLiability = taskStatus)
+          case Task.Trustees => tasks.copy(trustees = taskStatus)
+          case Task.Beneficiaries => tasks.copy(beneficiaries = taskStatus)
+          case Task.Protectors => tasks.copy(protectors = taskStatus)
+          case Task.Settlors => tasks.copy(settlors = taskStatus)
+          case Task.OtherIndividuals => tasks.copy(other = taskStatus)
         }
       }
       savedTasks <- set(internalId, identifier, updatedTasks)

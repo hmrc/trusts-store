@@ -16,17 +16,17 @@
 
 package models.tasks
 
-import models.tasks.TaskStatus.{NotStarted, Status}
+import models.tasks.TaskStatus.{NotStarted, TaskStatus}
 import play.api.libs.json.{Format, Json}
 
-case class Tasks(trustDetails: Status,
-                 assets: Status,
-                 taxLiability: Status,
-                 trustees: Status,
-                 beneficiaries: Status,
-                 settlors: Status,
-                 protectors: Status,
-                 other: Status)
+case class Tasks(trustDetails: TaskStatus,
+                 assets: TaskStatus,
+                 taxLiability: TaskStatus,
+                 trustees: TaskStatus,
+                 beneficiaries: TaskStatus,
+                 settlors: TaskStatus,
+                 protectors: TaskStatus,
+                 other: TaskStatus)
 
 object Tasks {
 

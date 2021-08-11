@@ -28,20 +28,20 @@ import scala.concurrent.Future
 
 trait TasksRepository extends IndexManager {
 
-  implicit final val jsObjectWrites: OWrites[JsObject] = OWrites[JsObject](identity)
+  implicit final lazy val jsObjectWrites: OWrites[JsObject] = OWrites[JsObject](identity)
 
-  val expireAfterSeconds: Int = config.get[Int](s"mongodb.$collectionName.expireAfterSeconds")
+  lazy val expireAfterSeconds: Int = config.get[Int](s"mongodb.$collectionName.expireAfterSeconds")
 
   private val internalIdKey: String = "internalId"
   val identifierKey: String
 
-  private val lastUpdatedIndex = MongoIndex(
+  private lazy val lastUpdatedIndex = MongoIndex(
     key = Seq("lastUpdated" -> IndexType.Ascending),
     name = "tasks-last-updated-index",
     expireAfterSeconds = Some(expireAfterSeconds)
   )
 
-  private val internalIdAndIdentifierIndex = MongoIndex(
+  private lazy val internalIdAndIdentifierIndex = MongoIndex(
     key = Seq(internalIdKey -> IndexType.Ascending, identifierKey -> IndexType.Ascending),
     name = "internal-id-and-identifier-compound-index"
   )
