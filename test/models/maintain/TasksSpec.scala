@@ -43,13 +43,13 @@ class TasksSpec extends BaseSpec {
             |""".stripMargin)
 
         json.as[Tasks] mustBe Tasks(
-          trustDetails = InProgress,
+          trustDetails = NotStarted,
           assets = Completed,
-          taxLiability = InProgress,
+          taxLiability = NotStarted,
           trustees = Completed,
-          beneficiaries = InProgress,
+          beneficiaries = NotStarted,
           settlors = Completed,
-          protectors = InProgress,
+          protectors = NotStarted,
           other = Completed
         )
       }
@@ -59,25 +59,25 @@ class TasksSpec extends BaseSpec {
         val json = Json.parse(
           """
             |{
-            |  "trustDetails": "in-progress",
+            |  "trustDetails": "not-started",
             |  "assets": "completed",
-            |  "taxLiability": "in-progress",
+            |  "taxLiability": "not-started",
             |  "trustees": "completed",
-            |  "beneficiaries": "in-progress",
+            |  "beneficiaries": "not-started",
             |  "settlors": "completed",
-            |  "protectors": "in-progress",
+            |  "protectors": "not-started",
             |  "other": "completed"
             |}
             |""".stripMargin)
 
         json.as[Tasks] mustBe Tasks(
-          trustDetails = InProgress,
+          trustDetails = NotStarted,
           assets = Completed,
-          taxLiability = InProgress,
+          taxLiability = NotStarted,
           trustees = Completed,
-          beneficiaries = InProgress,
+          beneficiaries = NotStarted,
           settlors = Completed,
-          protectors = InProgress,
+          protectors = NotStarted,
           other = Completed
         )
       }

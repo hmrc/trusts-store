@@ -30,7 +30,7 @@ object TaskStatus extends Enumeration {
 
   implicit val reads: Reads[Value] = JsPath.read[Boolean].map {
     case true => Completed
-    case false => InProgress
+    case false => NotStarted
   } orElse Reads.enumNameReads(TaskStatus)
 
   implicit val writes: Writes[Value] = Writes.enumNameWrites
