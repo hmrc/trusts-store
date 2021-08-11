@@ -17,10 +17,10 @@
 package controllers
 
 import base.BaseSpec
-import models.Task.TrustDetails
-import models.{Task, TaskStatus}
+import models.Task._
 import models.TaskStatus._
 import models.maintain.Tasks
+import models.{Task, TaskStatus}
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.mockito.{Matchers, Mockito}
@@ -497,8 +497,284 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), Matchers.eq(TrustDetails), Matchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), Matchers.eq(Task.TrustDetails), Matchers.eq(taskStatus))
       }
+    }
+
+    "must return Bad Request when invalid request body" in {
+
+      val request = FakeRequest(POST, routes.MaintainTaskListController.updateTrustDetailsStatus("identifier").url)
+        .withBody(Json.obj())
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.BAD_REQUEST
+    }
+
+  }
+
+  "invoking POST /maintain/task/update-assets" - {
+
+    "must return Ok and the updated tasks" in {
+
+      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+
+        reset(service)
+
+        val request = FakeRequest(POST, routes.MaintainTaskListController.updateAssetsStatus("identifier").url)
+          .withBody(Json.toJson(taskStatus))
+
+        val tasksBeforeUpdate = Tasks()
+
+        val tasksAfterUpdate = tasksBeforeUpdate.copy(assets = taskStatus)
+
+        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+
+        val result = route(application, request).value
+
+        status(result) mustBe Status.OK
+        contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
+
+        verify(service).modifyTask(any(), any(), Matchers.eq(Task.Assets), Matchers.eq(taskStatus))
+      }
+    }
+
+    "must return Bad Request when invalid request body" in {
+
+      val request = FakeRequest(POST, routes.MaintainTaskListController.updateAssetsStatus("identifier").url)
+        .withBody(Json.obj())
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.BAD_REQUEST
+    }
+
+  }
+
+  "invoking POST /maintain/task/update-tax-liability" - {
+
+    "must return Ok and the updated tasks" in {
+
+      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+
+        reset(service)
+
+        val request = FakeRequest(POST, routes.MaintainTaskListController.updateTaxLiabilityStatus("identifier").url)
+          .withBody(Json.toJson(taskStatus))
+
+        val tasksBeforeUpdate = Tasks()
+
+        val tasksAfterUpdate = tasksBeforeUpdate.copy(taxLiability = taskStatus)
+
+        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+
+        val result = route(application, request).value
+
+        status(result) mustBe Status.OK
+        contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
+
+        verify(service).modifyTask(any(), any(), Matchers.eq(Task.TaxLiability), Matchers.eq(taskStatus))
+      }
+    }
+
+    "must return Bad Request when invalid request body" in {
+
+      val request = FakeRequest(POST, routes.MaintainTaskListController.updateTaxLiabilityStatus("identifier").url)
+        .withBody(Json.obj())
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.BAD_REQUEST
+    }
+
+  }
+
+  "invoking POST /maintain/task/update-trustees" - {
+
+    "must return Ok and the updated tasks" in {
+
+      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+
+        reset(service)
+
+        val request = FakeRequest(POST, routes.MaintainTaskListController.updateTrusteesStatus("identifier").url)
+          .withBody(Json.toJson(taskStatus))
+
+        val tasksBeforeUpdate = Tasks()
+
+        val tasksAfterUpdate = tasksBeforeUpdate.copy(trustees = taskStatus)
+
+        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+
+        val result = route(application, request).value
+
+        status(result) mustBe Status.OK
+        contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
+
+        verify(service).modifyTask(any(), any(), Matchers.eq(Task.Trustees), Matchers.eq(taskStatus))
+      }
+    }
+
+    "must return Bad Request when invalid request body" in {
+
+      val request = FakeRequest(POST, routes.MaintainTaskListController.updateTrusteesStatus("identifier").url)
+        .withBody(Json.obj())
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.BAD_REQUEST
+    }
+
+  }
+
+  "invoking POST /maintain/task/update-beneficiaries" - {
+
+    "must return Ok and the updated tasks" in {
+
+      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+
+        reset(service)
+
+        val request = FakeRequest(POST, routes.MaintainTaskListController.updateBeneficiariesStatus("identifier").url)
+          .withBody(Json.toJson(taskStatus))
+
+        val tasksBeforeUpdate = Tasks()
+
+        val tasksAfterUpdate = tasksBeforeUpdate.copy(beneficiaries = taskStatus)
+
+        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+
+        val result = route(application, request).value
+
+        status(result) mustBe Status.OK
+        contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
+
+        verify(service).modifyTask(any(), any(), Matchers.eq(Task.Beneficiaries), Matchers.eq(taskStatus))
+      }
+    }
+
+    "must return Bad Request when invalid request body" in {
+
+      val request = FakeRequest(POST, routes.MaintainTaskListController.updateBeneficiariesStatus("identifier").url)
+        .withBody(Json.obj())
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.BAD_REQUEST
+    }
+
+  }
+
+  "invoking POST /maintain/task/update-settlors" - {
+
+    "must return Ok and the updated tasks" in {
+
+      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+
+        reset(service)
+
+        val request = FakeRequest(POST, routes.MaintainTaskListController.updateSettlorsStatus("identifier").url)
+          .withBody(Json.toJson(taskStatus))
+
+        val tasksBeforeUpdate = Tasks()
+
+        val tasksAfterUpdate = tasksBeforeUpdate.copy(settlors = taskStatus)
+
+        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+
+        val result = route(application, request).value
+
+        status(result) mustBe Status.OK
+        contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
+
+        verify(service).modifyTask(any(), any(), Matchers.eq(Task.Settlors), Matchers.eq(taskStatus))
+      }
+    }
+
+    "must return Bad Request when invalid request body" in {
+
+      val request = FakeRequest(POST, routes.MaintainTaskListController.updateSettlorsStatus("identifier").url)
+        .withBody(Json.obj())
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.BAD_REQUEST
+    }
+
+  }
+
+  "invoking POST /maintain/task/update-protectors" - {
+
+    "must return Ok and the updated tasks" in {
+
+      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+
+        reset(service)
+
+        val request = FakeRequest(POST, routes.MaintainTaskListController.updateProtectorsStatus("identifier").url)
+          .withBody(Json.toJson(taskStatus))
+
+        val tasksBeforeUpdate = Tasks()
+
+        val tasksAfterUpdate = tasksBeforeUpdate.copy(protectors = taskStatus)
+
+        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+
+        val result = route(application, request).value
+
+        status(result) mustBe Status.OK
+        contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
+
+        verify(service).modifyTask(any(), any(), Matchers.eq(Task.Protectors), Matchers.eq(taskStatus))
+      }
+    }
+
+    "must return Bad Request when invalid request body" in {
+
+      val request = FakeRequest(POST, routes.MaintainTaskListController.updateProtectorsStatus("identifier").url)
+        .withBody(Json.obj())
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.BAD_REQUEST
+    }
+
+  }
+
+  "invoking POST /maintain/task/update-other-individuals" - {
+
+    "must return Ok and the updated tasks" in {
+
+      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+
+        reset(service)
+
+        val request = FakeRequest(POST, routes.MaintainTaskListController.updateOtherIndividualsStatus("identifier").url)
+          .withBody(Json.toJson(taskStatus))
+
+        val tasksBeforeUpdate = Tasks()
+
+        val tasksAfterUpdate = tasksBeforeUpdate.copy(other = taskStatus)
+
+        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+
+        val result = route(application, request).value
+
+        status(result) mustBe Status.OK
+        contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
+
+        verify(service).modifyTask(any(), any(), Matchers.eq(Task.OtherIndividuals), Matchers.eq(taskStatus))
+      }
+    }
+
+    "must return Bad Request when invalid request body" in {
+
+      val request = FakeRequest(POST, routes.MaintainTaskListController.updateOtherIndividualsStatus("identifier").url)
+        .withBody(Json.obj())
+
+      val result = route(application, request).value
+
+      status(result) mustBe Status.BAD_REQUEST
     }
 
   }

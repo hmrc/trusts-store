@@ -21,6 +21,13 @@ POST       /maintain/tasks/reset/assets/:identifier               controllers.Ma
 ##########
 
 POST       /maintain/tasks/update-trust-details/:identifier         controllers.MaintainTaskListController.updateTrustDetailsStatus(identifier: String)
+POST       /maintain/tasks/update-assets/:identifier                controllers.MaintainTaskListController.updateAssetsStatus(identifier: String)
+POST       /maintain/tasks/update-tax-liability/:identifier         controllers.MaintainTaskListController.updateTaxLiabilityStatus(identifier: String)
+POST       /maintain/tasks/update-trustees/:identifier              controllers.MaintainTaskListController.updateTrusteesStatus(identifier: String)
+POST       /maintain/tasks/update-beneficiaries/:identifier         controllers.MaintainTaskListController.updateBeneficiariesStatus(identifier: String)
+POST       /maintain/tasks/update-protectors/:identifier            controllers.MaintainTaskListController.updateProtectorsStatus(identifier: String)
+POST       /maintain/tasks/update-settlors/:identifier              controllers.MaintainTaskListController.updateSettlorsStatus(identifier: String)
+POST       /maintain/tasks/update-other-individuals/:identifier     controllers.MaintainTaskListController.updateOtherIndividualsStatus(identifier: String)
 
 GET        /features/:flagName             controllers.FeatureFlagController.get(flagName: FeatureFlagName)
 PUT        /features/:flagName             controllers.FeatureFlagController.put(flagName: FeatureFlagName)

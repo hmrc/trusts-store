@@ -17,9 +17,10 @@
 package controllers
 
 import controllers.actions.IdentifierAction
+import models.Task.Task
 import models.TaskStatus.{Completed, InProgress}
-import models.{Task, TaskStatus}
 import models.maintain.Tasks
+import models.{Task, TaskStatus}
 import play.api.Logging
 import play.api.libs.json._
 import play.api.mvc._
@@ -115,11 +116,20 @@ class MaintainTaskListController @Inject()(
 			service.modifyTask(request.internalId, identifier, Task.Assets, InProgress).map(Ok(_))
 	}
 
-	def updateTrustDetailsStatus(identifier: String): Action[JsValue] = authAction.async(parse.json) {
+	def updateTrustDetailsStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.TrustDetails)
+	def updateAssetsStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.Assets)
+	def updateTaxLiabilityStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.TaxLiability)
+	def updateTrusteesStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.Trustees)
+	def updateBeneficiariesStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.Beneficiaries)
+	def updateSettlorsStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.Settlors)
+	def updateProtectorsStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.Protectors)
+	def updateOtherIndividualsStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.OtherIndividuals)
+
+	private def updateTaskStatus(identifier: String, task: Task): Action[JsValue] = authAction.async(parse.json) {
 		implicit request =>
 			request.body.validate[TaskStatus.Value] match {
 				case JsSuccess(taskStatus, _) =>
-					service.modifyTask(request.internalId, identifier, Task.TrustDetails, taskStatus).map(Ok(_))
+					service.modifyTask(request.internalId, identifier, task, taskStatus).map(Ok(_))
 				case JsError(errors) =>
 					logger.error(s"[Identifier: $identifier] Error validating request body as TaskStatus: $errors")
 					Future.successful(BadRequest)
