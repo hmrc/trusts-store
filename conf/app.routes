@@ -8,7 +8,7 @@ POST       /maintain/tasks/:identifier                      controllers.Maintain
 DELETE     /maintain/tasks/:identifier                      controllers.MaintainTaskListController.reset(identifier: String)
 
 ##########
-# To be deleted
+# TODO - delete once new endpoints are in production
 POST       /maintain/tasks/trust-details/:identifier        controllers.MaintainTaskListController.completeTrustDetails(identifier: String)
 POST       /maintain/tasks/assets/:identifier               controllers.MaintainTaskListController.completeAssets(identifier: String)
 POST       /maintain/tasks/tax-liability/:identifier        controllers.MaintainTaskListController.completeTaxLiability(identifier: String)
