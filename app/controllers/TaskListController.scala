@@ -25,10 +25,8 @@ import play.api.mvc._
 import services.TasksService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton()
 abstract class TaskListController(cc: ControllerComponents) extends BackendController(cc) with Logging {
 
 	val tasksService: TasksService
