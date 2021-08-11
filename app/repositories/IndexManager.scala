@@ -24,11 +24,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait IndexManager extends Logging {
 
-  val collectionName: String
+  def collectionName: String
 
   val mongo: ReactiveMongoApi
 
-  val config : Configuration
+  val config: Configuration
 
   implicit val ec: ExecutionContext
 

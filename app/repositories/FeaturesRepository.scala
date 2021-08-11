@@ -35,7 +35,7 @@ class FeaturesRepository @Inject()(val mongo: ReactiveMongoApi,
 
   implicit final val jsObjectWrites: OWrites[JsObject] = OWrites[JsObject](identity)
 
-  override val collectionName: String = "features"
+  override def collectionName: String = "features"
 
   private val featureFlagDocumentId = "feature-flags"
 

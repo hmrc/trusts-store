@@ -36,7 +36,7 @@ class ClaimedTrustsRepository @Inject()(override val mongo: ReactiveMongoApi,
 
   implicit final val jsObjectWrites: OWrites[JsObject] = OWrites[JsObject](identity)
 
-  override val collectionName: String = "claimAttempts"
+  override def collectionName: String = "claimAttempts"
 
   private val expireAfterSeconds = config.get[Int]("mongodb.claimAttempts.expireAfterSeconds")
 
