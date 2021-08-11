@@ -16,7 +16,7 @@
 
 package models.maintain
 
-import models.TaskStatus.{InProgress, Status}
+import models.TaskStatus.{NotStarted, Status}
 import play.api.libs.json.{Format, Json}
 
 case class Tasks(trustDetails: Status,
@@ -31,14 +31,14 @@ case class Tasks(trustDetails: Status,
 object Tasks {
 
   def apply(): Tasks = Tasks(
-    trustDetails = InProgress,
-    assets = InProgress,
-    taxLiability = InProgress,
-    trustees = InProgress,
-    beneficiaries = InProgress,
-    settlors = InProgress,
-    protectors = InProgress,
-    other = InProgress
+    trustDetails = NotStarted,
+    assets = NotStarted,
+    taxLiability = NotStarted,
+    trustees = NotStarted,
+    beneficiaries = NotStarted,
+    settlors = NotStarted,
+    protectors = NotStarted,
+    other = NotStarted
   )
 
   implicit val formats: Format[Tasks] = Json.format[Tasks]
