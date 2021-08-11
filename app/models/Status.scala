@@ -16,15 +16,21 @@
 
 package models
 
-object Operation {
-  sealed trait Operation {
-    val value : Boolean = this match {
-      case Complete => true
-      case InProgress => false
-    }
-  }
+import play.api.libs.json.{Format, JsPath, Reads, Writes}
 
-  case object Complete extends Operation
-  case object InProgress extends Operation
+object Status extends Enumeration {
+
+  type Status = Value
+
+  val Complete: Value = Value("complete")
+  val InProgress: Value = Value("inProgress")
+
+  implicit val reads: Reads[Value] = JsPath.read[Boolean].map {
+    case true => Complete
+    case false => InProgress
+  } orElse Reads.enumNameReads(Status)
+  
+  implicit val writes: Writes[Value] = Writes.enumNameWrites
+  implicit val formats: Format[Value] = Format.apply(reads, writes)
 
 }

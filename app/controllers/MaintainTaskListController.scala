@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions.IdentifierAction
-import models.Operation.{Complete, InProgress}
+import models.Status.{Complete, InProgress}
 import models.Task
 import models.maintain.Tasks
 import play.api.libs.json._
@@ -27,8 +27,6 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-
-
 
 @Singleton()
 class MaintainTaskListController @Inject()(

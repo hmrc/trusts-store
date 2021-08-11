@@ -16,17 +16,17 @@
 
 package services
 
-import java.time.LocalDateTime
-
 import base.BaseSpec
+import models.Status._
+import models.maintain.{TaskCache, Tasks}
 import org.mockito.Matchers.{eq => mEq, _}
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import play.api.Application
 import play.api.inject.bind
-import models.maintain.{Tasks, TaskCache}
 import repositories.TasksRepository
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class TasksServiceSpec extends BaseSpec {
@@ -79,14 +79,14 @@ class TasksServiceSpec extends BaseSpec {
     "must set an updated Task" in {
 
       val task = Tasks(
-        trustDetails = false,
-        assets = false,
-        taxLiability = false,
-        trustees = true,
-        settlors = true,
-        protectors = false,
-        beneficiaries = false,
-        other = false
+        trustDetails = InProgress,
+        assets = InProgress,
+        taxLiability = InProgress,
+        trustees = Complete,
+        settlors = Complete,
+        protectors = InProgress,
+        beneficiaries = InProgress,
+        other = InProgress
       )
 
       when(repository.set(any(), any(), any())).thenReturn(Future.successful(true))

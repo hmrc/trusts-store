@@ -16,7 +16,7 @@
 
 package services
 
-import models.Operation.Operation
+import models.Status.Status
 import models.Task
 import models.Task.Task
 import models.maintain.Tasks
@@ -45,19 +45,19 @@ class TasksService @Inject()(tasksRepository: TasksRepository)  {
     tasksRepository.reset(internalId, identifier)
   }
 
-  def modifyTask(internalId: String, identifier: String, update: Task, operation: Operation): Future[JsValue] = {
+  def modifyTask(internalId: String, identifier: String, update: Task, status: Status): Future[JsValue] = {
     for {
       tasks <- get(internalId, identifier)
       updatedTasks <- Future.successful {
         update match {
-          case Task.TrustDetails => tasks.copy(trustDetails = operation.value)
-          case Task.Assets => tasks.copy(assets = operation.value)
-          case Task.TaxLiability => tasks.copy(taxLiability = operation.value)
-          case Task.Trustees => tasks.copy(trustees = operation.value)
-          case Task.Beneficiaries => tasks.copy(beneficiaries = operation.value)
-          case Task.Protectors => tasks.copy(protectors = operation.value)
-          case Task.Settlors => tasks.copy(settlors = operation.value)
-          case Task.OtherIndividuals => tasks.copy(other = operation.value)
+          case Task.TrustDetails => tasks.copy(trustDetails = status)
+          case Task.Assets => tasks.copy(assets = status)
+          case Task.TaxLiability => tasks.copy(taxLiability = status)
+          case Task.Trustees => tasks.copy(trustees = status)
+          case Task.Beneficiaries => tasks.copy(beneficiaries = status)
+          case Task.Protectors => tasks.copy(protectors = status)
+          case Task.Settlors => tasks.copy(settlors = status)
+          case Task.OtherIndividuals => tasks.copy(other = status)
         }
       }
       savedTasks <- set(internalId, identifier, updatedTasks)
