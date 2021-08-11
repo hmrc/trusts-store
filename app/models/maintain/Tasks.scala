@@ -16,7 +16,7 @@
 
 package models.maintain
 
-import models.Status.{InProgress, Status}
+import models.TaskStatus.{InProgress, Status}
 import play.api.libs.json.{Format, Json}
 
 case class Tasks(trustDetails: Status,

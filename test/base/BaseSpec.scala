@@ -18,10 +18,12 @@ package base
 
 import config.AppConfig
 import controllers.actions.{FakeIdentifierAction, IdentifierAction}
+import generators.ModelGenerators
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.http.MimeTypes
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.inject.{Injector, bind}
@@ -40,7 +42,10 @@ class BaseSpec extends FreeSpec
   with ScalaFutures
   with Inside
   with BeforeAndAfterEach
-  with BeforeAndAfter {
+  with BeforeAndAfter
+  with ScalaCheckPropertyChecks
+  with ModelGenerators {
+
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
   def injector: Injector = app.injector
@@ -71,9 +76,3 @@ class BaseSpec extends FreeSpec
   }
 
 }
-
-
-
-
-
-

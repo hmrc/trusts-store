@@ -17,13 +17,14 @@
 package controllers
 
 import base.BaseSpec
-import models.Status._
-import models.Task
 import models.Task.TrustDetails
+import models.{Task, TaskStatus}
+import models.TaskStatus._
 import models.maintain.Tasks
 import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.mockito.{Matchers, Mockito}
+import org.scalacheck.Arbitrary.arbitrary
 import play.api.Application
 import play.api.http.Status
 import play.api.inject.bind
@@ -472,5 +473,33 @@ class MaintainTaskListControllerSpec extends BaseSpec {
       status(result) mustBe Status.OK
       contentAsJson(result) mustBe Json.toJson(updatedTasks)
     }
+  }
+
+  "invoking POST /maintain/task/update-trust-details" - {
+
+    "must return Ok and the updated tasks" in {
+
+      forAll(arbitrary[TaskStatus.Value]) { taskStatus =>
+
+        reset(service)
+
+        val request = FakeRequest(POST, routes.MaintainTaskListController.updateTrustDetailsStatus("identifier").url)
+          .withBody(Json.toJson(taskStatus))
+
+        val tasksBeforeUpdate = Tasks()
+
+        val tasksAfterUpdate = tasksBeforeUpdate.copy(trustDetails = taskStatus)
+
+        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+
+        val result = route(application, request).value
+
+        status(result) mustBe Status.OK
+        contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
+
+        verify(service).modifyTask(any(), any(), Matchers.eq(TrustDetails), Matchers.eq(taskStatus))
+      }
+    }
+
   }
 }

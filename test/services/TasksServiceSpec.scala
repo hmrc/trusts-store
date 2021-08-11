@@ -17,7 +17,7 @@
 package services
 
 import base.BaseSpec
-import models.Status._
+import models.TaskStatus._
 import models.maintain.{TaskCache, Tasks}
 import org.mockito.Matchers.{eq => mEq, _}
 import org.mockito.Mockito

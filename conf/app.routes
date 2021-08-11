@@ -6,6 +6,9 @@ POST       /claim             controllers.ClaimedTrustsController.store()
 GET        /maintain/tasks/:identifier                      controllers.MaintainTaskListController.get(identifier: String)
 POST       /maintain/tasks/:identifier                      controllers.MaintainTaskListController.set(identifier: String)
 DELETE     /maintain/tasks/:identifier                      controllers.MaintainTaskListController.reset(identifier: String)
+
+##########
+# To be deleted
 POST       /maintain/tasks/trust-details/:identifier        controllers.MaintainTaskListController.completeTrustDetails(identifier: String)
 POST       /maintain/tasks/assets/:identifier               controllers.MaintainTaskListController.completeAssets(identifier: String)
 POST       /maintain/tasks/tax-liability/:identifier        controllers.MaintainTaskListController.completeTaxLiability(identifier: String)
@@ -14,8 +17,10 @@ POST       /maintain/tasks/beneficiaries/:identifier        controllers.Maintain
 POST       /maintain/tasks/protectors/:identifier           controllers.MaintainTaskListController.completeProtectors(identifier: String)
 POST       /maintain/tasks/settlors/:identifier             controllers.MaintainTaskListController.completeSettlors(identifier: String)
 POST       /maintain/tasks/others/:identifier               controllers.MaintainTaskListController.completeOtherIndividuals(identifier: String)
-
 POST       /maintain/tasks/reset/assets/:identifier               controllers.MaintainTaskListController.inProgressAssets(identifier: String)
+##########
+
+POST       /maintain/tasks/update-trust-details/:identifier         controllers.MaintainTaskListController.updateTrustDetailsStatus(identifier: String)
 
 GET        /features/:flagName             controllers.FeatureFlagController.get(flagName: FeatureFlagName)
 PUT        /features/:flagName             controllers.FeatureFlagController.put(flagName: FeatureFlagName)

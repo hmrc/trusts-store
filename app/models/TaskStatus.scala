@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.{Format, JsPath, Reads, Writes}
 
-object Status extends Enumeration {
+object TaskStatus extends Enumeration {
 
   type Status = Value
 
@@ -31,7 +31,7 @@ object Status extends Enumeration {
   implicit val reads: Reads[Value] = JsPath.read[Boolean].map {
     case true => Completed
     case false => InProgress
-  } orElse Reads.enumNameReads(Status)
+  } orElse Reads.enumNameReads(TaskStatus)
 
   implicit val writes: Writes[Value] = Writes.enumNameWrites
   implicit val formats: Format[Value] = Format.apply(reads, writes)

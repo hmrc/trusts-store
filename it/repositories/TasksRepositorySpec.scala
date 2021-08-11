@@ -1,6 +1,6 @@
 package repositories
 
-import models.Status._
+import models.TaskStatus._
 import models.maintain.Tasks
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures

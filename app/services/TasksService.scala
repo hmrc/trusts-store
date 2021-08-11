@@ -16,7 +16,7 @@
 
 package services
 
-import models.Status.Status
+import models.TaskStatus.Status
 import models.Task
 import models.Task.Task
 import models.maintain.Tasks

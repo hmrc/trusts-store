@@ -17,7 +17,7 @@
 package models.maintain
 
 import base.BaseSpec
-import models.Status._
+import models.TaskStatus._
 import play.api.libs.json.Json
 
 class TasksSpec extends BaseSpec {
