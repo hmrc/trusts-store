@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-package models
+package services
 
-import play.api.libs.json._
+import repositories.{RegisterTasksRepository, TasksRepository}
 
-import java.time.{Instant, LocalDateTime, ZoneOffset}
+import javax.inject.{Inject, Singleton}
 
-trait MongoDateTimeFormats {
+@Singleton()
+class RegisterTasksService @Inject()(registerTasksRepository: RegisterTasksRepository) extends TasksService {
 
-  implicit val localDateTimeRead: Reads[LocalDateTime] =
-    (__ \ "$date").read[Long].map {
-      millis =>
-        LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.UTC)
-    }
+  override val tasksRepository: TasksRepository = registerTasksRepository
 
-  implicit val localDateTimeWrite: Writes[LocalDateTime] = new Writes[LocalDateTime] {
-    def writes(dateTime: LocalDateTime): JsValue = Json.obj(
-      "$date" -> dateTime.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
-    )
-  }
 }
-
-object MongoDateTimeFormats extends MongoDateTimeFormats

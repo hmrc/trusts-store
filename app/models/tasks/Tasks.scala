@@ -14,30 +14,31 @@
  * limitations under the License.
  */
 
-package models.maintain
+package models.tasks
 
+import models.tasks.TaskStatus.{NotStarted, TaskStatus}
 import play.api.libs.json.{Format, Json}
 
-case class Tasks(trustDetails: Boolean,
-                 assets: Boolean,
-                 taxLiability: Boolean,
-                 trustees: Boolean,
-                 beneficiaries: Boolean,
-                 settlors: Boolean,
-                 protectors: Boolean,
-                 other: Boolean)
+case class Tasks(trustDetails: TaskStatus,
+                 assets: TaskStatus,
+                 taxLiability: TaskStatus,
+                 trustees: TaskStatus,
+                 beneficiaries: TaskStatus,
+                 settlors: TaskStatus,
+                 protectors: TaskStatus,
+                 other: TaskStatus)
 
 object Tasks {
 
   def apply(): Tasks = Tasks(
-    trustDetails = false,
-    assets = false,
-    taxLiability = false,
-    trustees = false,
-    beneficiaries = false,
-    settlors = false,
-    protectors = false,
-    other = false
+    trustDetails = NotStarted,
+    assets = NotStarted,
+    taxLiability = NotStarted,
+    trustees = NotStarted,
+    beneficiaries = NotStarted,
+    settlors = NotStarted,
+    protectors = NotStarted,
+    other = NotStarted
   )
 
   implicit val formats: Format[Tasks] = Json.format[Tasks]

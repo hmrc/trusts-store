@@ -16,8 +16,7 @@
 
 package repositories
 
-import javax.inject.{Inject, Singleton}
-import models.FeatureFlag
+import models.flags.FeatureFlag
 import play.api.Configuration
 import play.api.libs.json.{JsObject, Json, OWrites}
 import play.modules.reactivemongo.ReactiveMongoApi
@@ -25,6 +24,7 @@ import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.IndexType
 import reactivemongo.play.json.collection.JSONCollection
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
@@ -35,7 +35,7 @@ class FeaturesRepository @Inject()(val mongo: ReactiveMongoApi,
 
   implicit final val jsObjectWrites: OWrites[JsObject] = OWrites[JsObject](identity)
 
-  override val collectionName: String = "features"
+  override def collectionName: String = "features"
 
   private val featureFlagDocumentId = "feature-flags"
 

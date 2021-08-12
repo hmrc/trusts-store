@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package models
+package models.repository
 
 import base.BaseSpec
 import play.api.libs.json.Json
 import reactivemongo.api.commands.WriteError
-import models.repository.StorageErrors
 
 class StorageErrorsSpec extends BaseSpec {
 

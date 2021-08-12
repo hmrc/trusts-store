@@ -16,13 +16,13 @@
 
 package services
 
-import javax.inject.Inject
 import config.AppConfig
-import models.{FeatureFlag, FeatureFlagName}
-import models.FeatureFlag.Disabled
-import models.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
+import models.flags.FeatureFlag.Disabled
+import models.flags.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
+import models.flags.{FeatureFlag, FeatureFlagName}
 import repositories.FeaturesRepository
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class FeatureFlagService @Inject()(

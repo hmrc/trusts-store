@@ -16,19 +16,18 @@
 
 package services
 
-import models.Operation.Operation
-import models.Task
-import models.Task.Task
-import models.maintain.Tasks
+import models.tasks.Task.Task
+import models.tasks.TaskStatus.TaskStatus
+import models.tasks.{Task, Tasks}
 import play.api.libs.json.{JsValue, Json}
 import repositories.TasksRepository
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-@Singleton()
-class TasksService @Inject()(tasksRepository: TasksRepository)  {
+trait TasksService {
+
+  val tasksRepository: TasksRepository
 
   def get(internalId: String, identifier: String): Future[Tasks] = {
     tasksRepository.get(internalId, identifier) map {
@@ -45,19 +44,19 @@ class TasksService @Inject()(tasksRepository: TasksRepository)  {
     tasksRepository.reset(internalId, identifier)
   }
 
-  def modifyTask(internalId: String, identifier: String, update: Task, operation: Operation): Future[JsValue] = {
+  def modifyTask(internalId: String, identifier: String, update: Task, taskStatus: TaskStatus): Future[JsValue] = {
     for {
       tasks <- get(internalId, identifier)
       updatedTasks <- Future.successful {
         update match {
-          case Task.TrustDetails => tasks.copy(trustDetails = operation.value)
-          case Task.Assets => tasks.copy(assets = operation.value)
-          case Task.TaxLiability => tasks.copy(taxLiability = operation.value)
-          case Task.Trustees => tasks.copy(trustees = operation.value)
-          case Task.Beneficiaries => tasks.copy(beneficiaries = operation.value)
-          case Task.Protectors => tasks.copy(protectors = operation.value)
-          case Task.Settlors => tasks.copy(settlors = operation.value)
-          case Task.OtherIndividuals => tasks.copy(other = operation.value)
+          case Task.TrustDetails => tasks.copy(trustDetails = taskStatus)
+          case Task.Assets => tasks.copy(assets = taskStatus)
+          case Task.TaxLiability => tasks.copy(taxLiability = taskStatus)
+          case Task.Trustees => tasks.copy(trustees = taskStatus)
+          case Task.Beneficiaries => tasks.copy(beneficiaries = taskStatus)
+          case Task.Protectors => tasks.copy(protectors = taskStatus)
+          case Task.Settlors => tasks.copy(settlors = taskStatus)
+          case Task.OtherIndividuals => tasks.copy(other = taskStatus)
         }
       }
       savedTasks <- set(internalId, identifier, updatedTasks)

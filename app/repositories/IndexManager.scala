@@ -16,19 +16,19 @@
 
 package repositories
 
+import play.api.{Configuration, Logging}
 import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.play.json.collection.JSONCollection
-import play.api.{Configuration, Logging}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait IndexManager extends Logging {
 
-  val collectionName: String
+  def collectionName: String
 
   val mongo: ReactiveMongoApi
 
-  val config : Configuration
+  val config: Configuration
 
   implicit val ec: ExecutionContext
 

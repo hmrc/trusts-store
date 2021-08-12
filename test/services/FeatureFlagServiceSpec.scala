@@ -18,9 +18,9 @@ package services
 
 import base.BaseSpec
 import config.AppConfig
-import models.FeatureFlag
-import models.FeatureFlag.{Disabled, Enabled}
-import models.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
+import models.flags.FeatureFlag
+import models.flags.FeatureFlag.{Disabled, Enabled}
+import models.flags.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import play.api.Application
