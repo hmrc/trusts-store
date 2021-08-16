@@ -11,7 +11,7 @@ import org.scalatest.freespec.AnyFreeSpec
 
 import scala.concurrent.ExecutionContext.Implicits._
 
-class MaintainTasksRepositorySpec extends AnyFreeSpec with MustMatchers
+class MaintainTasksRepositorySpec extends AnyFreeSpec with Matchers
   with ScalaFutures with OptionValues with MongoSuite {
 
   "a maintain tasks repository" - {
