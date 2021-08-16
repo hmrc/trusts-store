@@ -16,28 +16,28 @@
 
 package services
 
-import java.time.LocalDateTime
-
 import base.BaseSpec
+import models.tasks.TaskStatus._
+import models.tasks.{TaskCache, Tasks}
 import org.mockito.ArgumentMatchers.{eq => mEq, _}
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import play.api.Application
 import play.api.inject.bind
-import models.maintain.{Tasks, TaskCache}
-import repositories.TasksRepository
+import repositories.MaintainTasksRepository
 
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
-class TasksServiceSpec extends BaseSpec {
+class MaintainTasksServiceSpec extends BaseSpec {
 
-  private val repository = mock[TasksRepository]
+  private val repository = mock[MaintainTasksRepository]
 
   lazy val application: Application = applicationBuilder().overrides(
-    bind[TasksRepository].toInstance(repository)
+    bind[MaintainTasksRepository].toInstance(repository)
   ).build()
 
-  private val service = application.injector.instanceOf[TasksService]
+  private val service = application.injector.instanceOf[MaintainTasksService]
 
   override def beforeEach(): Unit = {
     Mockito.reset(repository)
@@ -79,14 +79,14 @@ class TasksServiceSpec extends BaseSpec {
     "must set an updated Task" in {
 
       val task = Tasks(
-        trustDetails = false,
-        assets = false,
-        taxLiability = false,
-        trustees = true,
-        settlors = true,
-        protectors = false,
-        beneficiaries = false,
-        other = false
+        trustDetails = InProgress,
+        assets = InProgress,
+        taxLiability = InProgress,
+        trustees = Completed,
+        settlors = Completed,
+        protectors = InProgress,
+        beneficiaries = InProgress,
+        other = InProgress
       )
 
       when(repository.set(any(), any(), any())).thenReturn(Future.successful(true))

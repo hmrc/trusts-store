@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package repositories
 
-object Task {
-  sealed trait Task
+import play.api.Configuration
+import play.modules.reactivemongo.ReactiveMongoApi
 
-  case object TrustDetails extends Task
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
-  case object Assets extends Task
+@Singleton()
+class RegisterTasksRepository @Inject()(override val mongo: ReactiveMongoApi,
+                                        override val config: Configuration)
+                                       (override implicit val ec: ExecutionContext) extends TasksRepository {
 
-  case object TaxLiability extends Task
+  override def collectionName: String = "registerTasks"
 
-  case object Trustees extends Task
-
-  case object Beneficiaries extends Task
-
-  case object Settlors extends Task
-
-  case object Protectors extends Task
-
-  case object OtherIndividuals extends Task
+  override val identifierKey: String = "draftId"
 }

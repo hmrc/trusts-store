@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.flags
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._

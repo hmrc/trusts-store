@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package config
+package controllers
 
-import models.flags.FeatureFlagName
-import play.api.Configuration
+import controllers.actions.IdentifierAction
+import play.api.mvc._
+import services.RegisterTasksService
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
-
-  def getFeature(flagName: FeatureFlagName): Option[Boolean] =
-    config.getOptional[Boolean](s"features.${flagName.asString}")
-}
+@Singleton()
+class RegisterTaskListController @Inject()(cc: ControllerComponents,
+																					 override val tasksService: RegisterTasksService,
+																					 override val authAction: IdentifierAction)
+                                          (override implicit val ec: ExecutionContext)
+	extends TaskListController(cc)

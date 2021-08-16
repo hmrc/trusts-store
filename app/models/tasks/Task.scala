@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package models
+package models.tasks
 
-object Operation {
-  sealed trait Operation {
-    val value : Boolean = this match {
-      case Complete => true
-      case InProgress => false
-    }
-  }
+object Task {
+  sealed trait Task
 
-  case object Complete extends Operation
-  case object InProgress extends Operation
+  case object TrustDetails extends Task
 
+  case object Assets extends Task
+
+  case object TaxLiability extends Task
+
+  case object Trustees extends Task
+
+  case object Beneficiaries extends Task
+
+  case object Settlors extends Task
+
+  case object Protectors extends Task
+
+  case object OtherIndividuals extends Task
 }

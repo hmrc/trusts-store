@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package repositories
 
-import play.api.libs.json._
+import play.api.Configuration
+import play.modules.reactivemongo.ReactiveMongoApi
 
-import java.time.{Instant, LocalDateTime, ZoneOffset}
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
-trait MongoDateTimeFormats {
+@Singleton()
+class MaintainTasksRepository @Inject()(override val mongo: ReactiveMongoApi,
+                                        override val config: Configuration)
+                                       (override implicit val ec: ExecutionContext) extends TasksRepository {
 
-  implicit val localDateTimeRead: Reads[LocalDateTime] =
-    (__ \ "$date").read[Long].map {
-      millis =>
-        LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.UTC)
-    }
+  override def collectionName: String = "maintainTasks"
 
-  implicit val localDateTimeWrite: Writes[LocalDateTime] = new Writes[LocalDateTime] {
-    def writes(dateTime: LocalDateTime): JsValue = Json.obj(
-      "$date" -> dateTime.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
-    )
-  }
+  override val identifierKey: String = "id"
 }
-
-object MongoDateTimeFormats extends MongoDateTimeFormats

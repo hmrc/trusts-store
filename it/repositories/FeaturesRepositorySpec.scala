@@ -3,8 +3,8 @@ package repositories
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.OptionValues
 import play.api.test.Helpers._
-import models.FeatureFlag.Enabled
-import models.FeatureFlagName.`5MLD`
+import models.flags.FeatureFlag.Enabled
+import models.flags.FeatureFlagName.`5MLD`
 import org.scalatest.matchers.must.Matchers
 import suite.MongoSuite
 import org.scalatest.freespec.AnyFreeSpec

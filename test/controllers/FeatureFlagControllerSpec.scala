@@ -17,10 +17,12 @@
 package controllers
 
 import base.BaseSpec
-import models.FeatureFlag
-import models.FeatureFlag.Enabled
-import models.FeatureFlagName.`5MLD`
+import models.flags.FeatureFlag
+import models.flags.FeatureFlag.Enabled
+import models.flags.FeatureFlagName.`5MLD`
 import org.mockito.ArgumentMatchers.any
+import models.flags.FeatureFlag.Enabled
+import models.flags.FeatureFlagName.`5MLD`
 import org.mockito.Mockito.{times, verify, when}
 import play.api.inject.bind
 import play.api.libs.json.{JsBoolean, JsString, Json}

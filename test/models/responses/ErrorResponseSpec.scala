@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package models
+package models.responses
 
 import base.BaseSpec
+import models.claim_a_trust.responses.ClaimedTrustResponse._
+import models.repository.StorageErrors
+import models.responses.ErrorResponse._
 import play.api.http.Status._
 import play.api.libs.json.Json
 import reactivemongo.api.commands.WriteError
-import models.repository.StorageErrors
-import models.responses.ErrorResponse
-import models.responses.ErrorResponse._
-import models.claim_a_trust.responses.ClaimedTrustResponse._
 
 class ErrorResponseSpec extends BaseSpec {
 

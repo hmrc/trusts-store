@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-package models
+package generators
 
-import play.api.libs.json._
+import models.tasks.TaskStatus
+import models.tasks.TaskStatus.TaskStatus
+import org.scalacheck.{Arbitrary, Gen}
 
-import java.time.{Instant, LocalDateTime, ZoneOffset}
+trait ModelGenerators {
 
-trait MongoDateTimeFormats {
-
-  implicit val localDateTimeRead: Reads[LocalDateTime] =
-    (__ \ "$date").read[Long].map {
-      millis =>
-        LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.UTC)
-    }
-
-  implicit val localDateTimeWrite: Writes[LocalDateTime] = new Writes[LocalDateTime] {
-    def writes(dateTime: LocalDateTime): JsValue = Json.obj(
-      "$date" -> dateTime.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
-    )
+  implicit lazy val arbitraryTaskStatus: Arbitrary[TaskStatus] = Arbitrary {
+    Gen.oneOf(TaskStatus.values)
   }
-}
 
-object MongoDateTimeFormats extends MongoDateTimeFormats
+}

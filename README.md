@@ -103,6 +103,62 @@ and `managedByAgent` is derived from answers in the **claim a trust** journey
 ]
 ```
 
+##  `GET /register/tasks/{identifier}` and `GET /maintain/tasks/{identifier}`
+
+### Successful
+Successful requests will contain the status of the tasks relevant to a given identifier. In registration this is the draft ID, and in maintain this is the identifier of the trust (i.e. the UTR or URN). The status can be any of the following:
+```scala
+Completed // the task is completed
+InProgress // the task has been started but not finished
+NotStarted // the task has not been started
+CannotStartYet // the task cannot be started yet as other tasks must be finished first
+NoActionNeeded // the task does not require completion in order for the user to be able to submit a declaration
+```
+If a document does not exist for the given identifier, a set of tasks with a default state of `NotStartedYet` are returned.
+
+### Unsuccessful
+A `401 Unauthorised` response is returned for a request with invalid authentication.
+
+##  `POST /register/tasks/{identifier}` and `POST /maintain/tasks/{identifier}`
+
+### Successful
+Successful requests will contain the status of the updated tasks relevant to a given identifier. In registration this is the draft ID, and in maintain this is the identifier of the trust (i.e. the UTR or URN). The status can be any of the following:
+```scala
+Completed // the task is completed
+InProgress // the task has been started but not finished
+NotStarted // the task has not been started
+CannotStartYet // the task cannot be started yet as other tasks must be finished first
+NoActionNeeded // the task does not require completion in order for the user to be able to submit a declaration
+```
+
+### Unsuccessful
+* A `400 Bad Request` response is returned for a request with a body that cannot be validated as an instance of `Tasks`.
+* A `401 Unauthorised` response is returned for a request with invalid authentication.
+
+##  `DELETE /register/tasks/{identifier}` and `DELETE /maintain/tasks/{identifier}`
+
+### Successful
+Successful requests will reset the status of all tasks to `NotStartedYet` relevant to a given identifier. In registration this is the draft ID, and in maintain this is the identifier of the trust (i.e. the UTR or URN).
+
+### Unsuccessful
+A `401 Unauthorised` response is returned for a request with invalid authentication.
+
+##  `POST /register/tasks/update-{task}/{identifier}` and `POST /maintain/tasks/update-{task}/{identifier}`
+
+### Successful
+Successful requests will contain the status of the updated task relevant to a given identifier. In registration this is the draft ID, and in maintain this is the identifier of the trust (i.e. the UTR or URN). The status can be any of the following:
+```scala
+Completed // the task is completed
+InProgress // the task has been started but not finished
+NotStarted // the task has not been started
+CannotStartYet // the task cannot be started yet as other tasks must be finished first
+NoActionNeeded // the task does not require completion in order for the user to be able to submit a declaration
+```
+
+### Unsuccessful
+* A `400 Bad Request` response is returned for a request with a body that cannot be validated as an instance of `TaskStatus`.
+* A `401 Unauthorised` response is returned for a request with invalid authentication.
+
 # Running the Service
 * Start the service locally with `sbt run` in the root directory
 * The service can be started via service manager with `sm --start TRUSTS_STORE` or as part of the `TRUSTS_ALL` profile

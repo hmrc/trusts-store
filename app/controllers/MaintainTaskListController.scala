@@ -17,92 +17,72 @@
 package controllers
 
 import controllers.actions.IdentifierAction
-import models.Operation.{Complete, InProgress}
-import models.Task
-import models.maintain.Tasks
-import play.api.libs.json._
+import models.tasks.Task
+import models.tasks.TaskStatus.{Completed, InProgress}
 import play.api.mvc._
-import services.TasksService
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import services.MaintainTasksService
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
-
-
+import scala.concurrent.ExecutionContext
 
 @Singleton()
-class MaintainTaskListController @Inject()(
-	cc: ControllerComponents,
-	service: TasksService,
-	authAction: IdentifierAction)(implicit ec: ExecutionContext) extends BackendController(cc) {
+class MaintainTaskListController @Inject()(cc: ControllerComponents,
+																					 override val tasksService: MaintainTasksService,
+																					 override val authAction: IdentifierAction)
+																					(override implicit val ec: ExecutionContext)
+	extends TaskListController(cc) {
 
-	def get(identifier: String): Action[AnyContent] = authAction.async {
-		request =>
-
-			service.get(request.internalId, identifier).map {
-				task =>
-					Ok(Json.toJson(task))
-			}
-	}
-
-	def set(identifier: String): Action[JsValue] = authAction.async(parse.json) {
-		request =>
-			request.body.validate[Tasks] match {
-				case JsSuccess(tasks, _) =>
-					service.set(request.internalId, identifier, tasks).map {
-						updated => Ok(Json.toJson(updated))
-					}
-				case _ => Future.successful(BadRequest)
-			}
-	}
-
-	def reset(identifier: String): Action[AnyContent] = authAction.async {
-		request =>
-			service.reset(request.internalId, identifier).map(_ => Ok)
-	}
-
+	@Deprecated
 	def completeTrustDetails(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.TrustDetails, Complete).map(Ok(_))
+			tasksService.modifyTask(request.internalId, identifier, Task.TrustDetails, Completed).map(Ok(_))
 	}
 
+	@Deprecated
 	def completeAssets(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.Assets, Complete).map(Ok(_))
+			tasksService.modifyTask(request.internalId, identifier, Task.Assets, Completed).map(Ok(_))
 	}
 
+	@Deprecated
 	def completeTaxLiability(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.TaxLiability, Complete).map(Ok(_))
+			tasksService.modifyTask(request.internalId, identifier, Task.TaxLiability, Completed).map(Ok(_))
 	}
 
+	@Deprecated
 	def completeTrustees(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.Trustees, Complete).map(Ok(_))
+			tasksService.modifyTask(request.internalId, identifier, Task.Trustees, Completed).map(Ok(_))
 	}
 
+	@Deprecated
 	def completeBeneficiaries(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.Beneficiaries, Complete).map(Ok(_))
+			tasksService.modifyTask(request.internalId, identifier, Task.Beneficiaries, Completed).map(Ok(_))
 	}
 
+	@Deprecated
 	def completeSettlors(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.Settlors, Complete).map(Ok(_))
+			tasksService.modifyTask(request.internalId, identifier, Task.Settlors, Completed).map(Ok(_))
 	}
 
+	@Deprecated
 	def completeProtectors(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.Protectors, Complete).map(Ok(_))
+			tasksService.modifyTask(request.internalId, identifier, Task.Protectors, Completed).map(Ok(_))
 	}
 
+	@Deprecated
 	def completeOtherIndividuals(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.OtherIndividuals, Complete).map(Ok(_))
+			tasksService.modifyTask(request.internalId, identifier, Task.OtherIndividuals, Completed).map(Ok(_))
 	}
 
+	@Deprecated
 	def inProgressAssets(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			service.modifyTask(request.internalId, identifier, Task.Assets, InProgress).map(Ok(_))
+			tasksService.modifyTask(request.internalId, identifier, Task.Assets, InProgress).map(Ok(_))
 	}
 }

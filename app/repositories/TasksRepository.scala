@@ -16,38 +16,33 @@
 
 package repositories
 
-import models.maintain.{Tasks, TaskCache}
-import play.api.Configuration
+import models.tasks.{TaskCache, Tasks}
 import play.api.libs.json.{JsObject, Json, OWrites}
-import play.modules.reactivemongo.ReactiveMongoApi
 import reactivemongo.api.WriteConcern
 import reactivemongo.api.indexes.IndexType
 import reactivemongo.play.json.collection.JSONCollection
 
 import java.sql.Timestamp
 import java.time.LocalDateTime
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-@Singleton()
-class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
-                                override val config: Configuration)
-                               (override implicit val ec: ExecutionContext) extends IndexManager {
+trait TasksRepository extends IndexManager {
 
-  implicit final val jsObjectWrites: OWrites[JsObject] = OWrites[JsObject](identity)
+  implicit final lazy val jsObjectWrites: OWrites[JsObject] = OWrites[JsObject](identity)
 
-  override val collectionName: String = "maintainTasks"
+  lazy val expireAfterSeconds: Int = config.get[Int](s"mongodb.$collectionName.expireAfterSeconds")
 
-  private val expireAfterSeconds = config.get[Int]("mongodb.maintainTasks.expireAfterSeconds")
+  private val internalIdKey: String = "internalId"
+  val identifierKey: String
 
-  private val lastUpdatedIndex = MongoIndex(
+  private lazy val lastUpdatedIndex = MongoIndex(
     key = Seq("lastUpdated" -> IndexType.Ascending),
     name = "tasks-last-updated-index",
     expireAfterSeconds = Some(expireAfterSeconds)
   )
 
-  private val internalIdAndUtrIndex = MongoIndex(
-    key = Seq("internalId" -> IndexType.Ascending, "id" -> IndexType.Ascending),
+  private lazy val internalIdAndIdentifierIndex = MongoIndex(
+    key = Seq(internalIdKey -> IndexType.Ascending, identifierKey -> IndexType.Ascending),
     name = "internal-id-and-identifier-compound-index"
   )
 
@@ -57,13 +52,13 @@ class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
   } yield col
 
   private def ensureIndexes: Future[Boolean] = for {
-    collection                           <- mongo.database.map(_.collection[JSONCollection](collectionName))
-    createdLastUpdatedIndex              <- collection.indexesManager.ensure(lastUpdatedIndex)
-    internalIdAndIdentifierCompoundIndex <- collection.indexesManager.ensure(internalIdAndUtrIndex)
+    collection <- mongo.database.map(_.collection[JSONCollection](collectionName))
+    createdLastUpdatedIndex <- collection.indexesManager.ensure(lastUpdatedIndex)
+    internalIdAndIdentifierCompoundIndex <- collection.indexesManager.ensure(internalIdAndIdentifierIndex)
   } yield createdLastUpdatedIndex && internalIdAndIdentifierCompoundIndex
 
   private def selector(internalId: String, identifier: String): JsObject =
-    Json.obj("internalId" -> internalId, "id" -> identifier)
+    Json.obj(internalIdKey -> internalId, identifierKey -> identifier)
 
   def get(internalId: String, identifier: String): Future[Option[TaskCache]] = {
     val modifier = Json.obj(
@@ -76,7 +71,8 @@ class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
 
     collection
       .flatMap(
-        _.findAndUpdate(selector = selector(internalId, identifier),
+        _.findAndUpdate(
+          selector = selector(internalId, identifier),
           update = modifier,
           fetchNewObject = true,
           upsert = false,
@@ -86,8 +82,8 @@ class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
           writeConcern = WriteConcern.Default,
           maxTime = None,
           collation = None,
-          arrayFilters = Nil)
-        .map(_.result[TaskCache])
+          arrayFilters = Nil
+        ).map(_.result[TaskCache])
       )
   }
 
@@ -109,4 +105,5 @@ class TasksRepository @Inject()(override val mongo: ReactiveMongoApi,
   def reset(internalId: String, identifier: String): Future[Boolean] = {
     set(internalId, identifier, Tasks())
   }
+
 }

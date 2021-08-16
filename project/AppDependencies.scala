@@ -1,6 +1,5 @@
 import play.core.PlayVersion.current
 import play.sbt.PlayImport._
-import sbt.Keys.libraryDependencies
 import sbt._
 
 object AppDependencies {
@@ -19,6 +18,7 @@ object AppDependencies {
     "uk.gov.hmrc"             %% "service-integration-test" % "1.1.0-play-28"         % "test, it",
     "com.github.tomakehurst"  %  "wiremock-standalone"      % "2.27.2"                % "test, it",
     "org.scalatestplus.play"  %% "scalatestplus-play"       % "4.0.3"                 % "test, it",
+    "org.scalatestplus"       %% "scalacheck-1-15"          % "3.2.9.0"               % "test",
     "com.vladsch.flexmark"    % "flexmark-all"              % "0.35.10"               % "test, it",
     "org.mockito"             %  "mockito-core"             % "1.10.19"               % "test, it"
   )

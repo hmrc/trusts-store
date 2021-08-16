@@ -16,18 +16,17 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
-import play.api.libs.json.{JsValue, Json}
-import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import controllers.actions.IdentifierAction
+import models.claim_a_trust.responses.ClaimedTrustResponse._
 import models.claim_a_trust.responses._
 import models.responses.ErrorResponse
-import services.ClaimedTrustsService
-import models.claim_a_trust.responses.ClaimedTrustResponse._
 import models.responses.ErrorResponse._
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc._
+import services.ClaimedTrustsService
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton()

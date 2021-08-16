@@ -22,7 +22,7 @@ lazy val microservice = Project(appName, file("."))
     inConfig(IntegrationTest)(itSettings),
     publishingSettings ++ scoverageSettings,
     resolvers += Resolver.jcenterRepo,
-    RoutesKeys.routesImport += "models.FeatureFlagName",
+    RoutesKeys.routesImport += "models.flags.FeatureFlagName",
     PlayKeys.playDefaultPort := 9783,
     majorVersion := 0,
     scalaVersion := "2.12.12",
