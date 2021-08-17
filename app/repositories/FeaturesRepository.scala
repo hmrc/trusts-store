@@ -28,8 +28,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class FeaturesRepository @Inject()(val mongo: ReactiveMongoApi,
-                                   val config: Configuration)
+class FeaturesRepository @Inject()(override val mongo: ReactiveMongoApi,
+                                   override val config: Configuration)
                                   (implicit val ec: ExecutionContext)
   extends IndexManager {
 

@@ -33,9 +33,9 @@ class FeaturesRepositorySpec
 
           val data = Seq(Enabled(`5MLD`))
 
-          whenReady(repo.setFeatureFlags(data).flatMap(_ => repo.getFeatureFlags)) { result =>
-            result mustBe data
-          }
+          val result = repo.setFeatureFlags(data).flatMap(_ => repo.getFeatureFlags).futureValue
+
+          result mustBe data
         }
       }
     }
