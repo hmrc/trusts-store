@@ -5,12 +5,14 @@ import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers._
 import suite.MongoSuite
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.freespec.AnyFreeSpec
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.concurrent.ExecutionContext.Implicits._
 
-class ClaimedTrustsRepositorySpec extends FreeSpec with MustMatchers
+class ClaimedTrustsRepositorySpec extends AnyFreeSpec with Matchers
   with ScalaFutures with OptionValues with Inside with MongoSuite with EitherValues {
 
   "a claimed trusts repository" - {

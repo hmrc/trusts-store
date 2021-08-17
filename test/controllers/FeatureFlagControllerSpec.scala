@@ -17,9 +17,12 @@
 package controllers
 
 import base.BaseSpec
+import models.flags.FeatureFlag
 import models.flags.FeatureFlag.Enabled
 import models.flags.FeatureFlagName.`5MLD`
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
+import models.flags.FeatureFlag.Enabled
+import models.flags.FeatureFlagName.`5MLD`
 import org.mockito.Mockito.{times, verify, when}
 import play.api.inject.bind
 import play.api.libs.json.{JsBoolean, JsString, Json}
@@ -47,7 +50,7 @@ class FeatureFlagControllerSpec extends BaseSpec {
           val result = route(app, request).value
 
           status(result) mustEqual OK
-          contentAsJson(result) mustEqual Json.toJson(Enabled(`5MLD`))
+          contentAsJson(result) mustEqual Json.toJson[FeatureFlag](Enabled(`5MLD`))
         }
       }
 
@@ -67,7 +70,7 @@ class FeatureFlagControllerSpec extends BaseSpec {
           val result = route(app, request).value
 
           status(result) mustEqual OK
-          contentAsJson(result) mustEqual Json.toJson(Enabled(`5MLD`))
+          contentAsJson(result) mustEqual Json.toJson[FeatureFlag](Enabled(`5MLD`))
         }
       }
     }

@@ -1,17 +1,20 @@
 package repositories
 
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.OptionValues
+import play.api.test.Helpers._
 import models.flags.FeatureFlag.Enabled
 import models.flags.FeatureFlagName.`5MLD`
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
-import play.api.test.Helpers._
+import org.scalatest.matchers.must.Matchers
 import suite.MongoSuite
+import org.scalatest.freespec.AnyFreeSpec
+
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class FeaturesRepositorySpec
-  extends FreeSpec
-    with MustMatchers
+  extends AnyFreeSpec
+    with Matchers
     with ScalaFutures
     with OptionValues
     with MongoSuite
@@ -30,9 +33,9 @@ class FeaturesRepositorySpec
 
           val data = Seq(Enabled(`5MLD`))
 
-          whenReady(repo.setFeatureFlags(data).flatMap(_ => repo.getFeatureFlags)) { result =>
-            result mustBe data
-          }
+          val result = repo.setFeatureFlags(data).flatMap(_ => repo.getFeatureFlags).futureValue
+
+          result mustBe data
         }
       }
     }

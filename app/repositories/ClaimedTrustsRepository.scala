@@ -29,8 +29,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class ClaimedTrustsRepository @Inject()(override val mongo: ReactiveMongoApi,
-                                        override val config: Configuration)
+class ClaimedTrustsRepository @Inject()(val mongo: ReactiveMongoApi,
+                                        val config: Configuration)
                                        (override implicit val ec: ExecutionContext)
   extends IndexManager {
 

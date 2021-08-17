@@ -19,9 +19,9 @@ package controllers
 import base.BaseSpec
 import models.tasks.TaskStatus._
 import models.tasks.{Task, Tasks}
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
-import org.mockito.{Matchers, Mockito}
+import org.mockito.{ArgumentMatchers, Matchers, Mockito}
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.Application
 import play.api.http.Status
@@ -146,7 +146,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), Matchers.eq(Task.TrustDetails), Matchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.TrustDetails), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -184,7 +184,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), Matchers.eq(Task.Assets), Matchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.Assets), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -222,7 +222,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), Matchers.eq(Task.TaxLiability), Matchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.TaxLiability), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -260,7 +260,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), Matchers.eq(Task.Trustees), Matchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.Trustees), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -298,7 +298,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), Matchers.eq(Task.Beneficiaries), Matchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.Beneficiaries), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -336,7 +336,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), Matchers.eq(Task.Settlors), Matchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.Settlors), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -374,7 +374,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), Matchers.eq(Task.Protectors), Matchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.Protectors), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -412,7 +412,7 @@ class RegisterTaskListControllerSpec extends BaseSpec {
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), Matchers.eq(Task.OtherIndividuals), Matchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.OtherIndividuals), ArgumentMatchers.eq(taskStatus))
       }
     }
 

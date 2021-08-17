@@ -17,10 +17,10 @@
 package services
 
 import base.BaseSpec
+import org.mockito.ArgumentMatchers._
 import models.claim_a_trust.TrustClaim
 import models.claim_a_trust.responses._
 import models.repository.StorageErrors
-import org.mockito.Matchers._
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import play.api.Application

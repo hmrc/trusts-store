@@ -19,7 +19,7 @@ package services
 import base.BaseSpec
 import models.tasks.TaskStatus._
 import models.tasks.{TaskCache, Tasks}
-import org.mockito.Matchers.{eq => mEq, _}
+import org.mockito.ArgumentMatchers.{eq => mEq, _}
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import play.api.Application

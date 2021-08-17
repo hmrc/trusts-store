@@ -21,8 +21,9 @@ import controllers.actions.{FakeIdentifierAction, IdentifierAction}
 import generators.ModelGenerators
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.matchers.must.Matchers
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.http.MimeTypes
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -35,7 +36,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 class BaseSpec extends FreeSpec
   with GuiceOneAppPerSuite
-  with MustMatchers
+  with Matchers
   with MockitoSugar
   with OptionValues
   with EitherValues
