@@ -73,10 +73,11 @@ class FeaturesRepository @Inject()(override val mongo: ReactiveMongoApi,
 
     collection.flatMap {
       _.update(ordered = false)
-        .one(selector, modifier, upsert = true).map {
-        lastError: WriteResult =>
-          lastError.ok
-      }
+        .one(selector, modifier, upsert = true)
+        .map {
+          lastError: WriteResult =>
+            lastError.ok
+        }
     }
   }
 }

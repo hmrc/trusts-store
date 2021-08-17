@@ -23,7 +23,7 @@ object AppDependencies {
     "org.mockito"             %  "mockito-core"             % "1.10.19"               % "test, it"
   )
 
-  val akkaVersion = "2.6.7"
+  val akkaVersion = "2.6.15"
   val akkaHttpVersion = "10.1.12"
 
   val overrides = Seq(
