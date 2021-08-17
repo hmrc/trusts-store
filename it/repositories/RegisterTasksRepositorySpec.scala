@@ -19,7 +19,7 @@ class RegisterTasksRepositorySpec extends AnyFreeSpec with Matchers
     val internalId = "Int-328969d0-557e-4559-96ba-074d0597107e"
     val draftId = "draftId"
 
-    "must return None when no cache exists" ignore {
+    "must return None when no cache exists" in {
       running(application) {
 
         getConnection(application).map{ connection =>
