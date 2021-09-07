@@ -17,6 +17,7 @@
 package services
 
 import base.BaseSpec
+import models.tasks.Task.TrustDetails
 import models.tasks.TaskStatus._
 import models.tasks.{TaskCache, Tasks}
 import org.mockito.ArgumentMatchers.{eq => mEq, _}
@@ -24,6 +25,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito._
 import play.api.Application
 import play.api.inject.bind
+import play.api.libs.json.Json
 import repositories.RegisterTasksRepository
 
 import java.time.LocalDateTime
@@ -109,4 +111,46 @@ class RegisterTasksServiceSpec extends BaseSpec {
     }
   }
 
+  "invoking .modifyTask" - {
+
+    "must modify a given Task status" in {
+
+      val startingTasks = Tasks(
+        trustDetails = InProgress,
+        assets = InProgress,
+        taxLiability = InProgress,
+        trustees = InProgress,
+        settlors = InProgress,
+        protectors = InProgress,
+        beneficiaries = InProgress,
+        other = InProgress
+      )
+
+      val updatedTasks = Tasks(
+        trustDetails = Completed,
+        assets = InProgress,
+        taxLiability = InProgress,
+        trustees = InProgress,
+        settlors = InProgress,
+        protectors = InProgress,
+        beneficiaries = InProgress,
+        other = InProgress
+      )
+
+      val taskCache = TaskCache(
+        fakeInternalId,
+        fakeUtr,
+        startingTasks,
+        LocalDateTime.now
+      )
+
+      when(repository.get(mEq(fakeInternalId), mEq(fakeUtr))).thenReturn(Future.successful(Some(taskCache)))
+
+      when(repository.set(any(), any(), any())).thenReturn(Future.successful(true))
+
+      val result = service.modifyTask(fakeInternalId, fakeUtr, TrustDetails, Completed).futureValue
+
+      result mustBe Json.toJson(updatedTasks)
+    }
+  }
 }
