@@ -19,8 +19,8 @@ package services
 import base.BaseSpec
 import config.AppConfig
 import models.flags.FeatureFlag
-import models.flags.FeatureFlag.{Disabled, Enabled}
-import models.flags.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
+import models.flags.FeatureFlag.Enabled
+import models.flags.FeatureFlagName.`5MLD`
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import play.api.Application
@@ -45,10 +45,6 @@ class FeatureFlagServiceSpec extends BaseSpec {
   private val feature = `5MLD`
   private val featureEnabled = FeatureFlag(feature, enabled = true)
   private val featureDisabled = FeatureFlag(feature, enabled = false)
-
-  private val otherFeatures: Seq[FeatureFlag] = Seq(
-    Disabled(NonTaxableAccessCode)
-  )
 
   override def beforeEach(): Unit = {
     reset(mockRepository)
@@ -98,7 +94,7 @@ class FeatureFlagServiceSpec extends BaseSpec {
 
           result mustBe true
 
-          verify(mockRepository).setFeatureFlags(otherFeatures :+ Enabled(feature))
+          verify(mockRepository).setFeatureFlags(Seq(Enabled(feature)))
         }
 
         "when flag does not exist" in {
@@ -109,7 +105,7 @@ class FeatureFlagServiceSpec extends BaseSpec {
 
           result mustBe true
 
-          verify(mockRepository).setFeatureFlags(otherFeatures :+ Enabled(feature))
+          verify(mockRepository).setFeatureFlags(Seq(Enabled(feature)))
         }
       }
     }

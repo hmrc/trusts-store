@@ -18,7 +18,7 @@ package services
 
 import config.AppConfig
 import models.flags.FeatureFlag.Disabled
-import models.flags.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
+import models.flags.FeatureFlagName.`5MLD`
 import models.flags.{FeatureFlag, FeatureFlagName}
 import repositories.FeaturesRepository
 
@@ -53,8 +53,7 @@ class FeatureFlagService @Inject()(
 
     def addDefaultFlagsIfNotPresent(storedFlags: Seq[FeatureFlag]): Seq[FeatureFlag] = {
       val defaultFlags: Seq[FeatureFlag] = Seq(
-        Disabled(`5MLD`),
-        Disabled(NonTaxableAccessCode)
+        Disabled(`5MLD`)
       )
 
       val missingFlags = defaultFlags.filterNot(defaultFlag => storedFlags.exists(_.name == defaultFlag.name))
