@@ -27,5 +27,4 @@ import scala.concurrent.ExecutionContext
 class RegisterTaskListController @Inject()(cc: ControllerComponents,
 																					 override val tasksService: RegisterTasksService,
 																					 override val authAction: IdentifierAction)
-                                          (override implicit val ec: ExecutionContext)
-	extends TaskListController(cc)
+                                          (override implicit val ec: ExecutionContext) extends TaskListController(cc)
