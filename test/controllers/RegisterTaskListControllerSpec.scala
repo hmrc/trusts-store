@@ -21,7 +21,7 @@ import models.tasks.TaskStatus._
 import models.tasks.{Task, Tasks}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
-import org.mockito.{ArgumentMatchers, Matchers, Mockito}
+import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.Application
 import play.api.http.Status

@@ -7,19 +7,6 @@ GET        /maintain/tasks/:identifier                              controllers.
 POST       /maintain/tasks/:identifier                              controllers.MaintainTaskListController.set(identifier: String)
 DELETE     /maintain/tasks/:identifier                              controllers.MaintainTaskListController.reset(identifier: String)
 
-##########
-# TODO - delete once new endpoints are in production
-POST       /maintain/tasks/trust-details/:identifier                controllers.MaintainTaskListController.completeTrustDetails(identifier: String)
-POST       /maintain/tasks/assets/:identifier                       controllers.MaintainTaskListController.completeAssets(identifier: String)
-POST       /maintain/tasks/tax-liability/:identifier                controllers.MaintainTaskListController.completeTaxLiability(identifier: String)
-POST       /maintain/tasks/trustees/:identifier                     controllers.MaintainTaskListController.completeTrustees(identifier: String)
-POST       /maintain/tasks/beneficiaries/:identifier                controllers.MaintainTaskListController.completeBeneficiaries(identifier: String)
-POST       /maintain/tasks/protectors/:identifier                   controllers.MaintainTaskListController.completeProtectors(identifier: String)
-POST       /maintain/tasks/settlors/:identifier                     controllers.MaintainTaskListController.completeSettlors(identifier: String)
-POST       /maintain/tasks/others/:identifier                       controllers.MaintainTaskListController.completeOtherIndividuals(identifier: String)
-POST       /maintain/tasks/reset/assets/:identifier                 controllers.MaintainTaskListController.inProgressAssets(identifier: String)
-##########
-
 POST       /maintain/tasks/update-trust-details/:identifier         controllers.MaintainTaskListController.updateTrustDetailsStatus(identifier: String)
 POST       /maintain/tasks/update-assets/:identifier                controllers.MaintainTaskListController.updateAssetsStatus(identifier: String)
 POST       /maintain/tasks/update-tax-liability/:identifier         controllers.MaintainTaskListController.updateTaxLiabilityStatus(identifier: String)
