@@ -18,7 +18,7 @@ package models.flags
 
 import base.BaseSpec
 import models.flags.FeatureFlag.{Disabled, Enabled}
-import models.flags.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
+import models.flags.FeatureFlagName.NonTaxableAccessCode
 import play.api.libs.json.Json
 
 class FeatureFlagSpec extends BaseSpec {
@@ -26,37 +26,6 @@ class FeatureFlagSpec extends BaseSpec {
   "FeatureFlag" - {
 
     "must de-serialise and serialise" - {
-
-      "5MLD" - {
-
-        "enabled" in {
-          val json = Json.parse(
-            """
-              |{
-              |  "name": "5mld",
-              |  "isEnabled": true
-              |}
-              |""".stripMargin
-          )
-          val result = json.as[FeatureFlag]
-          result mustBe Enabled(`5MLD`)
-          Json.toJson(result) mustBe json
-        }
-
-        "disabled" in {
-          val json = Json.parse(
-            """
-              |{
-              |  "name": "5mld",
-              |  "isEnabled": false
-              |}
-              |""".stripMargin
-          )
-          val result = json.as[FeatureFlag]
-          result mustBe Disabled(`5MLD`)
-          Json.toJson(result) mustBe json
-        }
-      }
 
       "NonTaxableAccessCode" - {
 

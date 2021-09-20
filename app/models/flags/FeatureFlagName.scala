@@ -25,16 +25,11 @@ sealed trait FeatureFlagName {
 
 object FeatureFlagName {
 
-  case object `5MLD` extends FeatureFlagName {
-    override val asString: String = "5mld"
-  }
-
   case object NonTaxableAccessCode extends FeatureFlagName {
     override val asString: String = "non-taxable.access-code"
   }
 
   implicit val reads: Reads[FeatureFlagName] = Reads {
-    case JsString(`5MLD`.asString) => JsSuccess(`5MLD`)
     case JsString(NonTaxableAccessCode.asString) => JsSuccess(NonTaxableAccessCode)
     case _ => JsError("Unrecognised feature flag name")
   }

@@ -19,8 +19,8 @@ package services
 import base.BaseSpec
 import config.AppConfig
 import models.flags.FeatureFlag
-import models.flags.FeatureFlag.{Disabled, Enabled}
-import models.flags.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
+import models.flags.FeatureFlag.Enabled
+import models.flags.FeatureFlagName.NonTaxableAccessCode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import play.api.Application
@@ -42,13 +42,11 @@ class FeatureFlagServiceSpec extends BaseSpec {
 
   private val service = application.injector.instanceOf[FeatureFlagService]
 
-  private val feature = `5MLD`
+  private val feature = NonTaxableAccessCode
   private val featureEnabled = FeatureFlag(feature, enabled = true)
   private val featureDisabled = FeatureFlag(feature, enabled = false)
 
-  private val otherFeatures: Seq[FeatureFlag] = Seq(
-    Disabled(NonTaxableAccessCode)
-  )
+  private val otherFeatures: Seq[FeatureFlag] = Seq()
 
   override def beforeEach(): Unit = {
     reset(mockRepository)

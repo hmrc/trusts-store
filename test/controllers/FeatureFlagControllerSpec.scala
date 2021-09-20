@@ -19,10 +19,8 @@ package controllers
 import base.BaseSpec
 import models.flags.FeatureFlag
 import models.flags.FeatureFlag.Enabled
-import models.flags.FeatureFlagName.`5MLD`
+import models.flags.FeatureFlagName.NonTaxableAccessCode
 import org.mockito.ArgumentMatchers.any
-import models.flags.FeatureFlag.Enabled
-import models.flags.FeatureFlagName.`5MLD`
 import org.mockito.Mockito.{times, verify, when}
 import play.api.inject.bind
 import play.api.libs.json.{JsBoolean, JsString, Json}
@@ -40,24 +38,24 @@ class FeatureFlagControllerSpec extends BaseSpec {
       "config for the flag exists" in {
 
         val app = applicationBuilder()
-          .configure((s"features.${`5MLD`.asString}", true))
+          .configure((s"features.${NonTaxableAccessCode.asString}", true))
           .build()
 
         running(app) {
 
-          val request = FakeRequest(GET, routes.FeatureFlagController.get(`5MLD`).url)
+          val request = FakeRequest(GET, routes.FeatureFlagController.get(NonTaxableAccessCode).url)
 
           val result = route(app, request).value
 
           status(result) mustEqual OK
-          contentAsJson(result) mustEqual Json.toJson[FeatureFlag](Enabled(`5MLD`))
+          contentAsJson(result) mustEqual Json.toJson[FeatureFlag](Enabled(NonTaxableAccessCode))
         }
       }
 
       "config for the flag does not exist" in {
 
         val mockService = mock[FeatureFlagService]
-        when(mockService.get(`5MLD`)) thenReturn Future.successful(Enabled(`5MLD`))
+        when(mockService.get(NonTaxableAccessCode)) thenReturn Future.successful(Enabled(NonTaxableAccessCode))
 
         val app = applicationBuilder()
           .overrides(bind[FeatureFlagService].toInstance(mockService))
@@ -65,12 +63,12 @@ class FeatureFlagControllerSpec extends BaseSpec {
 
         running(app) {
 
-          val request = FakeRequest(GET, routes.FeatureFlagController.get(`5MLD`).url)
+          val request = FakeRequest(GET, routes.FeatureFlagController.get(NonTaxableAccessCode).url)
 
           val result = route(app, request).value
 
           status(result) mustEqual OK
-          contentAsJson(result) mustEqual Json.toJson[FeatureFlag](Enabled(`5MLD`))
+          contentAsJson(result) mustEqual Json.toJson[FeatureFlag](Enabled(NonTaxableAccessCode))
         }
       }
     }
@@ -89,13 +87,13 @@ class FeatureFlagControllerSpec extends BaseSpec {
 
       running(app) {
 
-        val request = FakeRequest(PUT, routes.FeatureFlagController.put(`5MLD`).url)
+        val request = FakeRequest(PUT, routes.FeatureFlagController.put(NonTaxableAccessCode).url)
           .withJsonBody(JsBoolean(true))
 
         val result = route(app, request).value
 
         status(result) mustEqual NO_CONTENT
-        verify(mockService, times(1)).set(`5MLD`, enabled = true)
+        verify(mockService, times(1)).set(NonTaxableAccessCode, enabled = true)
       }
     }
 
@@ -110,7 +108,7 @@ class FeatureFlagControllerSpec extends BaseSpec {
 
       running(app) {
 
-        val request = FakeRequest(PUT, routes.FeatureFlagController.put(`5MLD`).url)
+        val request = FakeRequest(PUT, routes.FeatureFlagController.put(NonTaxableAccessCode).url)
           .withJsonBody(JsString("foo"))
 
         val result = route(app, request).value

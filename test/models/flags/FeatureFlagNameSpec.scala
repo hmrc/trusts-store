@@ -17,7 +17,7 @@
 package models.flags
 
 import base.BaseSpec
-import models.flags.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
+import models.flags.FeatureFlagName.NonTaxableAccessCode
 import play.api.libs.json.{JsError, JsString, JsSuccess, Json}
 
 class FeatureFlagNameSpec extends BaseSpec {
@@ -25,13 +25,6 @@ class FeatureFlagNameSpec extends BaseSpec {
   "FeatureFlagName" - {
 
     "must de-serialise and serialise" - {
-
-      "5MLD feature flag" in {
-        val json = JsString("5mld")
-        val result = json.validate[FeatureFlagName]
-        result mustBe JsSuccess(`5MLD`)
-        Json.toJson(result.get) mustBe json
-      }
 
       "NonTaxableAccessCode feature flag" in {
         val json = JsString("non-taxable.access-code")

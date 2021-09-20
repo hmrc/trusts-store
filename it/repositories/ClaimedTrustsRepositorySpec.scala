@@ -33,7 +33,7 @@ class ClaimedTrustsRepositorySpec extends AnyFreeSpec with Matchers
 
           val trustClaim = TrustClaim(internalId, "1234567890", managedByAgent = true, lastUpdated = lastUpdated)
 
-          val storedClaim = repository.store(trustClaim).futureValue.right.value
+          val storedClaim = repository.store(trustClaim).futureValue.value
 
           inside(storedClaim) {
             case TrustClaim(id, utr, mba, tl, ldt) =>
@@ -70,7 +70,7 @@ class ClaimedTrustsRepositorySpec extends AnyFreeSpec with Matchers
 
           val trustClaim = TrustClaim(internalId, "1234567890", managedByAgent = true, lastUpdated = lastUpdated)
 
-          repository.store(trustClaim).futureValue.right.value
+          repository.store(trustClaim).futureValue.value
 
           val updatedClaim = repository.store(trustClaim.copy(identifier = "0987654321")).futureValue
 
