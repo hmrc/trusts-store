@@ -30,4 +30,7 @@ class RegisterTasksRepository @Inject()(override val mongo: ReactiveMongoApi,
   override def collectionName: String = "registerTasks"
 
   override val identifierKey: String = "draftId"
+
+  override val useSessionId: Boolean = false
+
 }

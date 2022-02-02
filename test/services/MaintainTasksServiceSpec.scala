@@ -52,13 +52,14 @@ class MaintainTasksServiceSpec extends BaseSpec {
       val taskCache = TaskCache(
         "internalId",
         "utr",
+        "sessionId",
         task,
         LocalDateTime.now
       )
 
-      when(repository.get(mEq("internalId"), mEq("utr"))).thenReturn(Future.successful(Some(taskCache)))
+      when(repository.get(mEq("internalId"), mEq("utr"), mEq("sessionId"))).thenReturn(Future.successful(Some(taskCache)))
 
-      val result = service.get("internalId", "utr").futureValue
+      val result = service.get("internalId", "utr", "sessionId").futureValue
 
       result mustBe task
     }
@@ -66,9 +67,9 @@ class MaintainTasksServiceSpec extends BaseSpec {
     "must return a Task from the repository if there is not one for the given internal id and utr" in {
       val task = Tasks()
 
-      when(repository.get(mEq("internalId"), mEq("utr"))).thenReturn(Future.successful(None))
+      when(repository.get(mEq("internalId"), mEq("utr"), mEq("sessionId"))).thenReturn(Future.successful(None))
 
-      val result = service.get("internalId", "utr").futureValue
+      val result = service.get("internalId", "utr", "sessionId").futureValue
 
       result mustBe task
     }
@@ -89,9 +90,9 @@ class MaintainTasksServiceSpec extends BaseSpec {
         other = InProgress
       )
 
-      when(repository.set(any(), any(), any())).thenReturn(Future.successful(true))
+      when(repository.set(any(), any(), any(), any())).thenReturn(Future.successful(true))
 
-      val result = service.set(fakeInternalId, fakeUtr, task).futureValue
+      val result = service.set(fakeInternalId, fakeUtr, fakeSessionId, task).futureValue
 
       result mustBe task
     }
@@ -101,9 +102,9 @@ class MaintainTasksServiceSpec extends BaseSpec {
 
     "must reset task list" in {
 
-      when(repository.reset(any(), any())).thenReturn(Future.successful(true))
+      when(repository.reset(any(), any(), any())).thenReturn(Future.successful(true))
 
-      val result = service.reset(fakeInternalId, fakeUtr).futureValue
+      val result = service.reset(fakeInternalId, fakeUtr, fakeSessionId).futureValue
 
       result mustBe true
     }

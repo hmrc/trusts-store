@@ -57,6 +57,8 @@ class BaseSpec extends FreeSpec
 
   def fakeInternalId: String = "Int-328969d0-557e-4559-96ba-074d0597107e"
 
+  def fakeSessionId: String = "session-d41ebbc3-38bc-4276-86da-5533eb878e37"
+
   def fakeRequest: FakeRequest[JsValue] = FakeRequest("POST", "")
     .withHeaders(CONTENT_TYPE -> MimeTypes.JSON)
     .withBody(Json.parse("{}"))

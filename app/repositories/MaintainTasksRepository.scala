@@ -30,4 +30,7 @@ class MaintainTasksRepository @Inject()(override val mongo: ReactiveMongoApi,
   override def collectionName: String = "maintainTasks"
 
   override val identifierKey: String = "id"
+
+  override val useSessionId: Boolean = true
+
 }

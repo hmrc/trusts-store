@@ -18,6 +18,13 @@ class MaintainTasksRepositorySpec extends AnyFreeSpec with Matchers
 
     val internalId = "Int-328969d0-557e-4559-96ba-074d0597107e"
     val identifier = "1234567890"
+    val sessionId: String = "session-d41ebbc3-38bc-4276-86da-5533eb878e37"
+
+    "useSessionId must be true " in {
+      val repository = application.injector.instanceOf[MaintainTasksRepository]
+      val test = repository.useSessionId
+      test mustBe true
+    }
 
     "must return None when no cache exists" in {
       running(application) {
@@ -27,7 +34,7 @@ class MaintainTasksRepositorySpec extends AnyFreeSpec with Matchers
 
           val repository = application.injector.instanceOf[MaintainTasksRepository]
 
-          repository.get(internalId, identifier).futureValue mustBe None
+          repository.get(internalId, identifier, sessionId).futureValue mustBe None
         }
       }
     }
@@ -42,11 +49,11 @@ class MaintainTasksRepositorySpec extends AnyFreeSpec with Matchers
 
           val task = Tasks()
 
-          val result = repository.set(internalId, identifier, task).futureValue
+          val result = repository.set(internalId, identifier, sessionId, task).futureValue
 
           result mustBe true
 
-          repository.get(internalId, identifier).futureValue.value.task mustBe task
+          repository.get(internalId, identifier, sessionId).futureValue.value.task mustBe task
 
           dropTheDatabase(connection)
         }
@@ -73,15 +80,15 @@ class MaintainTasksRepositorySpec extends AnyFreeSpec with Matchers
             other = Completed
           )
 
-          repository.set(internalId, identifier, tasksCompleted).futureValue
+          repository.set(internalId, identifier, sessionId, tasksCompleted).futureValue
 
-          repository.get(internalId, identifier).futureValue.value.task mustBe tasksCompleted
+          repository.get(internalId, identifier, sessionId).futureValue.value.task mustBe tasksCompleted
 
-          val result = repository.reset(internalId, identifier).futureValue
+          val result = repository.reset(internalId, identifier, sessionId).futureValue
 
           result mustBe true
 
-          repository.get(internalId, identifier).futureValue.value.task mustBe Tasks()
+          repository.get(internalId, identifier, sessionId).futureValue.value.task mustBe Tasks()
 
           dropTheDatabase(connection)
         }

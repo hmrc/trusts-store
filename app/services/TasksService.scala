@@ -29,24 +29,24 @@ trait TasksService {
 
   val tasksRepository: TasksRepository
 
-  def get(internalId: String, identifier: String): Future[Tasks] = {
-    tasksRepository.get(internalId, identifier) map {
+  def get(internalId: String, identifier: String, sessionId: String): Future[Tasks] = {
+    tasksRepository.get(internalId, identifier, sessionId) map {
       case Some(cache) => cache.task
       case None => Tasks()
     }
   }
 
-  def set(internalId: String, identifier: String, updated: Tasks): Future[Tasks] = {
-    tasksRepository.set(internalId, identifier, updated).map(_ => updated)
+  def set(internalId: String, identifier: String, sessionId: String, updated: Tasks): Future[Tasks] = {
+    tasksRepository.set(internalId, identifier, sessionId, updated).map(_ => updated)
   }
 
-  def reset(internalId: String, identifier: String): Future[Boolean] = {
-    tasksRepository.reset(internalId, identifier)
+  def reset(internalId: String, identifier: String, sessionId: String): Future[Boolean] = {
+    tasksRepository.reset(internalId, identifier, sessionId)
   }
 
-  def modifyTask(internalId: String, identifier: String, update: Task, taskStatus: TaskStatus): Future[JsValue] = {
+  def modifyTask(internalId: String, identifier: String, sessionId: String, update: Task, taskStatus: TaskStatus): Future[JsValue] = {
     for {
-      tasks <- get(internalId, identifier)
+      tasks <- get(internalId, identifier, sessionId)
       updatedTasks <- Future.successful {
         update match {
           case Task.TrustDetails => tasks.copy(trustDetails = taskStatus)
@@ -59,7 +59,7 @@ trait TasksService {
           case Task.OtherIndividuals => tasks.copy(other = taskStatus)
         }
       }
-      savedTasks <- set(internalId, identifier, updatedTasks)
+      savedTasks <- set(internalId, identifier, sessionId, updatedTasks)
     } yield Json.toJson(savedTasks)
   }
 
