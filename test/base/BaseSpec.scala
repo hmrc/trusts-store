@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,8 @@ class BaseSpec extends FreeSpec
   def fakeUtr: String = "1234567890"
 
   def fakeInternalId: String = "Int-328969d0-557e-4559-96ba-074d0597107e"
+
+  def fakeSessionId: String = "session-d41ebbc3-38bc-4276-86da-5533eb878e37"
 
   def fakeRequest: FakeRequest[JsValue] = FakeRequest("POST", "")
     .withHeaders(CONTENT_TYPE -> MimeTypes.JSON)

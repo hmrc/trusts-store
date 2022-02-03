@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.MaintainTasksService
+import utils.Session
 
 import scala.concurrent.Future
 
@@ -44,6 +45,8 @@ class MaintainTaskListControllerSpec extends BaseSpec {
   override def beforeEach(): Unit = {
     Mockito.reset(service)
   }
+
+  private val sessionId: String = Session.id(hc)
 
   "invoking GET /maintain/tasks" - {
 
@@ -61,7 +64,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
         protectors = InProgress
       )
 
-      when(service.get(any(), any())).thenReturn(Future.successful(tasks))
+      when(service.get(any(), any(), any())).thenReturn(Future.successful(tasks))
 
       val result = route(application, request).value
 
@@ -87,13 +90,13 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val request = FakeRequest(POST, routes.MaintainTaskListController.set("utr").url).withBody(Json.toJson(tasks))
 
-      when(service.set(any(), any(), any())).thenReturn(Future.successful(tasks))
+      when(service.set(any(), any(), any(), any())).thenReturn(Future.successful(tasks))
 
       val result = route(application, request).value
 
       status(result) mustBe Status.OK
       contentAsJson(result) mustBe Json.toJson(tasks)
-      verify(service).set("id", "utr", tasks)
+      verify(service).set("id", "utr", sessionId, tasks)
 
     }
     "must return BAD_REQUEST for invalid JSON" in {
@@ -113,12 +116,12 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val request = FakeRequest(DELETE, routes.MaintainTaskListController.reset("utr").url)
 
-      when(service.reset(any(), any())).thenReturn(Future.successful(true))
+      when(service.reset(any(), any(), any())).thenReturn(Future.successful(true))
 
       val result = route(application, request).value
 
       status(result) mustBe Status.OK
-      verify(service).reset("id", "utr")
+      verify(service).reset("id", "utr", sessionId)
 
     }
 
@@ -139,14 +142,14 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(trustDetails = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.TrustDetails), ArgumentMatchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.TrustDetails), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -177,14 +180,14 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(assets = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.Assets), ArgumentMatchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Assets), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -215,14 +218,14 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(taxLiability = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.TaxLiability), ArgumentMatchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.TaxLiability), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -253,14 +256,14 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(trustees = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.Trustees), ArgumentMatchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Trustees), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -291,14 +294,14 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(beneficiaries = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.Beneficiaries), ArgumentMatchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Beneficiaries), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -329,14 +332,14 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(settlors = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.Settlors), ArgumentMatchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Settlors), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -367,14 +370,14 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(protectors = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.Protectors), ArgumentMatchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Protectors), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -405,14 +408,14 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(other = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), ArgumentMatchers.eq(Task.OtherIndividuals), ArgumentMatchers.eq(taskStatus))
+        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.OtherIndividuals), ArgumentMatchers.eq(taskStatus))
       }
     }
 

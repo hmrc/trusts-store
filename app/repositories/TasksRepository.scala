@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import play.api.libs.json.{JsObject, Json, OWrites}
 import reactivemongo.api.WriteConcern
 import reactivemongo.api.indexes.IndexType
 import reactivemongo.play.json.collection.JSONCollection
-
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import scala.concurrent.Future
@@ -34,6 +33,8 @@ trait TasksRepository extends IndexManager {
 
   private val internalIdKey: String = "internalId"
   val identifierKey: String
+  private val newId: String = "newId"
+  val useSessionId: Boolean
 
   private lazy val lastUpdatedIndex = MongoIndex(
     key = Seq("lastUpdated" -> IndexType.Ascending),
@@ -41,10 +42,17 @@ trait TasksRepository extends IndexManager {
     expireAfterSeconds = Some(expireAfterSeconds)
   )
 
-  private lazy val internalIdAndIdentifierIndex = MongoIndex(
-    key = Seq(internalIdKey -> IndexType.Ascending, identifierKey -> IndexType.Ascending),
-    name = "internal-id-and-identifier-compound-index"
-  )
+  private lazy val compoundIndex = if (useSessionId) {
+    MongoIndex(
+      key = Seq(internalIdKey -> IndexType.Ascending, identifierKey -> IndexType.Ascending, newId -> IndexType.Ascending),
+      name = "internal-id-and-identifier-and-newId-compound-index"
+    )
+  } else {
+    MongoIndex(
+      key = Seq(internalIdKey -> IndexType.Ascending, identifierKey -> IndexType.Ascending),
+      name = "internal-id-and-identifier-compound-index"
+    )
+  }
 
   private def collection: Future[JSONCollection] = for {
     _ <- ensureIndexes
@@ -54,13 +62,17 @@ trait TasksRepository extends IndexManager {
   private def ensureIndexes: Future[Boolean] = for {
     collection <- mongo.database.map(_.collection[JSONCollection](collectionName))
     createdLastUpdatedIndex <- collection.indexesManager.ensure(lastUpdatedIndex)
-    internalIdAndIdentifierCompoundIndex <- collection.indexesManager.ensure(internalIdAndIdentifierIndex)
+    internalIdAndIdentifierCompoundIndex <- collection.indexesManager.ensure(compoundIndex)
   } yield createdLastUpdatedIndex && internalIdAndIdentifierCompoundIndex
 
-  private def selector(internalId: String, identifier: String): JsObject =
+  private def selector(internalId: String, identifier: String, sessionId: String): JsObject = if (useSessionId) {
+    Json.obj(internalIdKey -> internalId, identifierKey -> identifier, newId -> s"$internalId-$identifier-$sessionId")
+  } else {
     Json.obj(internalIdKey -> internalId, identifierKey -> identifier)
+  }
 
-  def get(internalId: String, identifier: String): Future[Option[TaskCache]] = {
+
+  def get(internalId: String, identifier: String, sessionId: String): Future[Option[TaskCache]] = {
     val modifier = Json.obj(
       "$set" -> Json.obj(
         "lastUpdated" -> Json.obj(
@@ -72,7 +84,7 @@ trait TasksRepository extends IndexManager {
     collection
       .flatMap(
         _.findAndUpdate(
-          selector = selector(internalId, identifier),
+          selector = selector(internalId, identifier, sessionId),
           update = modifier,
           fetchNewObject = true,
           upsert = false,
@@ -87,23 +99,23 @@ trait TasksRepository extends IndexManager {
       )
   }
 
-  def set(internalId: String, identifier: String, updated: Tasks): Future[Boolean] = {
+  def set(internalId: String, identifier: String, sessionId: String, updated: Tasks): Future[Boolean] = {
 
-    val insertCache = TaskCache(internalId, identifier, updated)
+    val insertCache = TaskCache(internalId, identifier, sessionId, updated)
 
     val modifier = Json.obj(
       "$set" -> Json.toJson(insertCache)
     )
 
     collection.flatMap {
-      _.update(ordered = false).one(selector(internalId, identifier), modifier, upsert = true, multi = false).map {
+      _.update(ordered = false).one(selector(internalId, identifier, sessionId), modifier, upsert = true, multi = false).map {
         result => result.ok
       }
     }
   }
 
-  def reset(internalId: String, identifier: String): Future[Boolean] = {
-    set(internalId, identifier, Tasks())
+  def reset(internalId: String, identifier: String, sessionId: String): Future[Boolean] = {
+    set(internalId, identifier, sessionId, Tasks())
   }
 
 }

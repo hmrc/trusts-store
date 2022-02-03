@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,13 +54,14 @@ class RegisterTasksServiceSpec extends BaseSpec {
       val taskCache = TaskCache(
         "internalId",
         "draftId",
+        "sessionId",
         task,
         LocalDateTime.now
       )
 
-      when(repository.get(mEq("internalId"), mEq("draftId"))).thenReturn(Future.successful(Some(taskCache)))
+      when(repository.get(mEq("internalId"), mEq("draftId"), mEq("sessionId"))).thenReturn(Future.successful(Some(taskCache)))
 
-      val result = service.get("internalId", "draftId").futureValue
+      val result = service.get("internalId", "draftId", "sessionId").futureValue
 
       result mustBe task
     }
@@ -68,9 +69,9 @@ class RegisterTasksServiceSpec extends BaseSpec {
     "must return a Task from the repository if there is not one for the given internal id and draft id" in {
       val task = Tasks()
 
-      when(repository.get(mEq("internalId"), mEq("draftId"))).thenReturn(Future.successful(None))
+      when(repository.get(mEq("internalId"), mEq("draftId"), mEq("sessionId"))).thenReturn(Future.successful(None))
 
-      val result = service.get("internalId", "draftId").futureValue
+      val result = service.get("internalId", "draftId", "sessionId").futureValue
 
       result mustBe task
     }
@@ -91,9 +92,9 @@ class RegisterTasksServiceSpec extends BaseSpec {
         other = InProgress
       )
 
-      when(repository.set(any(), any(), any())).thenReturn(Future.successful(true))
+      when(repository.set(any(), any(), any(), any())).thenReturn(Future.successful(true))
 
-      val result = service.set(fakeInternalId, fakeUtr, task).futureValue
+      val result = service.set(fakeInternalId, fakeUtr, fakeSessionId, task).futureValue
 
       result mustBe task
     }
@@ -103,9 +104,9 @@ class RegisterTasksServiceSpec extends BaseSpec {
 
     "must reset task list" in {
 
-      when(repository.reset(any(), any())).thenReturn(Future.successful(true))
+      when(repository.reset(any(), any(), any())).thenReturn(Future.successful(true))
 
-      val result = service.reset(fakeInternalId, fakeUtr).futureValue
+      val result = service.reset(fakeInternalId, fakeUtr, fakeSessionId).futureValue
 
       result mustBe true
     }
@@ -140,15 +141,16 @@ class RegisterTasksServiceSpec extends BaseSpec {
       val taskCache = TaskCache(
         fakeInternalId,
         fakeUtr,
+        fakeSessionId,
         startingTasks,
         LocalDateTime.now
       )
 
-      when(repository.get(mEq(fakeInternalId), mEq(fakeUtr))).thenReturn(Future.successful(Some(taskCache)))
+      when(repository.get(mEq(fakeInternalId), mEq(fakeUtr), mEq(fakeSessionId))).thenReturn(Future.successful(Some(taskCache)))
 
-      when(repository.set(any(), any(), any())).thenReturn(Future.successful(true))
+      when(repository.set(any(), any(), any(), any())).thenReturn(Future.successful(true))
 
-      val result = service.modifyTask(fakeInternalId, fakeUtr, TrustDetails, Completed).futureValue
+      val result = service.modifyTask(fakeInternalId, fakeUtr, fakeSessionId, TrustDetails, Completed).futureValue
 
       result mustBe Json.toJson(updatedTasks)
     }

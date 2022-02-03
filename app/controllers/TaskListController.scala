@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import play.api.libs.json._
 import play.api.mvc._
 import services.TasksService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import utils.Session
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -35,18 +36,18 @@ abstract class TaskListController(cc: ControllerComponents) extends BackendContr
 	implicit val ec: ExecutionContext
 
 	def get(identifier: String): Action[AnyContent] = authAction.async {
-		request =>
-			tasksService.get(request.internalId, identifier).map {
+		implicit request =>
+			tasksService.get(request.internalId, identifier, Session.id(hc)).map {
 				task =>
 					Ok(Json.toJson(task))
 			}
 	}
 
 	def set(identifier: String): Action[JsValue] = authAction.async(parse.json) {
-		request =>
+		implicit request =>
 			request.body.validate[Tasks] match {
 				case JsSuccess(tasks, _) =>
-					tasksService.set(request.internalId, identifier, tasks).map {
+					tasksService.set(request.internalId, identifier, Session.id(hc), tasks).map {
 						updated => Ok(Json.toJson(updated))
 					}
 				case _ => Future.successful(BadRequest)
@@ -54,8 +55,8 @@ abstract class TaskListController(cc: ControllerComponents) extends BackendContr
 	}
 
 	def reset(identifier: String): Action[AnyContent] = authAction.async {
-		request =>
-			tasksService.reset(request.internalId, identifier).map(_ => Ok)
+		implicit request =>
+			tasksService.reset(request.internalId, identifier, Session.id(hc)).map(_ => Ok)
 	}
 
 	def updateTrustDetailsStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.TrustDetails)
@@ -71,7 +72,7 @@ abstract class TaskListController(cc: ControllerComponents) extends BackendContr
 		implicit request =>
 			request.body.validate[TaskStatus] match {
 				case JsSuccess(taskStatus, _) =>
-					tasksService.modifyTask(request.internalId, identifier, task, taskStatus).map(Ok(_))
+					tasksService.modifyTask(request.internalId, identifier, Session.id(hc), task, taskStatus).map(Ok(_))
 				case JsError(errors) =>
 					logger.error(s"[Identifier: $identifier] Error validating request body as TaskStatus: $errors")
 					Future.successful(BadRequest)

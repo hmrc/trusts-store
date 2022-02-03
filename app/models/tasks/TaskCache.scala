@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.time.LocalDateTime
 
 case class TaskCache(internalId: String,
                      id: String,
+                     sessionId: String,
                      task: Tasks,
                      lastUpdated: LocalDateTime = LocalDateTime.now)
 
@@ -35,6 +36,7 @@ object TaskCache extends MongoDateTimeFormats {
     (
       (__ \ "internalId").read[String] and
         (__ \ "id").read[String] and
+        (__ \ "sessionId").read[String] and
         (__ \ "task").read[Tasks] and
         (__ \ "lastUpdated").read(localDateTimeRead)
       ) (TaskCache.apply _)
@@ -44,6 +46,7 @@ object TaskCache extends MongoDateTimeFormats {
     (
       (__ \ "internalId").write[String] and
         (__ \ "id").write[String] and
+        (__ \ "sessionId").write[String] and
         (__ \ "task").write[Tasks] and
         (__ \ "lastUpdated").write(localDateTimeWrite)
       ) (unlift(TaskCache.unapply))
