@@ -36,7 +36,7 @@ object TaskCache extends MongoDateTimeFormats {
     (
       (__ \ "internalId").read[String] and
         (__ \ "id").read[String] and
-        (__ \ "sessionId").read[String] and
+        (__ \ "sessionId").readWithDefault[String]("") and
         (__ \ "task").read[Tasks] and
         (__ \ "lastUpdated").read(localDateTimeRead)
       ) (TaskCache.apply _)
