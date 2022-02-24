@@ -44,8 +44,8 @@ trait TasksRepository extends IndexManager {
 
   private lazy val compoundIndex = if (useSessionId) {
     MongoIndex(
-      key = Seq(internalIdKey -> IndexType.Ascending, identifierKey -> IndexType.Ascending, newId -> IndexType.Ascending),
-      name = "internal-id-and-identifier-and-newId-compound-index"
+      key = Seq(newId -> IndexType.Ascending),
+      name = "internal-id-and-identifier-and-sessionId-compound-index"
     )
   } else {
     MongoIndex(
@@ -66,7 +66,7 @@ trait TasksRepository extends IndexManager {
   } yield createdLastUpdatedIndex && internalIdAndIdentifierCompoundIndex
 
   private def selector(internalId: String, identifier: String, sessionId: String): JsObject = if (useSessionId) {
-    Json.obj(internalIdKey -> internalId, identifierKey -> identifier, newId -> s"$internalId-$identifier-$sessionId")
+    Json.obj(newId -> s"$internalId-$identifier-$sessionId")
   } else {
     Json.obj(internalIdKey -> internalId, identifierKey -> identifier)
   }
