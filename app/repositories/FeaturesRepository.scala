@@ -16,68 +16,94 @@
 
 package repositories
 
+import config.AppConfig
 import models.flags.FeatureFlag
-import play.api.Configuration
-import play.api.libs.json.{JsObject, Json, OWrites}
-import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.IndexType
-import reactivemongo.play.json.collection.JSONCollection
-
+import play.api.libs.json.{Format, JsObject, Json, OWrites}
 import javax.inject.{Inject, Singleton}
+import org.mongodb.scala.bson.BsonDocument
+import org.mongodb.scala.model.{FindOneAndUpdateOptions, IndexModel, IndexOptions, Indexes}
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.model.Projections._
+import org.mongodb.scala.model.Sorts._
+
+import scala.collection.script.Update
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class FeaturesRepository @Inject()(override val mongo: ReactiveMongoApi,
-                                   override val config: Configuration)
-                                  (implicit val ec: ExecutionContext)
-  extends IndexManager {
+class FeaturesRepository @Inject()(mongo: MongoComponent,
+                                   config: AppConfig)
+                                  (implicit ec: ExecutionContext)
+  extends PlayMongoRepository[FeatureFlag] (
+    mongoComponent = mongo,
+    domainFormat = Format(FeatureFlag.reads, FeatureFlag.writes),
+    collectionName = "features",
+    indexes = Seq(
+      IndexModel(
+        Indexes.ascending("lastUpdated"),
+        IndexOptions().name("features-last-updated-index")
+      )
+    )
 
-  implicit final val jsObjectWrites: OWrites[JsObject] = OWrites[JsObject](identity)
+  ) {
+ //   with IndexManager {
 
-  override def collectionName: String = "features"
+//  implicit final val jsObjectWrites: OWrites[JsObject] = OWrites[JsObject](identity)
+
+//  override def collectionName: String = "features"
 
   private val featureFlagDocumentId = "feature-flags"
 
-  private val lastUpdatedIndex = MongoIndex(
-    key = Seq("lastUpdated" -> IndexType.Ascending),
-    name = "features-last-updated-index"
-  )
+//  private val lastUpdatedIndex = MongoIndex(
+//    key = Seq("lastUpdated" -> IndexType.Ascending),
+//    name = "features-last-updated-index"
+//  )
 
-  private def collection: Future[JSONCollection] = for {
-    _ <- ensureIndexes
-    col <- mongo.database.map(_.collection[JSONCollection](collectionName))
-  } yield col
+//  private def collection: Future[JSONCollection] = for {
+//    _ <- ensureIndexes
+//    col <- mongo.database.map(_.collection[JSONCollection](collectionName))
+//  } yield col
 
-  private def ensureIndexes: Future[Boolean] = for {
-    collection <- mongo.database.map(_.collection[JSONCollection](collectionName))
-    createdLastUpdatedIndex <- collection.indexesManager.ensure(lastUpdatedIndex)
-  } yield createdLastUpdatedIndex
+//  private def ensureIndexes: Future[Boolean] = for {
+//    collection <- mongo.database.map(_.collection[JSONCollection](collectionName))
+//    createdLastUpdatedIndex <- collection.indexesManager.ensure(lastUpdatedIndex)
+//  } yield createdLastUpdatedIndex
+
+//  def getFeatureFlags: Future[Seq[FeatureFlag]] =
+//    collection.flatMap(_.find(Json.obj("_id" -> featureFlagDocumentId), None)
+//      .one[JsObject])
+//      .map(_.map(js => (js \ "flags").as[Seq[FeatureFlag]]))
+//      .map(_.getOrElse(Seq.empty[FeatureFlag]))
 
   def getFeatureFlags: Future[Seq[FeatureFlag]] =
-    collection.flatMap(_.find(Json.obj("_id" -> featureFlagDocumentId), None)
-      .one[JsObject])
-      .map(_.map(js => (js \ "flags").as[Seq[FeatureFlag]]))
-      .map(_.getOrElse(Seq.empty[FeatureFlag]))
+    collection.find[BsonDocument](equal("_id",featureFlagDocumentId)).headOption()
+      .map(_.map(bsonDocument =>
+      Json.parse(bsonDocument.toJson).as[JsObject])
+      .map(json => (json \ "flags").as[Seq[FeatureFlag]])
+          .getOrElse(Seq.empty[FeatureFlag])
+      )
 
   def setFeatureFlags(flags: Seq[FeatureFlag]): Future[Boolean] = {
 
-    val selector = Json.obj(
-      "_id" -> featureFlagDocumentId
-    )
+    val selector = equal(
+      "_id", featureFlagDocumentId)
 
-    val modifier = Json.obj(
-      "_id" -> featureFlagDocumentId,
-      "flags" -> Json.toJson(flags)
-    )
+    val modifier = equal(
+      "flags", Json.toJson(flags))
 
-    collection.flatMap {
-      _.update(ordered = false)
-        .one(selector, modifier, upsert = true)
-        .map {
-          lastError: WriteResult =>
-            lastError.ok
-        }
-    }
+    val updateOption = new FindOneAndUpdateOptions().upsert(true)
+
+    collection.findOneAndUpdate(selector, modifier, updateOption).toFutureOption().map(_ => true)
+
+//    collection.flatMap {
+//      _.update(ordered = false)
+//        .one(selector, modifier, upsert = true)
+//        .map {
+//          lastError: WriteResult =>
+//            lastError.ok
+//        }
+//    }
+
   }
 }

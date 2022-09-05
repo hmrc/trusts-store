@@ -16,13 +16,52 @@
 
 package services
 
-import repositories.{MaintainTasksRepository, TasksRepository}
-
+import repositories.{MaintainTasksRepository}
 import javax.inject.{Inject, Singleton}
+import models.tasks.Task.Task
+import models.tasks.TaskStatus.TaskStatus
+import models.tasks.{Task, Tasks}
+import play.api.libs.json.{JsValue, Json}
+
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class MaintainTasksService @Inject()(maintainTasksRepository: MaintainTasksRepository) extends TasksService {
+class MaintainTasksService @Inject()(maintainTasksRepository: MaintainTasksRepository)(implicit ec: ExecutionContext) {
 
-  override val tasksRepository: TasksRepository = maintainTasksRepository
+ // override val tasksRepository: TasksRepository = maintainTasksRepository
+
+  def get(internalId: String, identifier: String, sessionId: String): Future[Tasks] = {
+    maintainTasksRepository.get(internalId, identifier, sessionId) map {
+      case Some(cache) => cache.task
+      case None => Tasks()
+    }
+  }
+
+  def set(internalId: String, identifier: String, sessionId: String, updated: Tasks): Future[Tasks] = {
+    maintainTasksRepository.set(internalId, identifier, sessionId, updated).map(_ => updated)
+  }
+
+  def reset(internalId: String, identifier: String, sessionId: String): Future[Boolean] = {
+    maintainTasksRepository.reset(internalId, identifier, sessionId)
+  }
+
+  def modifyTask(internalId: String, identifier: String, sessionId: String, update: Task, taskStatus: TaskStatus): Future[JsValue] = {
+    for {
+      tasks <- get(internalId, identifier, sessionId)
+      updatedTasks <- Future.successful {
+        update match {
+          case Task.TrustDetails => tasks.copy(trustDetails = taskStatus)
+          case Task.Assets => tasks.copy(assets = taskStatus)
+          case Task.TaxLiability => tasks.copy(taxLiability = taskStatus)
+          case Task.Trustees => tasks.copy(trustees = taskStatus)
+          case Task.Beneficiaries => tasks.copy(beneficiaries = taskStatus)
+          case Task.Protectors => tasks.copy(protectors = taskStatus)
+          case Task.Settlors => tasks.copy(settlors = taskStatus)
+          case Task.OtherIndividuals => tasks.copy(other = taskStatus)
+        }
+      }
+      savedTasks <- set(internalId, identifier, sessionId, updatedTasks)
+    } yield Json.toJson(savedTasks)
+  }
 
 }

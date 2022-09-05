@@ -59,9 +59,7 @@ class ClaimedTrustsController @Inject()(
 					Created(trustClaim.toResponse)
 				case StoreParsingError =>
 					BadRequest(Json.toJson(ErrorResponse(BAD_REQUEST, CLAIM_TRUST_UNABLE_TO_PARSE)))
-				case StoreErrorsResponse(storageErrors) =>
-					InternalServerError(Json.toJson(ErrorResponse(INTERNAL_SERVER_ERROR, UNABLE_TO_STORE, Some(storageErrors.toJson))))
-			}
+				}
 	}
 
 }

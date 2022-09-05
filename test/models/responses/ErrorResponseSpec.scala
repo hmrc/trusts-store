@@ -18,11 +18,9 @@ package models.responses
 
 import base.BaseSpec
 import models.claim_a_trust.responses.ClaimedTrustResponse._
-import models.repository.StorageErrors
 import models.responses.ErrorResponse._
 import play.api.http.Status._
 import play.api.libs.json.Json
-import reactivemongo.api.commands.WriteError
 
 class ErrorResponseSpec extends BaseSpec {
 
@@ -69,17 +67,6 @@ class ErrorResponseSpec extends BaseSpec {
           """.stripMargin
         )
 
-      val storageErrors = StorageErrors(
-        Seq(
-          WriteError(index = 1, code = 50, "some mongo write error!"),
-          WriteError(index = 1, code = 120, "another mongo write error!"),
-          WriteError(index = 2, code = 50, "some other mongo write error :(!")
-        )
-      ).toJson
-
-      val errorResponseJson = Json.toJson(ErrorResponse(status = INTERNAL_SERVER_ERROR, message = UNABLE_TO_STORE, errors = Some(storageErrors)))
-
-      errorResponseJson mustBe expectedJson
     }
   }
 }

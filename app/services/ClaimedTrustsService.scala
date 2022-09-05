@@ -62,9 +62,7 @@ class ClaimedTrustsService @Inject()(private val claimedTrustsRepository: Claime
 
     trustClaim match {
       case Some(tc) =>
-        claimedTrustsRepository.store(tc).map {
-          case Left(writeErrors) => StoreErrorsResponse(writeErrors)
-          case Right(storedTrustClaim) => StoreSuccessResponse(storedTrustClaim)
+        claimedTrustsRepository.store(tc).map { StoreSuccessResponse
         }
       case None => Future.successful(StoreParsingError)
     }

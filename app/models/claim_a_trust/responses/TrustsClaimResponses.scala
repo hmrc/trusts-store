@@ -17,7 +17,6 @@
 package models.claim_a_trust.responses
 
 import models.claim_a_trust.TrustClaim
-import models.repository.StorageErrors
 
 trait ClaimedTrustResponse
 
@@ -29,6 +28,5 @@ object ClaimedTrustResponse {
 case class GetClaimFound(foundTrustClaim: TrustClaim) extends ClaimedTrustResponse
 case object GetClaimNotFound extends ClaimedTrustResponse
 
-case class StoreErrorsResponse(errors: StorageErrors) extends ClaimedTrustResponse
 case class StoreSuccessResponse(storedTrustClaim: TrustClaim) extends ClaimedTrustResponse
 case object StoreParsingError extends ClaimedTrustResponse

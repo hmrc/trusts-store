@@ -20,12 +20,10 @@ import base.BaseSpec
 import org.mockito.ArgumentMatchers._
 import models.claim_a_trust.TrustClaim
 import models.claim_a_trust.responses._
-import models.repository.StorageErrors
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import play.api.Application
 import play.api.inject.bind
-import reactivemongo.api.commands.WriteError
 import repositories.ClaimedTrustsRepository
 
 import scala.concurrent.Future
@@ -69,7 +67,7 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
 
       val trustClaim = TrustClaim(internalId = fakeInternalId, identifier = fakeUtr, managedByAgent = true)
 
-      when(repository.store(any())).thenReturn(Future.successful(Right(trustClaim)))
+      when(repository.store(any())).thenReturn(Future.successful(trustClaim))
 
       val result = service.store(fakeInternalId, Some(fakeUtr), Some(true), None).futureValue
 
@@ -80,7 +78,7 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
 
       val trustClaim = TrustClaim(internalId = fakeInternalId, identifier = fakeUtr, managedByAgent = true)
 
-      when(repository.store(any())).thenReturn(Future.successful(Right(trustClaim)))
+      when(repository.store(any())).thenReturn(Future.successful(trustClaim))
 
       val result = service.store(fakeInternalId, Some(fakeUtr), Some(true), Some(true)).futureValue
 
@@ -93,16 +91,6 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
       result mustBe StoreParsingError
     }
 
-    "must return a StoreErrorsResponse from the repository if the repository experiences WriteErrors" in {
-
-      val storageErrors = StorageErrors(Seq(WriteError(0, 100, "some mongo write error!"), WriteError(1, 50, "another mongo write error!")))
-
-      when(repository.store(any())).thenReturn(Future.successful(Left(storageErrors)))
-
-      val result = service.store(fakeInternalId, Some(fakeUtr), Some(true), Some(false)).futureValue
-
-      result mustBe StoreErrorsResponse(storageErrors)
-    }
   }
 
 }

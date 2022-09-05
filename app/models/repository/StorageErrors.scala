@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package models.repository
-
-import play.api.libs.json.{JsValue, Json}
-import reactivemongo.api.commands.WriteError
-
-case class StorageErrors(writeErrors: Seq[WriteError]) {
-  def toJson: JsValue = {
-    Json.toJson(writeErrors.groupBy(_.index)
-      .mapValues(errors => errors.map(error => Json.obj("code" -> error.code, "message" -> error.errmsg)))
-      .map { case (index, errors) => Json.obj(s"index $index" -> errors) }
-    )
-  }
-}
+//package models.repository
+//
+//import com.mongodb.WriteError
+//import play.api.libs.json.{JsValue, Json}
+//
+//
+//case class StorageErrors(writeErrors: Seq[WriteError]) {
+//  def toJson: JsValue = {
+//    Json.toJson(writeErrors.groupBy(_.index)
+//      .mapValues(errors => errors.map(error => Json.obj("code" -> error.getCode, "message" -> error.errmsg)))
+//      .map { case (index, errors) => Json.obj(s"index $index" -> errors) }
+//    )
+//  }
+//}
