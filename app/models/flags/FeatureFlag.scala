@@ -22,7 +22,6 @@ import play.api.libs.json._
 sealed trait FeatureFlag {
   def name: FeatureFlagName
   def isEnabled: Boolean
-  def isDisabled: Boolean = !isEnabled
 }
 
 object FeatureFlag {

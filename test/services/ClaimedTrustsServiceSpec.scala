@@ -17,13 +17,11 @@
 package services
 
 import base.BaseSpec
-import org.mockito.ArgumentMatchers._
 import models.claim_a_trust.TrustClaim
 import models.claim_a_trust.responses._
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito
 import org.mockito.Mockito._
-import play.api.Application
-import play.api.inject.bind
 import repositories.ClaimedTrustsRepository
 
 import scala.concurrent.Future
@@ -32,18 +30,14 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
 
   private val repository = mock[ClaimedTrustsRepository]
 
-  lazy val application: Application = applicationBuilder().overrides(
-    bind[ClaimedTrustsRepository].toInstance(repository)
-  ).build()
-
-  private val service = application.injector.instanceOf[ClaimedTrustsService]
+  private val service = new ClaimedTrustsService(repository)
 
   override def beforeEach(): Unit = {
     Mockito.reset(repository)
   }
 
-  "invoking .get" - {
-    "must return a GetClaimFoundResponse from the repository if there is one for the given internal id" in {
+  "invoking .get" should {
+    "return a GetClaimFoundResponse from the repository if there is one for the given internal id" in {
       val trustClaim = TrustClaim(internalId = fakeInternalId, identifier = fakeUtr, managedByAgent = true)
 
       when(repository.get(any())).thenReturn(Future.successful(Some(trustClaim)))
@@ -53,7 +47,7 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
       result mustBe GetClaimFound(trustClaim)
     }
 
-    "must return a GetClaimNotFoundResponse from the repository if there is no claims for the given internal id" in {
+    "return a GetClaimNotFoundResponse from the repository if there is no claims for the given internal id" in {
       when(repository.get(any())).thenReturn(Future.successful(None))
 
       val result = service.get("unmatched-internal-id").futureValue
@@ -62,8 +56,8 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
     }
   }
 
-  "invoking .store" - {
-    "must return a StoreSuccessResponse from the repository if the TrustClaim is successfully stored" in {
+  "invoking .store" should {
+    "return a StoreSuccessResponse from the repository if the TrustClaim is successfully stored" in {
 
       val trustClaim = TrustClaim(internalId = fakeInternalId, identifier = fakeUtr, managedByAgent = true)
 
@@ -74,7 +68,7 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
       result mustBe StoreSuccessResponse(trustClaim)
     }
 
-    "must return a StoreSuccessResponse from the repository if the TrustClaim is successfully stored with trustLocked" in {
+    "return a StoreSuccessResponse from the repository if the TrustClaim is successfully stored with trustLocked" in {
 
       val trustClaim = TrustClaim(internalId = fakeInternalId, identifier = fakeUtr, managedByAgent = true)
 
@@ -85,7 +79,7 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
       result mustBe StoreSuccessResponse(trustClaim)
     }
 
-    "must return a StoreParsingErrorResponse if the request body cannot be parsed into a TrustClaim" in {
+    "return a StoreParsingErrorResponse if the request body cannot be parsed into a TrustClaim" in {
       val result = service.store(fakeInternalId, None, None, None).futureValue
 
       result mustBe StoreParsingError

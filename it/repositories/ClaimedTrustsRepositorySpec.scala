@@ -1,86 +1,63 @@
 package repositories
 
 import models.claim_a_trust.TrustClaim
-import org.scalatest._
-import org.scalatest.concurrent.ScalaFutures
-import play.api.test.Helpers._
-import suite.MongoSuite
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.freespec.AnyFreeSpec
+import org.mongodb.scala.model.Filters
+import play.api.Logging
+import uk.gov.hmrc.mongo.test.MongoSupport
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import scala.concurrent.ExecutionContext.Implicits._
+import scala.concurrent.ExecutionContext.Implicits.global
 
-class ClaimedTrustsRepositorySpec extends AnyFreeSpec with Matchers
-  with ScalaFutures with OptionValues with Inside with MongoSuite with EitherValues {
+class ClaimedTrustsRepositorySpec extends RepositoriesBaseSpec with MongoSupport with Logging {
 
-  "a claimed trusts repository" - {
+  val internalId = "Int-328969d0-557e-4559-96ba-074d0597107e"
+  lazy val repository: ClaimedTrustsRepository = new ClaimedTrustsRepository(mongoComponent, appConfig)
 
-    val internalId = "Int-328969d0-557e-4559-96ba-074d0597107e"
+  private def remove(internalId: String): Boolean = {
+    logger.info(s"Delete Claim with internalId=$internalId")
+    val res = repository.collection.deleteMany(Filters.equal("_id", internalId)).toFutureOption().futureValue
+    logger.info(s"Deleted ${res.get.getDeletedCount}")
+    res.exists(_.wasAcknowledged()) && res.get.getDeletedCount >= 1
+  }
 
-    "must be able to store, retrieve and remove trusts claims" in {
+  "a claimed trusts repository" should {
 
-      running(application) {
+    "be able to store, retrieve and remove trusts claims" in {
 
-        getConnection(application).map { connection =>
+      cleanData(repository.collection)
 
-          dropTheDatabase(connection)
+      val lastUpdated = LocalDateTime.parse("2000-01-01 12:30", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
 
-          val repository = application.injector.instanceOf[ClaimedTrustsRepository]
+      val trustClaim = TrustClaim(internalId, "1234567890", managedByAgent = true, lastUpdated = lastUpdated)
 
-          val lastUpdated = LocalDateTime.parse("2000-01-01 12:30", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+      val storedClaim = repository.store(trustClaim).futureValue
 
-          val trustClaim = TrustClaim(internalId, "1234567890", managedByAgent = true, lastUpdated = lastUpdated)
+      storedClaim mustBe trustClaim
 
-          val storedClaim = repository.store(trustClaim).futureValue.right.value
+      repository.get(internalId).futureValue.value mustBe trustClaim
 
-          inside(storedClaim) {
-            case TrustClaim(id, utr, mba, tl, ldt) =>
-              id mustEqual internalId
-              utr mustEqual storedClaim.identifier
-              mba mustEqual storedClaim.managedByAgent
-              tl mustEqual storedClaim.trustLocked
-              ldt mustEqual storedClaim.lastUpdated
-          }
+      remove(internalId) mustBe true
 
-          repository.get(internalId).futureValue.value mustBe trustClaim
-
-          repository.remove(internalId).futureValue
-
-          repository.get(internalId).futureValue mustNot be(defined)
-
-          dropTheDatabase(connection)
-        }
-
-      }
+      repository.get(internalId).futureValue mustBe None
     }
 
-    "must be able to update a trust claim with the same auth id" in {
+    "be able to update a trust claim with the same auth id" in {
 
-      running(application) {
+      cleanData(repository.collection)
 
-        getConnection(application).map { connection =>
+      val lastUpdated = LocalDateTime.parse("2000-01-01 12:30", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
 
-          dropTheDatabase(connection)
+      val trustClaim = TrustClaim(internalId, "1234567890", managedByAgent = true, lastUpdated = lastUpdated)
 
-          val repository = application.injector.instanceOf[ClaimedTrustsRepository]
+      repository.store(trustClaim).futureValue
 
-          val lastUpdated = LocalDateTime.parse("2000-01-01 12:30", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+      val toUpdate = trustClaim.copy(identifier = "0987654321")
+      val updatedClaim = repository.store(toUpdate).futureValue
 
-          val trustClaim = TrustClaim(internalId, "1234567890", managedByAgent = true, lastUpdated = lastUpdated)
-
-          repository.store(trustClaim).futureValue.right.value
-
-          val updatedClaim = repository.store(trustClaim.copy(identifier = "0987654321")).futureValue
-
-          updatedClaim must be ('right)
-
-          dropTheDatabase(connection)
-        }
-
-      }
+      toUpdate mustBe updatedClaim
+      repository.get(internalId).futureValue.value mustBe toUpdate
+      repository.get(internalId).futureValue.value mustBe updatedClaim
     }
-
   }
 }

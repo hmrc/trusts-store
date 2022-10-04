@@ -25,9 +25,9 @@ import play.api.libs.json.Json
 class ErrorResponseSpec extends BaseSpec {
 
 
-  "ErrorResponse" - {
+  "ErrorResponse" should {
 
-    "must be able to provide a minimal json object with an error" in {
+    "be able to provide a minimal json object with an error" in {
 
       val expectedJson =
         Json.parse(
@@ -44,7 +44,7 @@ class ErrorResponseSpec extends BaseSpec {
       errorResponseJson mustBe expectedJson
     }
 
-    "must be able to provide a json object of with additional storage errors" in {
+    "be able to provide a json object of with additional storage errors" in {
 
       val expectedJson =
         Json.parse(

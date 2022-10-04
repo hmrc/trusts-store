@@ -53,7 +53,9 @@ class ClaimedTrustsService @Inject()(private val claimedTrustsRepository: Claime
         Some(TrustClaim(internalId, id, managedByAgent))
 
       case (Some(id), Some(managedByAgent), Some(maybeTrustLocked)) =>
-        if (maybeTrustLocked) {logger.info(s"[store][Session ID: ${Session.id(hc)}] TrustClaim is locked")}
+        if (maybeTrustLocked) {
+          logger.info(s"[store][Session ID: ${Session.id(hc)}] TrustClaim is locked")
+        }
         Some(TrustClaim(internalId, id, managedByAgent, maybeTrustLocked))
 
       case _ =>
@@ -62,7 +64,8 @@ class ClaimedTrustsService @Inject()(private val claimedTrustsRepository: Claime
 
     trustClaim match {
       case Some(tc) =>
-        claimedTrustsRepository.store(tc).map { StoreSuccessResponse
+        claimedTrustsRepository.store(tc).map {
+          StoreSuccessResponse
         }
       case None => Future.successful(StoreParsingError)
     }

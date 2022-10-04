@@ -21,9 +21,10 @@ import controllers.actions.{FakeIdentifierAction, IdentifierAction}
 import generators.ModelGenerators
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.http.MimeTypes
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -34,7 +35,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.CONTENT_TYPE
 import uk.gov.hmrc.http.HeaderCarrier
 
-class BaseSpec extends FreeSpec
+class BaseSpec extends AnyWordSpec
   with GuiceOneAppPerSuite
   with Matchers
   with MockitoSugar
@@ -67,12 +68,6 @@ class BaseSpec extends FreeSpec
 
   protected def applicationBuilder(): GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
-      .configure(
-        Seq(
-          "metrics.enabled" -> false,
-          "auditing.enabled" -> false
-        ): _*
-      )
       .overrides(
         bind[IdentifierAction].toInstance(new FakeIdentifierAction(injectedParsers))
       )

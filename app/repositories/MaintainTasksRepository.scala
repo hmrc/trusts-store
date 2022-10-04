@@ -17,99 +17,73 @@
 package repositories
 
 import config.AppConfig
-import javax.inject.{Inject, Singleton}
-import models.tasks.{TaskCache, Tasks}
-import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
-import play.api.Logging
-import play.api.libs.json.{Format, JsObject}
-import org.mongodb.scala.model.Filters.{and, equal}
-import org.mongodb.scala.model._
-import uk.gov.hmrc.mongo.MongoComponent
-import java.util.concurrent.TimeUnit
-import java.time.LocalDateTime
+import models.tasks.{MaintainTaskCache, Tasks}
 import org.mongodb.scala.bson.conversions.Bson
+import org.mongodb.scala.model.Filters.equal
+import org.mongodb.scala.model._
+import play.api.Logging
+import play.api.libs.json.Format
+import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
+import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
 class MaintainTasksRepository @Inject()(mongo: MongoComponent,
                                         config: AppConfig)
                                        (implicit ec: ExecutionContext)
-  extends PlayMongoRepository[TaskCache] (
+  extends PlayMongoRepository[MaintainTaskCache](
     mongoComponent = mongo,
-    domainFormat = Format(TaskCache.reads, TaskCache.writes),
+    domainFormat = Format(MaintainTaskCache.reads, MaintainTaskCache.writes),
     collectionName = "maintainTasks",
     indexes = Seq(
       IndexModel(
         Indexes.ascending("lastUpdated"),
-        IndexOptions().name("tasks-last-updated-index").expireAfter(config.claimAttemptsTtlInSeconds, TimeUnit.SECONDS).unique(false)
+        IndexOptions().name("maintain-tasks-last-updated-index").expireAfter(config.maintainTaskTtlInSeconds, TimeUnit.SECONDS).unique(false)
       ),
-        IndexModel(
-        Indexes.ascending("compoundIndex"),
+      IndexModel(
+        Indexes.ascending("newId"),
         IndexOptions().name("internal-id-and-identifier-and-sessionId-compound-index")
       )
-    )
+    ),
+    replaceIndexes = config.dropIndexes
   ) with Logging {
 
-  //  override def collectionName: String = "maintainTasks"
+  private val newId: String = "newId"
 
-   val identifierKey: String = "id"
+  private def computeNewId(internalId: String, identifier: String, sessionId: String): String =
+    s"$internalId-$identifier-$sessionId"
 
-   val useSessionId: Boolean = true
+  private def selector(internalId: String, identifier: String, sessionId: String): Bson =
+    equal(newId, computeNewId(internalId, identifier, sessionId))
 
-  def get(internalId: String, identifier: String, sessionId: String): Future[Option[TaskCache]] = {
-    val modifier = and (equal("$set",LocalDateTime.now),
-      equal("lastUpdated",LocalDateTime.now),
-      equal("$date", LocalDateTime.now)
-    )
+  def get(internalId: String, identifier: String, sessionId: String): Future[Option[Tasks]] = {
+    val modifier = Updates.set("lastUpdated", LocalDateTime.now)
 
-    val updateOption = new FindOneAndUpdateOptions().upsert(false)
+    val updateOption = new FindOneAndUpdateOptions()
+      .upsert(false)
+      .returnDocument(ReturnDocument.AFTER)
 
-    collection.findOneAndUpdate(selector(internalId,identifier,sessionId),modifier,updateOption).toFutureOption()
-
-//    collection
-//      .flatMap(
-//        _.findAndUpdate(
-//          selector = selector(internalId, identifier, sessionId),
-//          update = modifier,
-//          fetchNewObject = true,
-//          upsert = false,
-//          sort = None,
-//          fields = None,
-//          bypassDocumentValidation = false,
-//          writeConcern = WriteConcern.Default,
-//          maxTime = None,
-//          collation = None,
-//          arrayFilters = Nil
-//        ).map(_.result[TaskCache])
-//      )
+    collection.findOneAndUpdate(selector(internalId, identifier, sessionId), modifier, updateOption).toFutureOption()
+      .map(_.map(_.task))
   }
 
-  private def selector(internalId: String, identifier: String, sessionId: String): Bson = if (useSessionId) {
-    equal("newId", s"$internalId-$identifier-$sessionId")
-  } else {
-    equal("internalIdKey -> internalId", identifierKey -> identifier)
+  def set(internalId: String, identifier: String, sessionId: String, updated: Tasks): Future[Option[Tasks]] = {
+    val newIdValue = computeNewId(internalId, identifier, sessionId)
+    val insertCache = MaintainTaskCache(internalId, identifier, newIdValue, sessionId, updated)
+
+    val updateOption = new FindOneAndReplaceOptions()
+      .upsert(true)
+      .returnDocument(ReturnDocument.AFTER)
+
+    collection.findOneAndReplace(selector(internalId, identifier, sessionId), insertCache, updateOption).toFutureOption()
+      .map(_.map(_.task))
   }
 
-  def set(internalId: String, identifier: String, sessionId: String, updated: Tasks): Future[Boolean] = {
-
-    val insertCache = TaskCache(internalId, identifier, sessionId, updated)
-
-    val modifier = equal("$set",insertCache)
-
-    val updateOption = new FindOneAndUpdateOptions().upsert(true)
-
-    collection.findOneAndUpdate(selector(internalId,identifier,sessionId),modifier,updateOption).toFutureOption().map(_ => true)
-
-//    collection.flatMap {
-//      _.update(ordered = false).one(selector(internalId, identifier, sessionId), modifier, upsert = true, multi = false).map {
-//        result => result.ok
-//      }
-    }
-
-  def reset(internalId: String, identifier: String, sessionId: String): Future[Boolean] = {
+  def reset(internalId: String, identifier: String, sessionId: String): Future[Option[Tasks]] = {
     set(internalId, identifier, sessionId, Tasks())
   }
-
 }

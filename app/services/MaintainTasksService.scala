@@ -16,23 +16,21 @@
 
 package services
 
-import repositories.{MaintainTasksRepository}
-import javax.inject.{Inject, Singleton}
 import models.tasks.Task.Task
 import models.tasks.TaskStatus.TaskStatus
 import models.tasks.{Task, Tasks}
 import play.api.libs.json.{JsValue, Json}
+import repositories.MaintainTasksRepository
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
 class MaintainTasksService @Inject()(maintainTasksRepository: MaintainTasksRepository)(implicit ec: ExecutionContext) {
 
- // override val tasksRepository: TasksRepository = maintainTasksRepository
-
   def get(internalId: String, identifier: String, sessionId: String): Future[Tasks] = {
     maintainTasksRepository.get(internalId, identifier, sessionId) map {
-      case Some(cache) => cache.task
+      case Some(task) => task
       case None => Tasks()
     }
   }
@@ -42,7 +40,7 @@ class MaintainTasksService @Inject()(maintainTasksRepository: MaintainTasksRepos
   }
 
   def reset(internalId: String, identifier: String, sessionId: String): Future[Boolean] = {
-    maintainTasksRepository.reset(internalId, identifier, sessionId)
+    maintainTasksRepository.reset(internalId, identifier, sessionId).map(_.isDefined)
   }
 
   def modifyTask(internalId: String, identifier: String, sessionId: String, update: Task, taskStatus: TaskStatus): Future[JsValue] = {

@@ -16,7 +16,6 @@
 
 package controllers
 
-import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
 import controllers.actions.IdentifierAction
 import play.api.mvc._
 import services.MaintainTasksService

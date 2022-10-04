@@ -2,98 +2,58 @@ package repositories
 
 import models.tasks.TaskStatus._
 import models.tasks.Tasks
-import org.scalatest._
-import org.scalatest.concurrent.ScalaFutures
-import play.api.test.Helpers._
-import suite.MongoSuite
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.freespec.AnyFreeSpec
+import uk.gov.hmrc.mongo.test.MongoSupport
 
-import scala.concurrent.ExecutionContext.Implicits._
+import scala.concurrent.ExecutionContext.Implicits.global
 
-class MaintainTasksRepositorySpec extends AnyFreeSpec with Matchers
-  with ScalaFutures with OptionValues with MongoSuite {
+class MaintainTasksRepositorySpec extends RepositoriesBaseSpec with MongoSupport {
 
-  "a maintain tasks repository" - {
+  val internalId = "Int-328969d0-557e-4559-96ba-074d0597107e"
+  val identifier = "newId"
+  val sessionId: String = "session-d41ebbc3-38bc-4276-86da-5533eb878e37"
 
-    val internalId = "Int-328969d0-557e-4559-96ba-074d0597107e"
-    val identifier = "1234567890"
-    val sessionId: String = "session-d41ebbc3-38bc-4276-86da-5533eb878e37"
+  val defaultTask: Tasks = Tasks()
 
-    "useSessionId must be true " in {
-      val repository = application.injector.instanceOf[MaintainTasksRepository]
-      val test = repository.useSessionId
-      test mustBe true
+  lazy val repository: MaintainTasksRepository = new MaintainTasksRepository(mongoComponent, appConfig)
+
+  "a maintain tasks repository" should {
+
+    "return None when no cache exists" in {
+      cleanData(repository.collection)
+
+      repository.get(internalId, identifier, sessionId).futureValue mustBe None
     }
 
-    "must return None when no cache exists" in {
-      running(application) {
+    "set an updated Task and return one that exists for that user" in {
+      cleanData(repository.collection)
 
-        getConnection(application).map{ connection =>
-          dropTheDatabase(connection)
+      repository.set(internalId, identifier, sessionId, defaultTask).futureValue.value mustBe defaultTask
 
-          val repository = application.injector.instanceOf[MaintainTasksRepository]
-
-          repository.get(internalId, identifier, sessionId).futureValue mustBe None
-        }
-      }
+      repository.get(internalId, identifier, sessionId).futureValue.value mustBe defaultTask
     }
 
-    "must set an updated Task and return one that exists for that user" in {
-      running(application) {
+    "reset the task list so every task is incomplete" in {
+      cleanData(repository.collection)
 
-        getConnection(application).map { connection =>
-          dropTheDatabase(connection)
+      val tasksCompleted = Tasks(
+        trustDetails = Completed,
+        assets = Completed,
+        taxLiability = Completed,
+        trustees = Completed,
+        settlors = Completed,
+        protectors = Completed,
+        beneficiaries = Completed,
+        other = Completed
+      )
 
-          val repository = application.injector.instanceOf[MaintainTasksRepository]
+      repository.set(internalId, identifier, sessionId, tasksCompleted).futureValue.value mustBe tasksCompleted
 
-          val task = Tasks()
+      repository.get(internalId, identifier, sessionId).futureValue.value mustBe tasksCompleted
 
-          val result = repository.set(internalId, identifier, sessionId, task).futureValue
+      repository.reset(internalId, identifier, sessionId).futureValue.value mustBe defaultTask
 
-          result mustBe true
-
-          repository.get(internalId, identifier, sessionId).futureValue.value.task mustBe task
-
-          dropTheDatabase(connection)
-        }
-
-      }
-    }
-
-    "must reset the task list so every task is incomplete" in {
-      running(application) {
-
-        getConnection(application).map { connection =>
-          dropTheDatabase(connection)
-
-          val repository = application.injector.instanceOf[MaintainTasksRepository]
-
-          val tasksCompleted = Tasks(
-            trustDetails = Completed,
-            assets = Completed,
-            taxLiability = Completed,
-            trustees = Completed,
-            settlors = Completed,
-            protectors = Completed,
-            beneficiaries = Completed,
-            other = Completed
-          )
-
-          repository.set(internalId, identifier, sessionId, tasksCompleted).futureValue
-
-          repository.get(internalId, identifier, sessionId).futureValue.value.task mustBe tasksCompleted
-
-          val result = repository.reset(internalId, identifier, sessionId).futureValue
-
-          result mustBe true
-
-          repository.get(internalId, identifier, sessionId).futureValue.value.task mustBe Tasks()
-
-          dropTheDatabase(connection)
-        }
-
-      }
+      repository.get(internalId, identifier, sessionId).futureValue.value mustBe defaultTask
     }
   }
+
 }

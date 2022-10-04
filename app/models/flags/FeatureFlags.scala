@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-//package models.repository
-//
-//import com.mongodb.WriteError
-//import play.api.libs.json.{JsValue, Json}
-//
-//
-//case class StorageErrors(writeErrors: Seq[WriteError]) {
-//  def toJson: JsValue = {
-//    Json.toJson(writeErrors.groupBy(_.index)
-//      .mapValues(errors => errors.map(error => Json.obj("code" -> error.getCode, "message" -> error.errmsg)))
-//      .map { case (index, errors) => Json.obj(s"index $index" -> errors) }
-//    )
-//  }
-//}
+package models.flags
+
+import play.api.libs.json._
+
+case class FeatureFlags(flags: Seq[FeatureFlag])
+
+object FeatureFlags {
+  implicit val formats: Format[FeatureFlags] = Json.format[FeatureFlags]
+}

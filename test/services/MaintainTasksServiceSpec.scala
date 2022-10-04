@@ -18,53 +18,39 @@ package services
 
 import base.BaseSpec
 import models.tasks.TaskStatus._
-import models.tasks.{TaskCache, Tasks}
+import models.tasks.{Task, TaskStatus, Tasks}
 import org.mockito.ArgumentMatchers.{eq => mEq, _}
 import org.mockito.Mockito
 import org.mockito.Mockito._
-import play.api.Application
-import play.api.inject.bind
+import play.api.libs.json.Json
 import repositories.MaintainTasksRepository
 
-import java.time.LocalDateTime
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class MaintainTasksServiceSpec extends BaseSpec {
 
   private val repository = mock[MaintainTasksRepository]
 
-  lazy val application: Application = applicationBuilder().overrides(
-    bind[MaintainTasksRepository].toInstance(repository)
-  ).build()
-
-  private val service = application.injector.instanceOf[MaintainTasksService]
+  private val service = new MaintainTasksService(repository)
 
   override def beforeEach(): Unit = {
     Mockito.reset(repository)
   }
 
-  "invoking .get" - {
-
-    "must return a Task from the repository if there is one for the given internal id and utr" in {
+  "invoking .get" should {
+    "return a Task from the repository if there is one for the given internal id and utr" in {
 
       val task = Tasks()
 
-      val taskCache = TaskCache(
-        "internalId",
-        "utr",
-        "sessionId",
-        task,
-        LocalDateTime.now
-      )
-
-      when(repository.get(mEq("internalId"), mEq("utr"), mEq("sessionId"))).thenReturn(Future.successful(Some(taskCache)))
+      when(repository.get(mEq("internalId"), mEq("utr"), mEq("sessionId"))).thenReturn(Future.successful(Some(task)))
 
       val result = service.get("internalId", "utr", "sessionId").futureValue
 
       result mustBe task
     }
 
-    "must return a Task from the repository if there is not one for the given internal id and utr" in {
+    "return a Task from the repository if there is not one for the given internal id and utr" in {
       val task = Tasks()
 
       when(repository.get(mEq("internalId"), mEq("utr"), mEq("sessionId"))).thenReturn(Future.successful(None))
@@ -75,9 +61,8 @@ class MaintainTasksServiceSpec extends BaseSpec {
     }
   }
 
-  "invoking .set" - {
-
-    "must set an updated Task" in {
+  "invoking .set" should {
+    "set an updated Task" in {
 
       val task = Tasks(
         trustDetails = InProgress,
@@ -90,7 +75,7 @@ class MaintainTasksServiceSpec extends BaseSpec {
         other = InProgress
       )
 
-      when(repository.set(any(), any(), any(), any())).thenReturn(Future.successful(true))
+      when(repository.set(any(), any(), any(), any())).thenReturn(Future.successful(Some(task)))
 
       val result = service.set(fakeInternalId, fakeUtr, fakeSessionId, task).futureValue
 
@@ -98,11 +83,10 @@ class MaintainTasksServiceSpec extends BaseSpec {
     }
   }
 
-  "invoking .reset" - {
+  "invoking .reset" should {
+    "reset task list" in {
 
-    "must reset task list" in {
-
-      when(repository.reset(any(), any(), any())).thenReturn(Future.successful(true))
+      when(repository.reset(any(), any(), any())).thenReturn(Future.successful(Some(Tasks())))
 
       val result = service.reset(fakeInternalId, fakeUtr, fakeSessionId).futureValue
 
@@ -110,4 +94,35 @@ class MaintainTasksServiceSpec extends BaseSpec {
     }
   }
 
+  "invoking .modifyTask" should {
+    val tasks = Seq(Task.TrustDetails, Task.Assets, Task.TaxLiability, Task.Trustees, Task.Beneficiaries,
+      Task.Protectors, Task.Settlors, Task.OtherIndividuals)
+    val taskStatuses = TaskStatus.values.toSeq
+
+    tasks.foreach(task => {
+      taskStatuses.foreach(taskStatus => {
+        s"modify task of type=$task to status=$taskStatus" in {
+          val inputTasks = Tasks()
+          val expectedTasks = task match {
+            case Task.TrustDetails => inputTasks.copy(trustDetails = taskStatus)
+            case Task.Assets => inputTasks.copy(assets = taskStatus)
+            case Task.TaxLiability => inputTasks.copy(taxLiability = taskStatus)
+            case Task.Trustees => inputTasks.copy(trustees = taskStatus)
+            case Task.Beneficiaries => inputTasks.copy(beneficiaries = taskStatus)
+            case Task.Protectors => inputTasks.copy(protectors = taskStatus)
+            case Task.Settlors => inputTasks.copy(settlors = taskStatus)
+            case Task.OtherIndividuals => inputTasks.copy(other = taskStatus)
+          }
+
+          reset(repository)
+          when(repository.get(any(), any(), any())).thenReturn(Future.successful(Some(Tasks())))
+          when(repository.set(any(), any(), any(), any())).thenReturn(Future.successful(Some(Tasks())))
+
+          val result = service.modifyTask(fakeInternalId, fakeUtr, fakeSessionId, task, taskStatus).futureValue
+
+          result mustBe Json.toJson(expectedTasks)
+        }
+      })
+    })
+  }
 }

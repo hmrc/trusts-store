@@ -39,7 +39,7 @@ class RegisterTaskListController @Inject()(cc: ControllerComponents,
 
 	def get(identifier: String): Action[AnyContent] = authAction.async {
 		implicit request =>
-			tasksService.get(request.internalId, identifier, Session.id(hc)).map {
+			tasksService.get(request.internalId, identifier).map {
 				task =>
 					Ok(Json.toJson(task))
 			}

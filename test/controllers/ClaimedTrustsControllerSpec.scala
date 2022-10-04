@@ -17,9 +17,9 @@
 package controllers
 
 import base.BaseSpec
-import org.mockito.ArgumentMatchers.any
 import models.claim_a_trust.TrustClaim
 import models.claim_a_trust.responses._
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
 import org.mockito.Mockito._
 import play.api.Application
@@ -45,8 +45,8 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
     Mockito.reset(service)
   }
 
-  "invoking GET /claim" - {
-    "must return OK and a TrustClaim if there is one for the internal id" in {
+  "invoking GET /claim" should {
+    "return OK and a TrustClaim if there is one for the internal id" in {
       val request = FakeRequest(GET, routes.ClaimedTrustsController.get().url)
 
       val trustClaim = TrustClaim(internalId = fakeInternalId, identifier = fakeUtr, managedByAgent = true)
@@ -59,7 +59,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
       contentAsJson(result) mustBe trustClaim.toResponse
     }
 
-    "must return NOT_FOUND if there is no TrustClaim for the internal id" in {
+    "return NOT_FOUND if there is no TrustClaim for the internal id" in {
       val request = FakeRequest(GET, routes.ClaimedTrustsController.get().url)
 
       val expectedJson = Json.parse(
@@ -80,9 +80,9 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
     }
   }
 
-  "invoking POST /claim" - {
+  "invoking POST /claim" should {
 
-    "must return CREATED and the stored TrustClaim if the service returns a StoreSuccessResponse" in {
+    "return CREATED and the stored TrustClaim if the service returns a StoreSuccessResponse" in {
       val request = FakeRequest(POST, routes.ClaimedTrustsController.store().url)
         .withJsonBody(Json.obj(
           "id" -> "0123456789",
@@ -99,7 +99,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
       contentAsJson(result) mustBe trustClaim.toResponse
     }
 
-    "must return BAD_REQUEST and an error response if the service returns a StoreParsingErrorResponse" in {
+    "return BAD_REQUEST and an error response if the service returns a StoreParsingErrorResponse" in {
       val request = FakeRequest(POST, routes.ClaimedTrustsController.store().url)
         .withJsonBody(Json.obj(
           "some-incorrect-key" -> "some-incorrect-value"
@@ -120,37 +120,6 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
 
       status(result) mustBe Status.BAD_REQUEST
       contentAsJson(result) mustBe expectedJson
-    }
-
-    "must return INTERNAL_SERVER_ERROR and an error response if the service returns a StoreErrorsResponse" in {
-      val request = FakeRequest(POST, routes.ClaimedTrustsController.store().url)
-        .withJsonBody(Json.obj(
-          "some-incorrect-key" -> "some-incorrect-value"
-        ))
-
-      val expectedJson = Json.parse(
-        """
-          |{
-          |  "status": 500,
-          |  "message": "unable to store to trusts store",
-          |  "errors": [
-          |    { "index 1": [{ "code": 100, "message": "another mongo write error!" }] },
-          |    {
-          |      "index 0": [
-          |        { "code": 100, "message": "some mongo write error!" },
-          |        { "code": 200, "message": "a different mongo write error!" }
-          |      ]
-          |    }
-          |  ]
-          |}
-        """.stripMargin
-      )
-//      when(service.store(any(), any(), any(), any())(any())).thenReturn(Future.successful(StoreErrorsResponse(storageErrors)))
-//
-//      val result = route(application, request).value
-//
-//      status(result) mustBe Status.INTERNAL_SERVER_ERROR
-//      contentAsJson(result) mustBe expectedJson
     }
   }
 
