@@ -26,7 +26,8 @@ trait MongoDateTimeFormats {
   implicit val localDateTimeRead: Reads[LocalDateTime] = {
     case JsObject(map) if map.contains("$date") =>
       map("$date") match {
-        case JsNumber(v) => JsSuccess(LocalDateTime.ofInstant(Instant.ofEpochMilli(v.toLong), ZoneOffset.UTC))
+        case JsNumber(bigDecimal) =>
+          JsSuccess(LocalDateTime.ofInstant(Instant.ofEpochMilli(bigDecimal.toLong), ZoneOffset.UTC))
         case JsObject(stringObject) =>
           if (stringObject.contains("$numberLong")) {
             JsSuccess(LocalDateTime.ofInstant(Instant.ofEpochMilli(BigDecimal(stringObject("$numberLong").as[JsString].value).toLong), ZoneOffset.UTC))
