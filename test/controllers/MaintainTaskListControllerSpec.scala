@@ -48,9 +48,9 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   private val sessionId: String = Session.id(hc)
 
-  "invoking GET /maintain/tasks" - {
+  "invoking GET /maintain/tasks" should {
 
-    "must return OK and the completed Tasks" in {
+    "return OK and the completed Tasks" in {
       val request = FakeRequest(GET, routes.MaintainTaskListController.get("utr").url)
 
       val tasks = Tasks(
@@ -74,9 +74,9 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
-  "invoking POST /maintain/tasks" - {
+  "invoking POST /maintain/tasks" should {
 
-    "must return OK and the completed Tasks for valid tasks" in {
+    "return OK and the completed Tasks for valid tasks" in {
       val tasks = Tasks(
         trustDetails = InProgress,
         assets = InProgress,
@@ -99,7 +99,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
       verify(service).set("id", "utr", sessionId, tasks)
 
     }
-    "must return BAD_REQUEST for invalid JSON" in {
+    "return BAD_REQUEST for invalid JSON" in {
 
       val request = FakeRequest(POST, routes.MaintainTaskListController.set("utr").url).withBody(Json.obj())
 
@@ -110,9 +110,9 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
-  "invoking DELETE /maintain/tasks" - {
+  "invoking DELETE /maintain/tasks" should {
 
-    "must return OK" in {
+    "return OK" in {
 
       val request = FakeRequest(DELETE, routes.MaintainTaskListController.reset("utr").url)
 
@@ -127,9 +127,9 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
-  "invoking POST /maintain/task/update-trust-details" - {
+  "invoking POST /maintain/task/update-trust-details" should {
 
-    "must return Ok and the updated tasks" in {
+    "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
 
@@ -153,7 +153,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
       }
     }
 
-    "must return Bad Request when invalid request body" in {
+    "return Bad Request when invalid request body" in {
 
       val request = FakeRequest(POST, routes.MaintainTaskListController.updateTrustDetailsStatus("identifier").url)
         .withBody(Json.obj())
@@ -165,9 +165,9 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
-  "invoking POST /maintain/task/update-assets" - {
+  "invoking POST /maintain/task/update-assets" should {
 
-    "must return Ok and the updated tasks" in {
+    "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
 
@@ -191,7 +191,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
       }
     }
 
-    "must return Bad Request when invalid request body" in {
+    "return Bad Request when invalid request body" in {
 
       val request = FakeRequest(POST, routes.MaintainTaskListController.updateAssetsStatus("identifier").url)
         .withBody(Json.obj())
@@ -203,9 +203,9 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
-  "invoking POST /maintain/task/update-tax-liability" - {
+  "invoking POST /maintain/task/update-tax-liability" should {
 
-    "must return Ok and the updated tasks" in {
+    "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
 
@@ -229,7 +229,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
       }
     }
 
-    "must return Bad Request when invalid request body" in {
+    "return Bad Request when invalid request body" in {
 
       val request = FakeRequest(POST, routes.MaintainTaskListController.updateTaxLiabilityStatus("identifier").url)
         .withBody(Json.obj())
@@ -241,9 +241,9 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
-  "invoking POST /maintain/task/update-trustees" - {
+  "invoking POST /maintain/task/update-trustees" should {
 
-    "must return Ok and the updated tasks" in {
+    "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
 
@@ -267,7 +267,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
       }
     }
 
-    "must return Bad Request when invalid request body" in {
+    "return Bad Request when invalid request body" in {
 
       val request = FakeRequest(POST, routes.MaintainTaskListController.updateTrusteesStatus("identifier").url)
         .withBody(Json.obj())
@@ -279,9 +279,9 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
-  "invoking POST /maintain/task/update-beneficiaries" - {
+  "invoking POST /maintain/task/update-beneficiaries" should {
 
-    "must return Ok and the updated tasks" in {
+    "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
 
@@ -305,7 +305,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
       }
     }
 
-    "must return Bad Request when invalid request body" in {
+    "return Bad Request when invalid request body" in {
 
       val request = FakeRequest(POST, routes.MaintainTaskListController.updateBeneficiariesStatus("identifier").url)
         .withBody(Json.obj())
@@ -317,9 +317,9 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
-  "invoking POST /maintain/task/update-settlors" - {
+  "invoking POST /maintain/task/update-settlors" should {
 
-    "must return Ok and the updated tasks" in {
+    "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
 
@@ -343,7 +343,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
       }
     }
 
-    "must return Bad Request when invalid request body" in {
+    "return Bad Request when invalid request body" in {
 
       val request = FakeRequest(POST, routes.MaintainTaskListController.updateSettlorsStatus("identifier").url)
         .withBody(Json.obj())
@@ -355,9 +355,9 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
-  "invoking POST /maintain/task/update-protectors" - {
+  "invoking POST /maintain/task/update-protectors" should {
 
-    "must return Ok and the updated tasks" in {
+    "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
 
@@ -381,7 +381,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
       }
     }
 
-    "must return Bad Request when invalid request body" in {
+    "return Bad Request when invalid request body" in {
 
       val request = FakeRequest(POST, routes.MaintainTaskListController.updateProtectorsStatus("identifier").url)
         .withBody(Json.obj())
@@ -393,9 +393,9 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   }
 
-  "invoking POST /maintain/task/update-other-individuals" - {
+  "invoking POST /maintain/task/update-other-individuals" should {
 
-    "must return Ok and the updated tasks" in {
+    "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
 
@@ -419,7 +419,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
       }
     }
 
-    "must return Bad Request when invalid request body" in {
+    "return Bad Request when invalid request body" in {
 
       val request = FakeRequest(POST, routes.MaintainTaskListController.updateOtherIndividualsStatus("identifier").url)
         .withBody(Json.obj())

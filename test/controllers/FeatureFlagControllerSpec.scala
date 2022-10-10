@@ -21,8 +21,6 @@ import models.flags.FeatureFlag
 import models.flags.FeatureFlag.Enabled
 import models.flags.FeatureFlagName.`5MLD`
 import org.mockito.ArgumentMatchers.any
-import models.flags.FeatureFlag.Enabled
-import models.flags.FeatureFlagName.`5MLD`
 import org.mockito.Mockito.{times, verify, when}
 import play.api.inject.bind
 import play.api.libs.json.{JsBoolean, JsString, Json}
@@ -34,9 +32,9 @@ import scala.concurrent.Future
 
 class FeatureFlagControllerSpec extends BaseSpec {
 
-  "GET" - {
+  "GET" should {
 
-    "must return the feature flag from the request when" - {
+    "return the feature flag from the request when" should {
       "config for the flag exists" in {
 
         val app = applicationBuilder()
@@ -76,9 +74,9 @@ class FeatureFlagControllerSpec extends BaseSpec {
     }
   }
 
-  "PUT" - {
+  "PUT" should {
 
-    "must set a flag and return NO_CONTENT when sent a valid payload" in {
+    "set a flag and return NO_CONTENT when sent a valid payload" in {
 
       val mockService = mock[FeatureFlagService]
       when(mockService.set(any(), any())) thenReturn Future.successful(true)
@@ -99,7 +97,7 @@ class FeatureFlagControllerSpec extends BaseSpec {
       }
     }
 
-    "must return BAD_REQUEST when sent a valid payload" in {
+    "return BAD_REQUEST when sent a valid payload" in {
 
       val mockService = mock[FeatureFlagService]
       when(mockService.set(any(), any())) thenReturn Future.successful(true)

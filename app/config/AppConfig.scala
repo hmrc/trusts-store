@@ -26,4 +26,10 @@ class AppConfig @Inject()(config: Configuration) {
 
   def getFeature(flagName: FeatureFlagName): Option[Boolean] =
     config.getOptional[Boolean](s"features.${flagName.asString}")
+
+  val claimAttemptsTtlInSeconds: Long = config.get[Long]("mongodb.claimAttempts.expireAfterSeconds")
+  val maintainTaskTtlInSeconds: Long = config.get[Long]("mongodb.maintainTasks.expireAfterSeconds")
+  val registerTaskTtlInSeconds: Long = config.get[Long]("mongodb.registerTasks.expireAfterSeconds")
+  val dropIndexes: Boolean = config.get[Boolean]("microservice.services.features.mongo.dropIndexes")
+
 }

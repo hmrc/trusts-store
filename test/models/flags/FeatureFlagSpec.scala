@@ -23,11 +23,11 @@ import play.api.libs.json.Json
 
 class FeatureFlagSpec extends BaseSpec {
 
-  "FeatureFlag" - {
+  "FeatureFlag" should {
 
-    "must de-serialise and serialise" - {
+    "de-serialise and serialise" should {
 
-      "5MLD" - {
+      "5MLD" should {
 
         "enabled" in {
           val json = Json.parse(
@@ -58,7 +58,7 @@ class FeatureFlagSpec extends BaseSpec {
         }
       }
 
-      "NonTaxableAccessCode" - {
+      "NonTaxableAccessCode" should {
 
         "enabled" in {
           val json = Json.parse(

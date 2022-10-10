@@ -1,43 +1,45 @@
 package repositories
 
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.OptionValues
-import play.api.test.Helpers._
-import models.flags.FeatureFlag.Enabled
-import models.flags.FeatureFlagName.`5MLD`
-import org.scalatest.matchers.must.Matchers
-import suite.MongoSuite
-import org.scalatest.freespec.AnyFreeSpec
-
+import models.flags.FeatureFlag.{Disabled, Enabled}
+import models.flags.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
+import uk.gov.hmrc.mongo.test.MongoSupport
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class FeaturesRepositorySpec
-  extends AnyFreeSpec
-    with Matchers
-    with ScalaFutures
-    with OptionValues
-    with MongoSuite
-    with IntegrationPatience {
+class FeaturesRepositorySpec extends RepositoriesBaseSpec with MongoSupport {
 
-  "Features Repository" - {
+  lazy val repository: FeaturesRepository = new FeaturesRepository(mongoComponent, appConfig)
 
-    "must round trip feature flags correctly" in {
+  "Features Repository" should {
 
-      running(application) {
-        getConnection(application).map { connection =>
+    "remove all flag correctly" in {
+      val data = Seq()
 
-          val repo = application.injector.instanceOf[FeaturesRepository]
+      val setFlags = repository.setFeatureFlags(data).futureValue
+      setFlags mustBe true
 
-          dropTheDatabase(connection)
+      val result = repository.getFeatureFlags.futureValue
+      result mustBe data
+    }
 
-          val data = Seq(Enabled(`5MLD`))
+    "save one flag correctly" in {
+      val data = Seq(Enabled(`5MLD`))
 
-          val result = repo.setFeatureFlags(data).flatMap(_ => repo.getFeatureFlags).futureValue
+      val setFlags = repository.setFeatureFlags(data).futureValue
+      setFlags mustBe true
 
-          result mustBe data
-        }
-      }
+      val result = repository.getFeatureFlags.futureValue
+      result mustBe data
+    }
+
+    "save two flags correctly" in {
+      val data = Seq(Enabled(`5MLD`), Disabled(NonTaxableAccessCode))
+
+      val setFlags = repository.setFeatureFlags(data).futureValue
+      setFlags mustBe true
+
+      val result = repository.getFeatureFlags.futureValue
+      result mustBe data
     }
   }
 }

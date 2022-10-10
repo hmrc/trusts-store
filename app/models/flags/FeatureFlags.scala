@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package models.repository
+package models.flags
 
-import play.api.libs.json.{JsValue, Json}
-import reactivemongo.api.commands.WriteError
+import play.api.libs.json._
 
-case class StorageErrors(writeErrors: Seq[WriteError]) {
-  def toJson: JsValue = {
-    Json.toJson(writeErrors.groupBy(_.index)
-      .mapValues(errors => errors.map(error => Json.obj("code" -> error.code, "message" -> error.errmsg)))
-      .map { case (index, errors) => Json.obj(s"index $index" -> errors) }
-    )
-  }
+case class FeatureFlags(flags: Seq[FeatureFlag])
+
+object FeatureFlags {
+  implicit val formats: Format[FeatureFlags] = Json.format[FeatureFlags]
 }

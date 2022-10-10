@@ -21,34 +21,37 @@ import play.api.libs.json.{OWrites, Reads, __}
 
 import java.time.LocalDateTime
 
-case class TaskCache(internalId: String,
-                     id: String,
-                     sessionId: String,
-                     task: Tasks,
-                     lastUpdated: LocalDateTime = LocalDateTime.now)
+case class RegisterTaskCache(internalId: String,
+                             draftId: String,
+                             id: String,
+                             sessionId: String,
+                             task: Tasks,
+                             lastUpdated: LocalDateTime = LocalDateTime.now)
 
 
-object TaskCache extends MongoDateTimeFormats {
+object RegisterTaskCache extends MongoDateTimeFormats {
 
   import play.api.libs.functional.syntax._
 
-  implicit lazy val reads: Reads[TaskCache] = {
+  implicit lazy val reads: Reads[RegisterTaskCache] = {
     (
       (__ \ "internalId").read[String] and
         (__ \ "id").read[String] and
+        (__ \ "draftId").read[String] and
         (__ \ "sessionId").readWithDefault[String]("") and
         (__ \ "task").read[Tasks] and
         (__ \ "lastUpdated").read(localDateTimeRead)
-      ) (TaskCache.apply _)
+      ) (RegisterTaskCache.apply _)
   }
 
-  implicit lazy val writes: OWrites[TaskCache] = {
+  implicit lazy val writes: OWrites[RegisterTaskCache] = {
     (
       (__ \ "internalId").write[String] and
         (__ \ "id").write[String] and
+        (__ \ "draftId").write[String] and
         (__ \ "sessionId").write[String] and
         (__ \ "task").write[Tasks] and
         (__ \ "lastUpdated").write(localDateTimeWrite)
-      ) (unlift(TaskCache.unapply))
+      ) (unlift(RegisterTaskCache.unapply))
   }
 }

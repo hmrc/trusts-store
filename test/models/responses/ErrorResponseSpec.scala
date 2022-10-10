@@ -18,18 +18,16 @@ package models.responses
 
 import base.BaseSpec
 import models.claim_a_trust.responses.ClaimedTrustResponse._
-import models.repository.StorageErrors
 import models.responses.ErrorResponse._
 import play.api.http.Status._
 import play.api.libs.json.Json
-import reactivemongo.api.commands.WriteError
 
 class ErrorResponseSpec extends BaseSpec {
 
 
-  "ErrorResponse" - {
+  "ErrorResponse" should {
 
-    "must be able to provide a minimal json object with an error" in {
+    "be able to provide a minimal json object with an error" in {
 
       val expectedJson =
         Json.parse(
@@ -46,7 +44,7 @@ class ErrorResponseSpec extends BaseSpec {
       errorResponseJson mustBe expectedJson
     }
 
-    "must be able to provide a json object of with additional storage errors" in {
+    "be able to provide a json object of with additional storage errors" in {
 
       val expectedJson =
         Json.parse(
@@ -69,17 +67,6 @@ class ErrorResponseSpec extends BaseSpec {
           """.stripMargin
         )
 
-      val storageErrors = StorageErrors(
-        Seq(
-          WriteError(index = 1, code = 50, "some mongo write error!"),
-          WriteError(index = 1, code = 120, "another mongo write error!"),
-          WriteError(index = 2, code = 50, "some other mongo write error :(!")
-        )
-      ).toJson
-
-      val errorResponseJson = Json.toJson(ErrorResponse(status = INTERNAL_SERVER_ERROR, message = UNABLE_TO_STORE, errors = Some(storageErrors)))
-
-      errorResponseJson mustBe expectedJson
     }
   }
 }

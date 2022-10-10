@@ -22,9 +22,9 @@ import play.api.libs.json.Json
 
 class TasksSpec extends BaseSpec {
 
-  "Tasks" - {
+  "Tasks" should {
 
-    "deserialise" - {
+    "deserialise" should {
 
       "old style" in {
 

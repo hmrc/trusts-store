@@ -22,9 +22,9 @@ import play.api.libs.json.{JsError, JsString, JsSuccess, Json}
 
 class FeatureFlagNameSpec extends BaseSpec {
 
-  "FeatureFlagName" - {
+  "FeatureFlagName" should {
 
-    "must de-serialise and serialise" - {
+    "de-serialise and serialise" should {
 
       "5MLD feature flag" in {
         val json = JsString("5mld")

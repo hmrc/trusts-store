@@ -16,68 +16,44 @@
 
 package repositories
 
-import models.flags.FeatureFlag
-import play.api.Configuration
-import play.api.libs.json.{JsObject, Json, OWrites}
-import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.IndexType
-import reactivemongo.play.json.collection.JSONCollection
+import com.mongodb.client.model.FindOneAndReplaceOptions
+import config.AppConfig
+import models.flags.{FeatureFlag, FeatureFlags}
+import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes, ReturnDocument}
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class FeaturesRepository @Inject()(override val mongo: ReactiveMongoApi,
-                                   override val config: Configuration)
-                                  (implicit val ec: ExecutionContext)
-  extends IndexManager {
-
-  implicit final val jsObjectWrites: OWrites[JsObject] = OWrites[JsObject](identity)
-
-  override def collectionName: String = "features"
-
+class FeaturesRepository @Inject()(mongo: MongoComponent,
+                                   config: AppConfig)
+                                  (implicit ec: ExecutionContext)
+  extends PlayMongoRepository[FeatureFlags](
+    mongoComponent = mongo,
+    domainFormat = FeatureFlags.formats,
+    collectionName = "features",
+    indexes = Seq(
+      IndexModel(
+        Indexes.ascending("lastUpdated"),
+        IndexOptions().name("features-last-updated-index").unique(false)
+      )
+    ),
+    replaceIndexes = config.dropIndexes
+  ) {
   private val featureFlagDocumentId = "feature-flags"
-
-  private val lastUpdatedIndex = MongoIndex(
-    key = Seq("lastUpdated" -> IndexType.Ascending),
-    name = "features-last-updated-index"
-  )
-
-  private def collection: Future[JSONCollection] = for {
-    _ <- ensureIndexes
-    col <- mongo.database.map(_.collection[JSONCollection](collectionName))
-  } yield col
-
-  private def ensureIndexes: Future[Boolean] = for {
-    collection <- mongo.database.map(_.collection[JSONCollection](collectionName))
-    createdLastUpdatedIndex <- collection.indexesManager.ensure(lastUpdatedIndex)
-  } yield createdLastUpdatedIndex
+  private val selector = equal("_id", featureFlagDocumentId)
 
   def getFeatureFlags: Future[Seq[FeatureFlag]] =
-    collection.flatMap(_.find(Json.obj("_id" -> featureFlagDocumentId), None)
-      .one[JsObject])
-      .map(_.map(js => (js \ "flags").as[Seq[FeatureFlag]]))
-      .map(_.getOrElse(Seq.empty[FeatureFlag]))
+    collection.find(selector).headOption().map(_.map(_.flags).getOrElse(Seq.empty[FeatureFlag]))
 
   def setFeatureFlags(flags: Seq[FeatureFlag]): Future[Boolean] = {
+    val options = new FindOneAndReplaceOptions()
+      .upsert(true)
+      .returnDocument(ReturnDocument.AFTER)
 
-    val selector = Json.obj(
-      "_id" -> featureFlagDocumentId
-    )
-
-    val modifier = Json.obj(
-      "_id" -> featureFlagDocumentId,
-      "flags" -> Json.toJson(flags)
-    )
-
-    collection.flatMap {
-      _.update(ordered = false)
-        .one(selector, modifier, upsert = true)
-        .map {
-          lastError: WriteResult =>
-            lastError.ok
-        }
-    }
+    collection.findOneAndReplace(selector, FeatureFlags(flags), options).toFutureOption().map(_.isDefined)
   }
 }

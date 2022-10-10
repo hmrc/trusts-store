@@ -17,69 +17,54 @@
 package services
 
 import base.BaseSpec
-import models.tasks.Task.TrustDetails
 import models.tasks.TaskStatus._
-import models.tasks.{TaskCache, Tasks}
+import models.tasks.{Task, TaskStatus, Tasks}
 import org.mockito.ArgumentMatchers.{eq => mEq, _}
 import org.mockito.Mockito
 import org.mockito.Mockito._
-import play.api.Application
-import play.api.inject.bind
 import play.api.libs.json.Json
 import repositories.RegisterTasksRepository
 
-import java.time.LocalDateTime
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RegisterTasksServiceSpec extends BaseSpec {
 
   private val repository = mock[RegisterTasksRepository]
 
-  lazy val application: Application = applicationBuilder().overrides(
-    bind[RegisterTasksRepository].toInstance(repository)
-  ).build()
-
-  private val service = application.injector.instanceOf[RegisterTasksService]
+  private val service = new RegisterTasksService(repository)
 
   override def beforeEach(): Unit = {
     Mockito.reset(repository)
   }
 
-  "invoking .get" - {
+  "invoking .get" should {
 
-    "must return a Task from the repository if there is one for the given internal id and draft id" in {
+    "return a Task from the repository if there is one for the given internal id and draft id" in {
 
       val task = Tasks()
 
-      val taskCache = TaskCache(
-        "internalId",
-        "draftId",
-        "sessionId",
-        task,
-        LocalDateTime.now
-      )
+      when(repository.get(mEq("internalId"), mEq("draftId"))).thenReturn(Future.successful(Some(task)))
 
-      when(repository.get(mEq("internalId"), mEq("draftId"), mEq("sessionId"))).thenReturn(Future.successful(Some(taskCache)))
-
-      val result = service.get("internalId", "draftId", "sessionId").futureValue
+      val result = service.get("internalId", "draftId").futureValue
 
       result mustBe task
     }
 
-    "must return a Task from the repository if there is not one for the given internal id and draft id" in {
+    "return a Task from the repository if there is not one for the given internal id and draft id" in {
       val task = Tasks()
 
-      when(repository.get(mEq("internalId"), mEq("draftId"), mEq("sessionId"))).thenReturn(Future.successful(None))
+      when(repository.get(mEq("internalId"), mEq("draftId"))).thenReturn(Future.successful(None))
 
-      val result = service.get("internalId", "draftId", "sessionId").futureValue
+      val result = service.get("internalId", "draftId").futureValue
 
       result mustBe task
     }
   }
 
-  "invoking .set" - {
+  "invoking .set" should {
 
-    "must set an updated Task" in {
+    "set an updated Task" in {
 
       val task = Tasks(
         trustDetails = InProgress,
@@ -92,7 +77,7 @@ class RegisterTasksServiceSpec extends BaseSpec {
         other = InProgress
       )
 
-      when(repository.set(any(), any(), any(), any())).thenReturn(Future.successful(true))
+      when(repository.set(any(), any(), any(), any())).thenReturn(Future.successful(Some(task)))
 
       val result = service.set(fakeInternalId, fakeUtr, fakeSessionId, task).futureValue
 
@@ -100,11 +85,11 @@ class RegisterTasksServiceSpec extends BaseSpec {
     }
   }
 
-  "invoking .reset" - {
+  "invoking .reset" should {
 
-    "must reset task list" in {
+    "reset task list" in {
 
-      when(repository.reset(any(), any(), any())).thenReturn(Future.successful(true))
+      when(repository.reset(any(), any(), any())).thenReturn(Future.successful(Some(Tasks())))
 
       val result = service.reset(fakeInternalId, fakeUtr, fakeSessionId).futureValue
 
@@ -112,47 +97,35 @@ class RegisterTasksServiceSpec extends BaseSpec {
     }
   }
 
-  "invoking .modifyTask" - {
+  "invoking .modifyTask" should {
+    val tasks = Seq(Task.TrustDetails, Task.Assets, Task.TaxLiability, Task.Trustees, Task.Beneficiaries,
+      Task.Protectors, Task.Settlors, Task.OtherIndividuals)
+    val taskStatuses = TaskStatus.values.toSeq
 
-    "must modify a given Task status" in {
+    tasks.foreach(task => {
+      taskStatuses.foreach(taskStatus => {
+        s"modify task of type=$task to status=$taskStatus" in {
+          val inputTasks = Tasks()
+          val expectedTasks = task match {
+            case Task.TrustDetails => inputTasks.copy(trustDetails = taskStatus)
+            case Task.Assets => inputTasks.copy(assets = taskStatus)
+            case Task.TaxLiability => inputTasks.copy(taxLiability = taskStatus)
+            case Task.Trustees => inputTasks.copy(trustees = taskStatus)
+            case Task.Beneficiaries => inputTasks.copy(beneficiaries = taskStatus)
+            case Task.Protectors => inputTasks.copy(protectors = taskStatus)
+            case Task.Settlors => inputTasks.copy(settlors = taskStatus)
+            case Task.OtherIndividuals => inputTasks.copy(other = taskStatus)
+          }
 
-      val startingTasks = Tasks(
-        trustDetails = InProgress,
-        assets = InProgress,
-        taxLiability = InProgress,
-        trustees = InProgress,
-        settlors = InProgress,
-        protectors = InProgress,
-        beneficiaries = InProgress,
-        other = InProgress
-      )
+          reset(repository)
+          when(repository.get(any(), any())).thenReturn(Future.successful(Some(Tasks())))
+          when(repository.set(any(), any(), any(), any())).thenReturn(Future.successful(Some(Tasks())))
 
-      val updatedTasks = Tasks(
-        trustDetails = Completed,
-        assets = InProgress,
-        taxLiability = InProgress,
-        trustees = InProgress,
-        settlors = InProgress,
-        protectors = InProgress,
-        beneficiaries = InProgress,
-        other = InProgress
-      )
+          val result = service.modifyTask(fakeInternalId, fakeUtr, fakeSessionId, task, taskStatus).futureValue
 
-      val taskCache = TaskCache(
-        fakeInternalId,
-        fakeUtr,
-        fakeSessionId,
-        startingTasks,
-        LocalDateTime.now
-      )
-
-      when(repository.get(mEq(fakeInternalId), mEq(fakeUtr), mEq(fakeSessionId))).thenReturn(Future.successful(Some(taskCache)))
-
-      when(repository.set(any(), any(), any(), any())).thenReturn(Future.successful(true))
-
-      val result = service.modifyTask(fakeInternalId, fakeUtr, fakeSessionId, TrustDetails, Completed).futureValue
-
-      result mustBe Json.toJson(updatedTasks)
-    }
+          result mustBe Json.toJson(expectedTasks)
+        }
+      })
+    })
   }
 }

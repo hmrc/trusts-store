@@ -16,21 +16,75 @@
 
 package repositories
 
-import play.api.Configuration
-import play.modules.reactivemongo.ReactiveMongoApi
+import config.AppConfig
+import models.tasks.{RegisterTaskCache, Tasks}
+import org.mongodb.scala.bson.conversions.Bson
+import org.mongodb.scala.model.Filters.{and, equal}
+import org.mongodb.scala.model._
+import play.api.Logging
+import play.api.libs.json.Format
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
+import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class RegisterTasksRepository @Inject()(override val mongo: ReactiveMongoApi,
-                                        override val config: Configuration)
-                                       (override implicit val ec: ExecutionContext) extends TasksRepository {
+class RegisterTasksRepository @Inject()(mongo: MongoComponent,
+                                        config: AppConfig)
+                                       (implicit ec: ExecutionContext)
+  extends PlayMongoRepository[RegisterTaskCache](
+    mongoComponent = mongo,
+    domainFormat = Format(RegisterTaskCache.reads, RegisterTaskCache.writes),
+    collectionName = "registerTasks",
+    indexes = Seq(
+      IndexModel(
+        Indexes.ascending("lastUpdated"),
+        IndexOptions().name("register-tasks-last-updated-index").expireAfter(config.registerTaskTtlInSeconds, TimeUnit.SECONDS).unique(false)
+      ),
+      IndexModel(
+        Indexes.ascending("internalId", "draftId"),
+        IndexOptions().name("internal-id-and-identifier-compound-index")
+      )
+    ),
+    replaceIndexes = config.dropIndexes
+  ) with Logging {
 
-  override def collectionName: String = "registerTasks"
+  private val internalIdKey: String = "internalId"
+  private val identifierKey: String = "draftId"
 
-  override val identifierKey: String = "draftId"
+  private def selector(internalId: String, identifier: String): Bson =
+    and(
+      equal(internalIdKey, internalId),
+      equal(identifierKey, identifier)
+    )
 
-  override val useSessionId: Boolean = false
+  def get(internalId: String, identifier: String): Future[Option[Tasks]] = {
+    val modifier = Updates.set("lastUpdated", LocalDateTime.now)
 
+    val updateOption = new FindOneAndUpdateOptions()
+      .upsert(false)
+      .returnDocument(ReturnDocument.AFTER)
+
+    collection.findOneAndUpdate(selector(internalId, identifier), modifier, updateOption).toFutureOption()
+      .map(_.map(_.task))
+  }
+
+  def set(internalId: String, identifier: String, sessionId: String, updated: Tasks): Future[Option[Tasks]] = {
+    val draftIdValue = identifier
+    val insertCache = RegisterTaskCache(internalId, identifier, draftIdValue, sessionId, updated)
+
+    val updateOption = new FindOneAndReplaceOptions()
+      .upsert(true)
+      .returnDocument(ReturnDocument.AFTER)
+
+    collection.findOneAndReplace(selector(internalId, identifier), insertCache, updateOption).toFutureOption()
+      .map(_.map(_.task))
+  }
+
+  def reset(internalId: String, identifier: String, sessionId: String): Future[Option[Tasks]] = {
+    set(internalId, identifier, sessionId, Tasks())
+  }
 }

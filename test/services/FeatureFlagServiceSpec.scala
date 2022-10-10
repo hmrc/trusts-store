@@ -23,10 +23,9 @@ import models.flags.FeatureFlag.{Disabled, Enabled}
 import models.flags.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
-import play.api.Application
-import play.api.inject.bind
 import repositories.FeaturesRepository
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class FeatureFlagServiceSpec extends BaseSpec {
@@ -34,13 +33,7 @@ class FeatureFlagServiceSpec extends BaseSpec {
   private val mockRepository = mock[FeaturesRepository]
   private val mockConfig = mock[AppConfig]
 
-  lazy val application: Application = applicationBuilder()
-    .overrides(
-      bind[FeaturesRepository].toInstance(mockRepository),
-      bind[AppConfig].toInstance(mockConfig)
-    ).build()
-
-  private val service = application.injector.instanceOf[FeatureFlagService]
+  private val service = new FeatureFlagService(mockRepository, mockConfig)
 
   private val feature = `5MLD`
   private val featureEnabled = FeatureFlag(feature, enabled = true)
@@ -54,11 +47,11 @@ class FeatureFlagServiceSpec extends BaseSpec {
     reset(mockRepository)
   }
 
-  "FeatureFlagService" - {
+  "FeatureFlagService" should {
 
-    ".get" - {
+    ".get" should {
 
-      "must return flag from config if it exists" in {
+      "return flag from config if it exists" in {
         when(mockConfig.getFeature(any())).thenReturn(Some(true))
 
         val result = service.get(feature).futureValue
@@ -66,7 +59,7 @@ class FeatureFlagServiceSpec extends BaseSpec {
         result mustBe featureEnabled
       }
 
-      "must return flag from repository if it exists" in {
+      "return flag from repository if it exists" in {
         when(mockConfig.getFeature(any())).thenReturn(None)
 
         when(mockRepository.getFeatureFlags).thenReturn(Future.successful(Seq(featureEnabled)))
@@ -76,7 +69,7 @@ class FeatureFlagServiceSpec extends BaseSpec {
         result mustBe featureEnabled
       }
 
-      "must return disabled by default if flag does not exist" in {
+      "return disabled by default if flag does not exist" in {
         when(mockConfig.getFeature(any())).thenReturn(None)
 
         when(mockRepository.getFeatureFlags).thenReturn(Future.successful(Nil))
@@ -87,8 +80,8 @@ class FeatureFlagServiceSpec extends BaseSpec {
       }
     }
 
-    ".set" - {
-      "must update flags with new flag" - {
+    ".set" should {
+      "update flags with new flag" should {
 
         "when flag exists" in {
           when(mockRepository.getFeatureFlags).thenReturn(Future.successful(Seq(featureEnabled)))

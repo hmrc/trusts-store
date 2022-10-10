@@ -35,7 +35,7 @@ class IdentifierActionSpec extends BaseSpec {
 
   implicit lazy val mtrlzr: Materializer = injector.instanceOf[Materializer]
 
-  val playBodyParsers = injector.instanceOf[PlayBodyParsers]
+  val playBodyParsers: PlayBodyParsers = injector.instanceOf[PlayBodyParsers]
 
   class Harness(authAction: IdentifierAction) {
     def onSubmit(): Action[JsValue] = authAction.apply(playBodyParsers.json) { _ => Results.Ok }
@@ -53,9 +53,9 @@ class IdentifierActionSpec extends BaseSpec {
   private val agentAffinityGroup = AffinityGroup.Agent
   private val orgAffinityGroup = AffinityGroup.Organisation
 
-  "Auth Action must" - {
+  "Auth Action must" when {
 
-    "when Agent user" - {
+    "when Agent user" should {
 
       "allow user to continue" in {
         val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(agentAffinityGroup)), bodyParsers)
@@ -67,9 +67,9 @@ class IdentifierActionSpec extends BaseSpec {
 
     }
 
-    "when Organisation user" - {
+    "when Organisation user" should {
 
-      "allow user to continue" - {
+      "allow user to continue" in {
         val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(orgAffinityGroup)), bodyParsers)
         val controller = new Harness(authAction)
         val result = controller.onSubmit()(fakeRequest)
@@ -79,7 +79,7 @@ class IdentifierActionSpec extends BaseSpec {
 
     }
 
-    "when Individual user" - {
+    "when Individual user" should {
 
       "be returned an unauthorized response" in {
         val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(Individual)), bodyParsers)
@@ -91,7 +91,7 @@ class IdentifierActionSpec extends BaseSpec {
 
     }
 
-    "the user hasn't logged in" - {
+    "the user hasn't logged in" should {
 
       "be returned an unauthorized response" in {
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), bodyParsers)
@@ -102,7 +102,7 @@ class IdentifierActionSpec extends BaseSpec {
       }
     }
 
-    "the user's session has expired" - {
+    "the user's session has expired" should {
 
       "be returned an unauthorized response" in {
         val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), bodyParsers)
@@ -113,7 +113,7 @@ class IdentifierActionSpec extends BaseSpec {
       }
     }
 
-    "handle insufficient retrievals" - {
+    "handle insufficient retrievals" should {
 
       "by returning an unauthorized response" in {
         val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(insufficientAuthRetrievals), bodyParsers)
