@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ class FeatureFlagSpec extends BaseSpec {
       "5MLD" should {
 
         "enabled" in {
-          val json = Json.parse(
+          val json   = Json.parse(
             """
               |{
               |  "name": "5mld",
@@ -44,7 +44,7 @@ class FeatureFlagSpec extends BaseSpec {
         }
 
         "disabled" in {
-          val json = Json.parse(
+          val json   = Json.parse(
             """
               |{
               |  "name": "5mld",
@@ -61,7 +61,7 @@ class FeatureFlagSpec extends BaseSpec {
       "NonTaxableAccessCode" should {
 
         "enabled" in {
-          val json = Json.parse(
+          val json   = Json.parse(
             """
               |{
               |  "name": "non-taxable.access-code",
@@ -75,7 +75,7 @@ class FeatureFlagSpec extends BaseSpec {
         }
 
         "disabled" in {
-          val json = Json.parse(
+          val json   = Json.parse(
             """
               |{
               |  "name": "non-taxable.access-code",

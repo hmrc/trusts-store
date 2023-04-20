@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,36 +30,34 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton()
-class ClaimedTrustsController @Inject()(
-	cc: ControllerComponents,
- 	service: ClaimedTrustsService,
-	authAction: IdentifierAction)(implicit ec: ExecutionContext) extends BackendController(cc) {
+class ClaimedTrustsController @Inject() (
+  cc: ControllerComponents,
+  service: ClaimedTrustsService,
+  authAction: IdentifierAction
+)(implicit ec: ExecutionContext)
+    extends BackendController(cc) {
 
-	def get(): Action[AnyContent] = authAction.async {
-		implicit request =>
+  def get(): Action[AnyContent] = authAction.async { implicit request =>
+    service.get(request.internalId) map {
+      case GetClaimFound(trustClaim) =>
+        Ok(trustClaim.toResponse)
+      case GetClaimNotFound          =>
+        NotFound(Json.toJson(ErrorResponse(NOT_FOUND, CLAIM_TRUST_UNABLE_TO_LOCATE)))
+    }
+  }
 
-			service.get(request.internalId) map {
-				case GetClaimFound(trustClaim) =>
-					Ok(trustClaim.toResponse)
-				case GetClaimNotFound =>
-					NotFound(Json.toJson(ErrorResponse(NOT_FOUND, CLAIM_TRUST_UNABLE_TO_LOCATE)))
-			}
-	}
+  def store(): Action[JsValue] = authAction.async(parse.tolerantJson) { implicit request =>
+    val identifier          = (request.body \ "id").asOpt[String]
+    val maybeManagedByAgent = (request.body \ "managedByAgent").asOpt[Boolean]
+    val maybeTrustLocked    = (request.body \ "trustLocked").asOpt[Boolean]
+    val internalId          = request.internalId
 
-	def store(): Action[JsValue] = authAction.async(parse.tolerantJson) {
-		implicit request =>
-
-			val identifier = (request.body \ "id").asOpt[String]
-			val maybeManagedByAgent = (request.body \ "managedByAgent").asOpt[Boolean]
-			val maybeTrustLocked = (request.body \ "trustLocked").asOpt[Boolean]
-			val internalId = request.internalId
-
-			service.store(internalId, identifier, maybeManagedByAgent, maybeTrustLocked) map {
-				case StoreSuccessResponse(trustClaim) =>
-					Created(trustClaim.toResponse)
-				case StoreParsingError =>
-					BadRequest(Json.toJson(ErrorResponse(BAD_REQUEST, CLAIM_TRUST_UNABLE_TO_PARSE)))
-				}
-	}
+    service.store(internalId, identifier, maybeManagedByAgent, maybeTrustLocked) map {
+      case StoreSuccessResponse(trustClaim) =>
+        Created(trustClaim.toResponse)
+      case StoreParsingError                =>
+        BadRequest(Json.toJson(ErrorResponse(BAD_REQUEST, CLAIM_TRUST_UNABLE_TO_PARSE)))
+    }
+  }
 
 }

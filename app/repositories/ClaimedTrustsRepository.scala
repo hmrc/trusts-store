@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,26 +29,28 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class ClaimedTrustsRepository @Inject()(
-                                         mongo: MongoComponent,
-                                         config: AppConfig)
-                                       (implicit ec: ExecutionContext)
-  extends PlayMongoRepository[TrustClaim](
-    mongoComponent = mongo,
-    domainFormat = Format(TrustClaim.reads, TrustClaim.writes),
-    collectionName = "claimAttempts",
-    indexes = Seq(
-      IndexModel(
-        Indexes.ascending("lastUpdated"),
-        IndexOptions().name("trust-claims-last-updated-index").expireAfter(config.claimAttemptsTtlInSeconds, TimeUnit.SECONDS).unique(false))),
+class ClaimedTrustsRepository @Inject() (mongo: MongoComponent, config: AppConfig)(implicit ec: ExecutionContext)
+    extends PlayMongoRepository[TrustClaim](
+      mongoComponent = mongo,
+      domainFormat = Format(TrustClaim.reads, TrustClaim.writes),
+      collectionName = "claimAttempts",
+      indexes = Seq(
+        IndexModel(
+          Indexes.ascending("lastUpdated"),
+          IndexOptions()
+            .name("trust-claims-last-updated-index")
+            .expireAfter(config.claimAttemptsTtlInSeconds, TimeUnit.SECONDS)
+            .unique(false)
+        )
+      ),
       replaceIndexes = config.dropIndexes
-  ) {
+    ) {
 
   def get(internalId: String): Future[Option[TrustClaim]] =
     collection.find(equal("_id", internalId)).headOption()
 
   def store(trustClaim: TrustClaim): Future[TrustClaim] = {
-    val selector = equal("_id", trustClaim.internalId)
+    val selector     = equal("_id", trustClaim.internalId)
     val updateOption = new FindOneAndReplaceOptions()
       .upsert(true)
       .returnDocument(ReturnDocument.AFTER)

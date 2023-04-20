@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,21 +27,21 @@ class FeatureFlagNameSpec extends BaseSpec {
     "de-serialise and serialise" should {
 
       "5MLD feature flag" in {
-        val json = JsString("5mld")
+        val json   = JsString("5mld")
         val result = json.validate[FeatureFlagName]
         result mustBe JsSuccess(`5MLD`)
         Json.toJson(result.get) mustBe json
       }
 
       "NonTaxableAccessCode feature flag" in {
-        val json = JsString("non-taxable.access-code")
+        val json   = JsString("non-taxable.access-code")
         val result = json.validate[FeatureFlagName]
         result mustBe JsSuccess(NonTaxableAccessCode)
         Json.toJson(result.get) mustBe json
       }
 
       "unknown feature flag" in {
-        val json = JsString("unknown feature")
+        val json   = JsString("unknown feature")
         val result = json.validate[FeatureFlagName]
         result mustBe JsError("Unrecognised feature flag name")
       }

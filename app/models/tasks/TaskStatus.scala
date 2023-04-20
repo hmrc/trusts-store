@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,18 +22,18 @@ object TaskStatus extends Enumeration {
 
   type TaskStatus = Value
 
-  val Completed: Value = Value("completed")
-  val InProgress: Value = Value("in-progress")
-  val NotStarted: Value = Value("not-started")
+  val Completed: Value      = Value("completed")
+  val InProgress: Value     = Value("in-progress")
+  val NotStarted: Value     = Value("not-started")
   val CannotStartYet: Value = Value("cannot-start-yet")
   val NoActionNeeded: Value = Value("no-action-needed")
 
   implicit val reads: Reads[Value] = JsPath.read[Boolean].map {
-    case true => Completed
+    case true  => Completed
     case false => NotStarted
   } orElse Reads.enumNameReads(TaskStatus)
 
-  implicit val writes: Writes[Value] = Writes.enumNameWrites
+  implicit val writes: Writes[Value]  = Writes.enumNameWrites
   implicit val formats: Format[Value] = Format.apply(reads, writes)
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,13 +34,12 @@ object FeatureFlag {
     override val isEnabled = false
   }
 
-  def apply(name: FeatureFlagName, enabled: Boolean): FeatureFlag = {
+  def apply(name: FeatureFlagName, enabled: Boolean): FeatureFlag =
     if (enabled) {
       Enabled(name)
     } else {
       Disabled(name)
     }
-  }
 
   implicit val reads: Reads[FeatureFlag] =
     (__ \ "isEnabled").read[Boolean].flatMap {
@@ -51,6 +50,6 @@ object FeatureFlag {
   implicit val writes: Writes[FeatureFlag] = (
     (__ \ "name").write[FeatureFlagName] and
       (__ \ "isEnabled").write[Boolean]
-    ).apply(ff => (ff.name, ff.isEnabled))
+  ).apply(ff => (ff.name, ff.isEnabled))
 
 }

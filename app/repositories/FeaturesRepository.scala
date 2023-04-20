@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,23 +28,21 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class FeaturesRepository @Inject()(mongo: MongoComponent,
-                                   config: AppConfig)
-                                  (implicit ec: ExecutionContext)
-  extends PlayMongoRepository[FeatureFlags](
-    mongoComponent = mongo,
-    domainFormat = FeatureFlags.formats,
-    collectionName = "features",
-    indexes = Seq(
-      IndexModel(
-        Indexes.ascending("lastUpdated"),
-        IndexOptions().name("features-last-updated-index").unique(false)
-      )
-    ),
-    replaceIndexes = config.dropIndexes
-  ) {
+class FeaturesRepository @Inject() (mongo: MongoComponent, config: AppConfig)(implicit ec: ExecutionContext)
+    extends PlayMongoRepository[FeatureFlags](
+      mongoComponent = mongo,
+      domainFormat = FeatureFlags.formats,
+      collectionName = "features",
+      indexes = Seq(
+        IndexModel(
+          Indexes.ascending("lastUpdated"),
+          IndexOptions().name("features-last-updated-index").unique(false)
+        )
+      ),
+      replaceIndexes = config.dropIndexes
+    ) {
   private val featureFlagDocumentId = "feature-flags"
-  private val selector = equal("_id", featureFlagDocumentId)
+  private val selector              = equal("_id", featureFlagDocumentId)
 
   def getFeatureFlags: Future[Seq[FeatureFlag]] =
     collection.find(selector).headOption().map(_.map(_.flags).getOrElse(Seq.empty[FeatureFlag]))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,25 +32,27 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class MaintainTasksRepository @Inject()(mongo: MongoComponent,
-                                        config: AppConfig)
-                                       (implicit ec: ExecutionContext)
-  extends PlayMongoRepository[MaintainTaskCache](
-    mongoComponent = mongo,
-    domainFormat = Format(MaintainTaskCache.reads, MaintainTaskCache.writes),
-    collectionName = "maintainTasks",
-    indexes = Seq(
-      IndexModel(
-        Indexes.ascending("lastUpdated"),
-        IndexOptions().name("maintain-tasks-last-updated-index").expireAfter(config.maintainTaskTtlInSeconds, TimeUnit.SECONDS).unique(false)
+class MaintainTasksRepository @Inject() (mongo: MongoComponent, config: AppConfig)(implicit ec: ExecutionContext)
+    extends PlayMongoRepository[MaintainTaskCache](
+      mongoComponent = mongo,
+      domainFormat = Format(MaintainTaskCache.reads, MaintainTaskCache.writes),
+      collectionName = "maintainTasks",
+      indexes = Seq(
+        IndexModel(
+          Indexes.ascending("lastUpdated"),
+          IndexOptions()
+            .name("maintain-tasks-last-updated-index")
+            .expireAfter(config.maintainTaskTtlInSeconds, TimeUnit.SECONDS)
+            .unique(false)
+        ),
+        IndexModel(
+          Indexes.ascending("newId"),
+          IndexOptions().name("internal-id-and-identifier-and-sessionId-compound-index")
+        )
       ),
-      IndexModel(
-        Indexes.ascending("newId"),
-        IndexOptions().name("internal-id-and-identifier-and-sessionId-compound-index")
-      )
-    ),
-    replaceIndexes = config.dropIndexes
-  ) with Logging {
+      replaceIndexes = config.dropIndexes
+    )
+    with Logging {
 
   private val newId: String = "newId"
 
@@ -67,23 +69,26 @@ class MaintainTasksRepository @Inject()(mongo: MongoComponent,
       .upsert(false)
       .returnDocument(ReturnDocument.AFTER)
 
-    collection.findOneAndUpdate(selector(internalId, identifier, sessionId), modifier, updateOption).toFutureOption()
+    collection
+      .findOneAndUpdate(selector(internalId, identifier, sessionId), modifier, updateOption)
+      .toFutureOption()
       .map(_.map(_.task))
   }
 
   def set(internalId: String, identifier: String, sessionId: String, updated: Tasks): Future[Option[Tasks]] = {
-    val newIdValue = computeNewId(internalId, identifier, sessionId)
+    val newIdValue  = computeNewId(internalId, identifier, sessionId)
     val insertCache = MaintainTaskCache(internalId, identifier, newIdValue, sessionId, updated)
 
     val updateOption = new FindOneAndReplaceOptions()
       .upsert(true)
       .returnDocument(ReturnDocument.AFTER)
 
-    collection.findOneAndReplace(selector(internalId, identifier, sessionId), insertCache, updateOption).toFutureOption()
+    collection
+      .findOneAndReplace(selector(internalId, identifier, sessionId), insertCache, updateOption)
+      .toFutureOption()
       .map(_.map(_.task))
   }
 
-  def reset(internalId: String, identifier: String, sessionId: String): Future[Option[Tasks]] = {
+  def reset(internalId: String, identifier: String, sessionId: String): Future[Option[Tasks]] =
     set(internalId, identifier, sessionId, Tasks())
-  }
 }

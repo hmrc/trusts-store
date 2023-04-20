@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ trait ClaimedTrustResponse
 
 object ClaimedTrustResponse {
   val CLAIM_TRUST_UNABLE_TO_LOCATE = "unable to locate a TrustClaim for the given requests internalId"
-  val CLAIM_TRUST_UNABLE_TO_PARSE = "Unable to parse request body into a TrustClaim"
+  val CLAIM_TRUST_UNABLE_TO_PARSE  = "Unable to parse request body into a TrustClaim"
 }
 
 case class GetClaimFound(foundTrustClaim: TrustClaim) extends ClaimedTrustResponse

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,55 +31,53 @@ import utils.Session
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class RegisterTaskListController @Inject()(cc: ControllerComponents,
-																					  val tasksService: RegisterTasksService,
-																					  val authAction: IdentifierAction)
-                                          ( implicit val ec: ExecutionContext)
-	extends BackendController(cc) with Logging {
+class RegisterTaskListController @Inject() (
+  cc: ControllerComponents,
+  val tasksService: RegisterTasksService,
+  val authAction: IdentifierAction
+)(implicit val ec: ExecutionContext)
+    extends BackendController(cc)
+    with Logging {
 
-	def get(identifier: String): Action[AnyContent] = authAction.async {
-		implicit request =>
-			tasksService.get(request.internalId, identifier).map {
-				task =>
-					Ok(Json.toJson(task))
-			}
-	}
+  def get(identifier: String): Action[AnyContent] = authAction.async { implicit request =>
+    tasksService.get(request.internalId, identifier).map { task =>
+      Ok(Json.toJson(task))
+    }
+  }
 
-	def set(identifier: String): Action[JsValue] = authAction.async(parse.json) {
-		implicit request =>
-			request.body.validate[Tasks] match {
-				case JsSuccess(tasks, _) =>
-					tasksService.set(request.internalId, identifier, Session.id(hc), tasks).map {
-						updated => Ok(Json.toJson(updated))
-					}
-				case _ => Future.successful(BadRequest)
-			}
-	}
+  def set(identifier: String): Action[JsValue] = authAction.async(parse.json) { implicit request =>
+    request.body.validate[Tasks] match {
+      case JsSuccess(tasks, _) =>
+        tasksService.set(request.internalId, identifier, Session.id(hc), tasks).map { updated =>
+          Ok(Json.toJson(updated))
+        }
+      case _                   => Future.successful(BadRequest)
+    }
+  }
 
-	def reset(identifier: String): Action[AnyContent] = authAction.async {
-		implicit request =>
-			tasksService.reset(request.internalId, identifier, Session.id(hc)).map(_ => Ok)
-	}
+  def reset(identifier: String): Action[AnyContent] = authAction.async { implicit request =>
+    tasksService.reset(request.internalId, identifier, Session.id(hc)).map(_ => Ok)
+  }
 
-	def updateTrustDetailsStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.TrustDetails)
-	def updateAssetsStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.Assets)
-	def updateTaxLiabilityStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.TaxLiability)
-	def updateTrusteesStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.Trustees)
-	def updateBeneficiariesStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.Beneficiaries)
-	def updateSettlorsStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.Settlors)
-	def updateProtectorsStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.Protectors)
-	def updateOtherIndividualsStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.OtherIndividuals)
+  def updateTrustDetailsStatus(identifier: String): Action[JsValue]     = updateTaskStatus(identifier, Task.TrustDetails)
+  def updateAssetsStatus(identifier: String): Action[JsValue]           = updateTaskStatus(identifier, Task.Assets)
+  def updateTaxLiabilityStatus(identifier: String): Action[JsValue]     = updateTaskStatus(identifier, Task.TaxLiability)
+  def updateTrusteesStatus(identifier: String): Action[JsValue]         = updateTaskStatus(identifier, Task.Trustees)
+  def updateBeneficiariesStatus(identifier: String): Action[JsValue]    = updateTaskStatus(identifier, Task.Beneficiaries)
+  def updateSettlorsStatus(identifier: String): Action[JsValue]         = updateTaskStatus(identifier, Task.Settlors)
+  def updateProtectorsStatus(identifier: String): Action[JsValue]       = updateTaskStatus(identifier, Task.Protectors)
+  def updateOtherIndividualsStatus(identifier: String): Action[JsValue] =
+    updateTaskStatus(identifier, Task.OtherIndividuals)
 
-	private def updateTaskStatus(identifier: String, task: Task): Action[JsValue] = authAction.async(parse.json) {
-		implicit request =>
-			request.body.validate[TaskStatus] match {
-				case JsSuccess(taskStatus, _) =>
-					tasksService.modifyTask(request.internalId, identifier, Session.id(hc), task, taskStatus).map(Ok(_))
-				case JsError(errors) =>
-					logger.error(s"[Identifier: $identifier] Error validating request body as TaskStatus: $errors")
-					Future.successful(BadRequest)
-			}
-	}
-
+  private def updateTaskStatus(identifier: String, task: Task): Action[JsValue] = authAction.async(parse.json) {
+    implicit request =>
+      request.body.validate[TaskStatus] match {
+        case JsSuccess(taskStatus, _) =>
+          tasksService.modifyTask(request.internalId, identifier, Session.id(hc), task, taskStatus).map(Ok(_))
+        case JsError(errors)          =>
+          logger.error(s"[Identifier: $identifier] Error validating request body as TaskStatus: $errors")
+          Future.successful(BadRequest)
+      }
+  }
 
 }

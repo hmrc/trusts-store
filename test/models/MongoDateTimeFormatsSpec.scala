@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,16 +29,16 @@ class MongoDateTimeFormatsSpec extends BaseSpec with MongoDateTimeFormats {
 
     val dateMillis = 1517443200000L
 
-    val jsonMiliseconds = Json.obj(
+    val jsonMiliseconds         = Json.obj(
       s"$$date" -> dateMillis
     )
-    val jsonWrappedLong = Json.obj(
+    val jsonWrappedLong         = Json.obj(
       s"$$date" -> Json.obj(s"$$numberLong" -> dateMillis.toString)
     )
     val jsonStringZonedDateTime = Json.obj(
       s"$$date" -> JsString("2018-02-01T00:00:00.000Z")
     )
-    val jsonStringDateTime = Json.obj(
+    val jsonStringDateTime      = Json.obj(
       s"$$date" -> JsString("2018-02-01T00:00:00.000000")
     )
 

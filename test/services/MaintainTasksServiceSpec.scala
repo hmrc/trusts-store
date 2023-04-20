@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,8 @@ class MaintainTasksServiceSpec extends BaseSpec {
 
   private val service = new MaintainTasksService(repository)
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit =
     Mockito.reset(repository)
-  }
 
   "invoking .get" should {
     "return a Task from the repository if there is one for the given internal id and utr" in {
@@ -95,22 +94,30 @@ class MaintainTasksServiceSpec extends BaseSpec {
   }
 
   "invoking .modifyTask" should {
-    val tasks = Seq(Task.TrustDetails, Task.Assets, Task.TaxLiability, Task.Trustees, Task.Beneficiaries,
-      Task.Protectors, Task.Settlors, Task.OtherIndividuals)
+    val tasks        = Seq(
+      Task.TrustDetails,
+      Task.Assets,
+      Task.TaxLiability,
+      Task.Trustees,
+      Task.Beneficiaries,
+      Task.Protectors,
+      Task.Settlors,
+      Task.OtherIndividuals
+    )
     val taskStatuses = TaskStatus.values.toSeq
 
-    tasks.foreach(task => {
-      taskStatuses.foreach(taskStatus => {
+    tasks.foreach { task =>
+      taskStatuses.foreach { taskStatus =>
         s"modify task of type=$task to status=$taskStatus" in {
-          val inputTasks = Tasks()
+          val inputTasks    = Tasks()
           val expectedTasks = task match {
-            case Task.TrustDetails => inputTasks.copy(trustDetails = taskStatus)
-            case Task.Assets => inputTasks.copy(assets = taskStatus)
-            case Task.TaxLiability => inputTasks.copy(taxLiability = taskStatus)
-            case Task.Trustees => inputTasks.copy(trustees = taskStatus)
-            case Task.Beneficiaries => inputTasks.copy(beneficiaries = taskStatus)
-            case Task.Protectors => inputTasks.copy(protectors = taskStatus)
-            case Task.Settlors => inputTasks.copy(settlors = taskStatus)
+            case Task.TrustDetails     => inputTasks.copy(trustDetails = taskStatus)
+            case Task.Assets           => inputTasks.copy(assets = taskStatus)
+            case Task.TaxLiability     => inputTasks.copy(taxLiability = taskStatus)
+            case Task.Trustees         => inputTasks.copy(trustees = taskStatus)
+            case Task.Beneficiaries    => inputTasks.copy(beneficiaries = taskStatus)
+            case Task.Protectors       => inputTasks.copy(protectors = taskStatus)
+            case Task.Settlors         => inputTasks.copy(settlors = taskStatus)
             case Task.OtherIndividuals => inputTasks.copy(other = taskStatus)
           }
 
@@ -122,7 +129,7 @@ class MaintainTasksServiceSpec extends BaseSpec {
 
           result mustBe Json.toJson(expectedTasks)
         }
-      })
-    })
+      }
+    }
   }
 }

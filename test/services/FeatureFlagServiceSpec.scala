@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,21 +31,20 @@ import scala.concurrent.Future
 class FeatureFlagServiceSpec extends BaseSpec {
 
   private val mockRepository = mock[FeaturesRepository]
-  private val mockConfig = mock[AppConfig]
+  private val mockConfig     = mock[AppConfig]
 
   private val service = new FeatureFlagService(mockRepository, mockConfig)
 
-  private val feature = `5MLD`
-  private val featureEnabled = FeatureFlag(feature, enabled = true)
+  private val feature         = `5MLD`
+  private val featureEnabled  = FeatureFlag(feature, enabled = true)
   private val featureDisabled = FeatureFlag(feature, enabled = false)
 
   private val otherFeatures: Seq[FeatureFlag] = Seq(
     Disabled(NonTaxableAccessCode)
   )
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit =
     reset(mockRepository)
-  }
 
   "FeatureFlagService" should {
 
