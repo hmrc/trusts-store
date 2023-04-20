@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,19 +21,20 @@ import play.api.libs.json.{OWrites, Reads, __}
 
 import java.time.LocalDateTime
 
-case class RegisterTaskCache(internalId: String,
-                             draftId: String,
-                             id: String,
-                             sessionId: String,
-                             task: Tasks,
-                             lastUpdated: LocalDateTime = LocalDateTime.now)
-
+case class RegisterTaskCache(
+  internalId: String,
+  draftId: String,
+  id: String,
+  sessionId: String,
+  task: Tasks,
+  lastUpdated: LocalDateTime = LocalDateTime.now
+)
 
 object RegisterTaskCache extends MongoDateTimeFormats {
 
   import play.api.libs.functional.syntax._
 
-  implicit lazy val reads: Reads[RegisterTaskCache] = {
+  implicit lazy val reads: Reads[RegisterTaskCache] =
     (
       (__ \ "internalId").read[String] and
         (__ \ "id").read[String] and
@@ -41,10 +42,9 @@ object RegisterTaskCache extends MongoDateTimeFormats {
         (__ \ "sessionId").readWithDefault[String]("") and
         (__ \ "task").read[Tasks] and
         (__ \ "lastUpdated").read(localDateTimeRead)
-      ) (RegisterTaskCache.apply _)
-  }
+    )(RegisterTaskCache.apply _)
 
-  implicit lazy val writes: OWrites[RegisterTaskCache] = {
+  implicit lazy val writes: OWrites[RegisterTaskCache] =
     (
       (__ \ "internalId").write[String] and
         (__ \ "id").write[String] and
@@ -52,6 +52,5 @@ object RegisterTaskCache extends MongoDateTimeFormats {
         (__ \ "sessionId").write[String] and
         (__ \ "task").write[Tasks] and
         (__ \ "lastUpdated").write(localDateTimeWrite)
-      ) (unlift(RegisterTaskCache.unapply))
-  }
+    )(unlift(RegisterTaskCache.unapply))
 }

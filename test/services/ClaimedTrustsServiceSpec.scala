@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,8 @@ class ClaimedTrustsServiceSpec extends BaseSpec {
 
   private val service = new ClaimedTrustsService(repository)
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit =
     Mockito.reset(repository)
-  }
 
   "invoking .get" should {
     "return a GetClaimFoundResponse from the repository if there is one for the given internal id" in {

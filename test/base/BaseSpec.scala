@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,18 +35,19 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.CONTENT_TYPE
 import uk.gov.hmrc.http.HeaderCarrier
 
-class BaseSpec extends AnyWordSpec
-  with GuiceOneAppPerSuite
-  with Matchers
-  with MockitoSugar
-  with OptionValues
-  with EitherValues
-  with ScalaFutures
-  with Inside
-  with BeforeAndAfterEach
-  with BeforeAndAfter
-  with ScalaCheckPropertyChecks
-  with ModelGenerators {
+class BaseSpec
+    extends AnyWordSpec
+    with GuiceOneAppPerSuite
+    with Matchers
+    with MockitoSugar
+    with OptionValues
+    with EitherValues
+    with ScalaFutures
+    with Inside
+    with BeforeAndAfterEach
+    with BeforeAndAfter
+    with ScalaCheckPropertyChecks
+    with ModelGenerators {
 
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
@@ -66,11 +67,10 @@ class BaseSpec extends AnyWordSpec
 
   def injectedParsers: PlayBodyParsers = injector.instanceOf[PlayBodyParsers]
 
-  protected def applicationBuilder(): GuiceApplicationBuilder = {
+  protected def applicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[IdentifierAction].toInstance(new FakeIdentifierAction(injectedParsers))
       )
-  }
 
 }

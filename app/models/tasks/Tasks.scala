@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,16 @@ package models.tasks
 import models.tasks.TaskStatus.{NotStarted, TaskStatus}
 import play.api.libs.json.{Format, Json}
 
-case class Tasks(trustDetails: TaskStatus,
-                 assets: TaskStatus,
-                 taxLiability: TaskStatus,
-                 trustees: TaskStatus,
-                 beneficiaries: TaskStatus,
-                 settlors: TaskStatus,
-                 protectors: TaskStatus,
-                 other: TaskStatus)
+case class Tasks(
+  trustDetails: TaskStatus,
+  assets: TaskStatus,
+  taxLiability: TaskStatus,
+  trustees: TaskStatus,
+  beneficiaries: TaskStatus,
+  settlors: TaskStatus,
+  protectors: TaskStatus,
+  other: TaskStatus
+)
 
 object Tasks {
 

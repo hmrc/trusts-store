@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,29 +25,27 @@ import repositories.FeaturesRepository
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FeatureFlagService @Inject()(
-                                    featuresRepository: FeaturesRepository,
-                                    config: AppConfig
-                                  )(implicit ec: ExecutionContext) {
+class FeatureFlagService @Inject() (
+  featuresRepository: FeaturesRepository,
+  config: AppConfig
+)(implicit ec: ExecutionContext) {
 
-  def get(name: FeatureFlagName): Future[FeatureFlag] = {
+  def get(name: FeatureFlagName): Future[FeatureFlag] =
     config.getFeature(name) match {
       case Some(flag) =>
         Future.successful(FeatureFlag(name, flag))
-      case _ =>
+      case _          =>
         getAll.map { flags =>
           lazy val defaultFlag = Disabled(name)
           flags.find(_.name == name).getOrElse(defaultFlag)
         }
     }
-  }
 
-  def set(flagName: FeatureFlagName, enabled: Boolean): Future[Boolean] = {
+  def set(flagName: FeatureFlagName, enabled: Boolean): Future[Boolean] =
     getAll.flatMap { currentFlags =>
       val updatedFlags = currentFlags.filterNot(_.name == flagName) :+ FeatureFlag(flagName, enabled)
       featuresRepository.setFeatureFlags(updatedFlags)
     }
-  }
 
   private def getAll: Future[Seq[FeatureFlag]] = {
 

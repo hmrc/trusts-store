@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ object ErrorResponse {
 
   implicit val errorResponseWrites: OWrites[ErrorResponse] = (
     (JsPath \ "status").write[Int] and
-    (JsPath \ "message").write[String] and
-    (JsPath \ "errors").writeNullable[JsValue]
-    )(unlift(ErrorResponse.unapply))
+      (JsPath \ "message").write[String] and
+      (JsPath \ "errors").writeNullable[JsValue]
+  )(unlift(ErrorResponse.unapply))
 }

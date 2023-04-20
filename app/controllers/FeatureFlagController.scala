@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import services.FeatureFlagService
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FeatureFlagController @Inject()(ffService: FeatureFlagService,
-                                      cc: ControllerComponents)
-                                     (implicit ec:ExecutionContext) extends AbstractController(cc) {
+class FeatureFlagController @Inject() (ffService: FeatureFlagService, cc: ControllerComponents)(implicit
+  ec: ExecutionContext
+) extends AbstractController(cc) {
 
   def get(flagName: FeatureFlagName): Action[AnyContent] = Action.async {
     ffService.get(flagName).map(flag => Ok(Json.toJson(flag)))
@@ -35,7 +35,7 @@ class FeatureFlagController @Inject()(ffService: FeatureFlagService,
   def put(flagName: FeatureFlagName): Action[AnyContent] = Action.async { request =>
     request.body.asJson match {
       case Some(JsBoolean(enabled)) => ffService.set(flagName, enabled).map(_ => NoContent)
-      case _ => Future.successful(BadRequest)
+      case _                        => Future.successful(BadRequest)
     }
   }
 }

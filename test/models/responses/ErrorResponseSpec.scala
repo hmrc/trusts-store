@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import play.api.libs.json.Json
 
 class ErrorResponseSpec extends BaseSpec {
 
-
   "ErrorResponse" should {
 
     "be able to provide a minimal json object with an error" in {
@@ -39,7 +38,8 @@ class ErrorResponseSpec extends BaseSpec {
           """.stripMargin
         )
 
-      val errorResponseJson = Json.toJson(ErrorResponse(status = NOT_FOUND, message = CLAIM_TRUST_UNABLE_TO_LOCATE, errors = None))
+      val errorResponseJson =
+        Json.toJson(ErrorResponse(status = NOT_FOUND, message = CLAIM_TRUST_UNABLE_TO_LOCATE, errors = None))
 
       errorResponseJson mustBe expectedJson
     }

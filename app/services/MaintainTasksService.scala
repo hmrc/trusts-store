@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,40 +26,42 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class MaintainTasksService @Inject()(maintainTasksRepository: MaintainTasksRepository)(implicit ec: ExecutionContext) {
+class MaintainTasksService @Inject() (maintainTasksRepository: MaintainTasksRepository)(implicit ec: ExecutionContext) {
 
-  def get(internalId: String, identifier: String, sessionId: String): Future[Tasks] = {
+  def get(internalId: String, identifier: String, sessionId: String): Future[Tasks] =
     maintainTasksRepository.get(internalId, identifier, sessionId) map {
       case Some(task) => task
-      case None => Tasks()
+      case None       => Tasks()
     }
-  }
 
-  def set(internalId: String, identifier: String, sessionId: String, updated: Tasks): Future[Tasks] = {
+  def set(internalId: String, identifier: String, sessionId: String, updated: Tasks): Future[Tasks] =
     maintainTasksRepository.set(internalId, identifier, sessionId, updated).map(_ => updated)
-  }
 
-  def reset(internalId: String, identifier: String, sessionId: String): Future[Boolean] = {
+  def reset(internalId: String, identifier: String, sessionId: String): Future[Boolean] =
     maintainTasksRepository.reset(internalId, identifier, sessionId).map(_.isDefined)
-  }
 
-  def modifyTask(internalId: String, identifier: String, sessionId: String, update: Task, taskStatus: TaskStatus): Future[JsValue] = {
+  def modifyTask(
+    internalId: String,
+    identifier: String,
+    sessionId: String,
+    update: Task,
+    taskStatus: TaskStatus
+  ): Future[JsValue] =
     for {
-      tasks <- get(internalId, identifier, sessionId)
+      tasks        <- get(internalId, identifier, sessionId)
       updatedTasks <- Future.successful {
-        update match {
-          case Task.TrustDetails => tasks.copy(trustDetails = taskStatus)
-          case Task.Assets => tasks.copy(assets = taskStatus)
-          case Task.TaxLiability => tasks.copy(taxLiability = taskStatus)
-          case Task.Trustees => tasks.copy(trustees = taskStatus)
-          case Task.Beneficiaries => tasks.copy(beneficiaries = taskStatus)
-          case Task.Protectors => tasks.copy(protectors = taskStatus)
-          case Task.Settlors => tasks.copy(settlors = taskStatus)
-          case Task.OtherIndividuals => tasks.copy(other = taskStatus)
-        }
-      }
-      savedTasks <- set(internalId, identifier, sessionId, updatedTasks)
+                        update match {
+                          case Task.TrustDetails     => tasks.copy(trustDetails = taskStatus)
+                          case Task.Assets           => tasks.copy(assets = taskStatus)
+                          case Task.TaxLiability     => tasks.copy(taxLiability = taskStatus)
+                          case Task.Trustees         => tasks.copy(trustees = taskStatus)
+                          case Task.Beneficiaries    => tasks.copy(beneficiaries = taskStatus)
+                          case Task.Protectors       => tasks.copy(protectors = taskStatus)
+                          case Task.Settlors         => tasks.copy(settlors = taskStatus)
+                          case Task.OtherIndividuals => tasks.copy(other = taskStatus)
+                        }
+                      }
+      savedTasks   <- set(internalId, identifier, sessionId, updatedTasks)
     } yield Json.toJson(savedTasks)
-  }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,24 +34,22 @@ object FeatureFlagName {
   }
 
   implicit val reads: Reads[FeatureFlagName] = Reads {
-    case JsString(`5MLD`.asString) => JsSuccess(`5MLD`)
+    case JsString(`5MLD`.asString)               => JsSuccess(`5MLD`)
     case JsString(NonTaxableAccessCode.asString) => JsSuccess(NonTaxableAccessCode)
-    case _ => JsError("Unrecognised feature flag name")
+    case _                                       => JsError("Unrecognised feature flag name")
   }
 
   implicit val writes: Writes[FeatureFlagName] =
     Writes(value => JsString(value.asString))
 
   implicit val pathBinder: PathBindable[FeatureFlagName] = new PathBindable[FeatureFlagName] {
-    override def bind(key: String, value: String): Either[String, FeatureFlagName] = {
+    override def bind(key: String, value: String): Either[String, FeatureFlagName] =
       JsString(value).validate[FeatureFlagName] match {
         case JsSuccess(name, _) => Right(name)
-        case _ => Left("invalid feature flag name")
+        case _                  => Left("invalid feature flag name")
       }
-    }
-    override def unbind(key: String, value: FeatureFlagName): String = {
+    override def unbind(key: String, value: FeatureFlagName): String               =
       value.asString
-    }
   }
 
 }

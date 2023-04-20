@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,40 +22,39 @@ import play.api.libs.json._
 
 import java.time.LocalDateTime
 
-case class TrustClaim(internalId: String,
-                      identifier: String,
-                      managedByAgent: Boolean,
-                      trustLocked: Boolean = false,
-                      lastUpdated: LocalDateTime = LocalDateTime.now
-                     ) {
+case class TrustClaim(
+  internalId: String,
+  identifier: String,
+  managedByAgent: Boolean,
+  trustLocked: Boolean = false,
+  lastUpdated: LocalDateTime = LocalDateTime.now
+) {
 
   def toResponse: JsObject =
     Json.obj(
-      "internalId" -> this.internalId,
-      "id" -> this.identifier,
+      "internalId"     -> this.internalId,
+      "id"             -> this.identifier,
       "managedByAgent" -> this.managedByAgent,
-      "trustLocked" -> this.trustLocked
+      "trustLocked"    -> this.trustLocked
     )
 }
 
 object TrustClaim extends MongoDateTimeFormats {
-  implicit lazy val reads: Reads[TrustClaim] = {
+  implicit lazy val reads: Reads[TrustClaim] =
     (
-        (__ \ "_id").read[String] and
+      (__ \ "_id").read[String] and
         (__ \ "id").read[String] and
         (__ \ "managedByAgent").read[Boolean] and
         (__ \ "trustLocked").read[Boolean] and
         (__ \ "lastUpdated").read(localDateTimeRead)
-    ) (TrustClaim.apply _)
-  }
+    )(TrustClaim.apply _)
 
-  implicit lazy val writes: OWrites[TrustClaim] = {
+  implicit lazy val writes: OWrites[TrustClaim] =
     (
-        (__ \ "_id").write[String] and
+      (__ \ "_id").write[String] and
         (__ \ "id").write[String] and
         (__ \ "managedByAgent").write[Boolean] and
         (__ \ "trustLocked").write[Boolean] and
         (__ \ "lastUpdated").write(localDateTimeWrite)
-    ) (unlift(TrustClaim.unapply))
-  }
+    )(unlift(TrustClaim.unapply))
 }

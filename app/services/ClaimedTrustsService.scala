@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,24 +28,22 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton()
-class ClaimedTrustsService @Inject()(private val claimedTrustsRepository: ClaimedTrustsRepository)
-  extends Logging {
+class ClaimedTrustsService @Inject() (private val claimedTrustsRepository: ClaimedTrustsRepository) extends Logging {
 
-  def get(internalId: String): Future[ClaimedTrustResponse] = {
+  def get(internalId: String): Future[ClaimedTrustResponse] =
     claimedTrustsRepository.get(internalId) map {
       case Some(trustClaim) =>
         GetClaimFound(trustClaim)
-      case None =>
+      case None             =>
         GetClaimNotFound
     }
-  }
 
-  def store(internalId: String,
-            identifier: Option[String],
-            maybeManagedByAgent: Option[Boolean],
-            maybeTrustLocked: Option[Boolean]
-           )
-           (implicit hc: HeaderCarrier): Future[ClaimedTrustResponse] = {
+  def store(
+    internalId: String,
+    identifier: Option[String],
+    maybeManagedByAgent: Option[Boolean],
+    maybeTrustLocked: Option[Boolean]
+  )(implicit hc: HeaderCarrier): Future[ClaimedTrustResponse] = {
 
     val trustClaim = (identifier, maybeManagedByAgent, maybeTrustLocked) match {
       case (Some(id), Some(managedByAgent), None) =>
@@ -67,7 +65,7 @@ class ClaimedTrustsService @Inject()(private val claimedTrustsRepository: Claime
         claimedTrustsRepository.store(tc).map {
           StoreSuccessResponse
         }
-      case None => Future.successful(StoreParsingError)
+      case None     => Future.successful(StoreParsingError)
     }
   }
 

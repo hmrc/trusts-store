@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class IdentifierActionSpec extends BaseSpec {
   val playBodyParsers: PlayBodyParsers = injector.instanceOf[PlayBodyParsers]
 
   class Harness(authAction: IdentifierAction) {
-    def onSubmit(): Action[JsValue] = authAction.apply(playBodyParsers.json) { _ => Results.Ok }
+    def onSubmit(): Action[JsValue] = authAction.apply(playBodyParsers.json)(_ => Results.Ok)
   }
 
   def bodyParsers: BodyParsers.Default = injector.instanceOf[BodyParsers.Default]
@@ -49,18 +49,18 @@ class IdentifierActionSpec extends BaseSpec {
   private def insufficientAuthRetrievals =
     Future.successful(new ~(None, None))
 
-
   private val agentAffinityGroup = AffinityGroup.Agent
-  private val orgAffinityGroup = AffinityGroup.Organisation
+  private val orgAffinityGroup   = AffinityGroup.Organisation
 
   "Auth Action must" when {
 
     "when Agent user" should {
 
       "allow user to continue" in {
-        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(agentAffinityGroup)), bodyParsers)
+        val authAction =
+          new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(agentAffinityGroup)), bodyParsers)
         val controller = new Harness(authAction)
-        val result = controller.onSubmit()(fakeRequest)
+        val result     = controller.onSubmit()(fakeRequest)
 
         status(result) mustBe OK
       }
@@ -70,9 +70,10 @@ class IdentifierActionSpec extends BaseSpec {
     "when Organisation user" should {
 
       "allow user to continue" in {
-        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(orgAffinityGroup)), bodyParsers)
+        val authAction =
+          new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(orgAffinityGroup)), bodyParsers)
         val controller = new Harness(authAction)
-        val result = controller.onSubmit()(fakeRequest)
+        val result     = controller.onSubmit()(fakeRequest)
 
         status(result) mustBe OK
       }
@@ -82,9 +83,10 @@ class IdentifierActionSpec extends BaseSpec {
     "when Individual user" should {
 
       "be returned an unauthorized response" in {
-        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(Individual)), bodyParsers)
+        val authAction =
+          new AuthenticatedIdentifierAction(new FakeAuthConnector(authRetrievals(Individual)), bodyParsers)
         val controller = new Harness(authAction)
-        val result = controller.onSubmit()(fakeRequest)
+        val result     = controller.onSubmit()(fakeRequest)
 
         status(result) mustBe UNAUTHORIZED
       }
@@ -94,9 +96,10 @@ class IdentifierActionSpec extends BaseSpec {
     "the user hasn't logged in" should {
 
       "be returned an unauthorized response" in {
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), bodyParsers)
+        val authAction =
+          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), bodyParsers)
         val controller = new Harness(authAction)
-        val result = controller.onSubmit()(fakeRequest)
+        val result     = controller.onSubmit()(fakeRequest)
 
         status(result) mustBe UNAUTHORIZED
       }
@@ -105,9 +108,10 @@ class IdentifierActionSpec extends BaseSpec {
     "the user's session has expired" should {
 
       "be returned an unauthorized response" in {
-        val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), bodyParsers)
+        val authAction =
+          new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), bodyParsers)
         val controller = new Harness(authAction)
-        val result = controller.onSubmit()(fakeRequest)
+        val result     = controller.onSubmit()(fakeRequest)
 
         status(result) mustBe UNAUTHORIZED
       }
@@ -116,9 +120,10 @@ class IdentifierActionSpec extends BaseSpec {
     "handle insufficient retrievals" should {
 
       "by returning an unauthorized response" in {
-        val authAction = new AuthenticatedIdentifierAction(new FakeAuthConnector(insufficientAuthRetrievals), bodyParsers)
+        val authAction =
+          new AuthenticatedIdentifierAction(new FakeAuthConnector(insufficientAuthRetrievals), bodyParsers)
         val controller = new Harness(authAction)
-        val result = controller.onSubmit()(fakeRequest)
+        val result     = controller.onSubmit()(fakeRequest)
 
         status(result) mustBe UNAUTHORIZED
       }
@@ -126,15 +131,18 @@ class IdentifierActionSpec extends BaseSpec {
   }
 }
 
-class FakeFailingAuthConnector @Inject()(exceptionToReturn: Throwable) extends AuthConnector {
-  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+class FakeFailingAuthConnector @Inject() (exceptionToReturn: Throwable) extends AuthConnector {
+  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[A] =
     Future.failed(exceptionToReturn)
 }
 
-
 class FakeAuthConnector(stubbedRetrievalResult: Future[_]) extends AuthConnector {
-  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
+  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[A] =
     stubbedRetrievalResult.map(_.asInstanceOf[A])(ec)
-  }
 }
-

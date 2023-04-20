@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,13 +38,14 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
   private val service: RegisterTasksService = mock[RegisterTasksService]
 
-  lazy val application: Application = applicationBuilder().overrides(
-    bind[RegisterTasksService].toInstance(service)
-  ).build()
+  lazy val application: Application = applicationBuilder()
+    .overrides(
+      bind[RegisterTasksService].toInstance(service)
+    )
+    .build()
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit =
     Mockito.reset(service)
-  }
 
   private val sessionId: String = Session.id(hc)
 
@@ -132,7 +133,6 @@ class RegisterTaskListControllerSpec extends BaseSpec {
     "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
-
         reset(service)
 
         val request = FakeRequest(POST, routes.RegisterTaskListController.updateTrustDetailsStatus("identifier").url)
@@ -142,14 +142,16 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(trustDetails = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any()))
+          .thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.TrustDetails), ArgumentMatchers.eq(taskStatus))
+        verify(service)
+          .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.TrustDetails), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -170,7 +172,6 @@ class RegisterTaskListControllerSpec extends BaseSpec {
     "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
-
         reset(service)
 
         val request = FakeRequest(POST, routes.RegisterTaskListController.updateAssetsStatus("identifier").url)
@@ -180,14 +181,16 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(assets = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any()))
+          .thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Assets), ArgumentMatchers.eq(taskStatus))
+        verify(service)
+          .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Assets), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -208,7 +211,6 @@ class RegisterTaskListControllerSpec extends BaseSpec {
     "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
-
         reset(service)
 
         val request = FakeRequest(POST, routes.RegisterTaskListController.updateTaxLiabilityStatus("identifier").url)
@@ -218,14 +220,16 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(taxLiability = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any()))
+          .thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.TaxLiability), ArgumentMatchers.eq(taskStatus))
+        verify(service)
+          .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.TaxLiability), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -246,7 +250,6 @@ class RegisterTaskListControllerSpec extends BaseSpec {
     "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
-
         reset(service)
 
         val request = FakeRequest(POST, routes.RegisterTaskListController.updateTrusteesStatus("identifier").url)
@@ -256,14 +259,16 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(trustees = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any()))
+          .thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Trustees), ArgumentMatchers.eq(taskStatus))
+        verify(service)
+          .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Trustees), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -284,7 +289,6 @@ class RegisterTaskListControllerSpec extends BaseSpec {
     "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
-
         reset(service)
 
         val request = FakeRequest(POST, routes.RegisterTaskListController.updateBeneficiariesStatus("identifier").url)
@@ -294,14 +298,16 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(beneficiaries = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any()))
+          .thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Beneficiaries), ArgumentMatchers.eq(taskStatus))
+        verify(service)
+          .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Beneficiaries), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -322,7 +328,6 @@ class RegisterTaskListControllerSpec extends BaseSpec {
     "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
-
         reset(service)
 
         val request = FakeRequest(POST, routes.RegisterTaskListController.updateSettlorsStatus("identifier").url)
@@ -332,14 +337,16 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(settlors = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any()))
+          .thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Settlors), ArgumentMatchers.eq(taskStatus))
+        verify(service)
+          .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Settlors), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -360,7 +367,6 @@ class RegisterTaskListControllerSpec extends BaseSpec {
     "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
-
         reset(service)
 
         val request = FakeRequest(POST, routes.RegisterTaskListController.updateProtectorsStatus("identifier").url)
@@ -370,14 +376,16 @@ class RegisterTaskListControllerSpec extends BaseSpec {
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(protectors = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any()))
+          .thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Protectors), ArgumentMatchers.eq(taskStatus))
+        verify(service)
+          .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Protectors), ArgumentMatchers.eq(taskStatus))
       }
     }
 
@@ -398,24 +406,26 @@ class RegisterTaskListControllerSpec extends BaseSpec {
     "return Ok and the updated tasks" in {
 
       forAll(arbitrary[TaskStatus]) { taskStatus =>
-
         reset(service)
 
-        val request = FakeRequest(POST, routes.RegisterTaskListController.updateOtherIndividualsStatus("identifier").url)
-          .withBody(Json.toJson(taskStatus))
+        val request =
+          FakeRequest(POST, routes.RegisterTaskListController.updateOtherIndividualsStatus("identifier").url)
+            .withBody(Json.toJson(taskStatus))
 
         val tasksBeforeUpdate = Tasks()
 
         val tasksAfterUpdate = tasksBeforeUpdate.copy(other = taskStatus)
 
-        when(service.modifyTask(any(), any(), any(), any(), any())).thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
+        when(service.modifyTask(any(), any(), any(), any(), any()))
+          .thenReturn(Future.successful(Json.toJson(tasksAfterUpdate)))
 
         val result = route(application, request).value
 
         status(result) mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
-        verify(service).modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.OtherIndividuals), ArgumentMatchers.eq(taskStatus))
+        verify(service)
+          .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.OtherIndividuals), ArgumentMatchers.eq(taskStatus))
       }
     }
 

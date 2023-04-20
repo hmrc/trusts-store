@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,18 +32,18 @@ import services.ClaimedTrustsService
 
 import scala.concurrent.Future
 
-
 class ClaimedTrustsControllerSpec extends BaseSpec {
 
   private val service: ClaimedTrustsService = mock[ClaimedTrustsService]
 
-  lazy val application: Application = applicationBuilder().overrides(
-    bind[ClaimedTrustsService].toInstance(service)
-  ).build()
+  lazy val application: Application = applicationBuilder()
+    .overrides(
+      bind[ClaimedTrustsService].toInstance(service)
+    )
+    .build()
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit =
     Mockito.reset(service)
-  }
 
   "invoking GET /claim" should {
     "return OK and a TrustClaim if there is one for the internal id" in {
@@ -84,14 +84,17 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
 
     "return CREATED and the stored TrustClaim if the service returns a StoreSuccessResponse" in {
       val request = FakeRequest(POST, routes.ClaimedTrustsController.store().url)
-        .withJsonBody(Json.obj(
-          "id" -> "0123456789",
-          "managedByAgent" -> true
-        ))
+        .withJsonBody(
+          Json.obj(
+            "id"             -> "0123456789",
+            "managedByAgent" -> true
+          )
+        )
 
       val trustClaim = TrustClaim(internalId = fakeInternalId, identifier = fakeUtr, managedByAgent = true)
 
-      when(service.store(any(), any(), any(), any())(any())).thenReturn(Future.successful(StoreSuccessResponse(trustClaim)))
+      when(service.store(any(), any(), any(), any())(any()))
+        .thenReturn(Future.successful(StoreSuccessResponse(trustClaim)))
 
       val result = route(application, request).value
 
@@ -101,9 +104,11 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
 
     "return BAD_REQUEST and an error response if the service returns a StoreParsingErrorResponse" in {
       val request = FakeRequest(POST, routes.ClaimedTrustsController.store().url)
-        .withJsonBody(Json.obj(
-          "some-incorrect-key" -> "some-incorrect-value"
-        ))
+        .withJsonBody(
+          Json.obj(
+            "some-incorrect-key" -> "some-incorrect-value"
+          )
+        )
 
       val expectedJson = Json.parse(
         """
