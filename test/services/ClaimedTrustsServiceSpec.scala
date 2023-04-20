@@ -24,6 +24,8 @@ import org.mockito.Mockito
 import org.mockito.Mockito._
 import repositories.ClaimedTrustsRepository
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 import scala.concurrent.Future
 
 class ClaimedTrustsServiceSpec extends BaseSpec {

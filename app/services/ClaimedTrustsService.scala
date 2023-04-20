@@ -24,11 +24,12 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.Session
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class ClaimedTrustsService @Inject() (private val claimedTrustsRepository: ClaimedTrustsRepository) extends Logging {
+class ClaimedTrustsService @Inject() (private val claimedTrustsRepository: ClaimedTrustsRepository)(implicit
+  ec: ExecutionContext
+) extends Logging {
 
   def get(internalId: String): Future[ClaimedTrustResponse] =
     claimedTrustsRepository.get(internalId) map {
