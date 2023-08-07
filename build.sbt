@@ -16,6 +16,7 @@ lazy val scoverageSettings = {
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(SbtAutoBuildPlugin, play.sbt.PlayScala, SbtDistributablesPlugin)
+  .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .configs(IntegrationTest)
   .settings(
     inConfig(IntegrationTest)(DefaultBuildSettings.integrationTestSettings()),
