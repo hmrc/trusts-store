@@ -17,10 +17,9 @@
 package repositories
 
 import com.mongodb.client.model.FindOneAndReplaceOptions
-import config.AppConfig
 import models.flags.{FeatureFlag, FeatureFlags}
 import org.mongodb.scala.model.Filters._
-import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes, ReturnDocument}
+import org.mongodb.scala.model.ReturnDocument
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
@@ -28,21 +27,19 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class FeaturesRepository @Inject() (mongo: MongoComponent, config: AppConfig)(implicit ec: ExecutionContext)
-    extends PlayMongoRepository[FeatureFlags](
-      mongoComponent = mongo,
-      domainFormat = FeatureFlags.formats,
-      collectionName = "features",
-      indexes = Seq(
-        IndexModel(
-          Indexes.ascending("lastUpdated"),
-          IndexOptions().name("features-last-updated-index").unique(false)
-        )
-      ),
-      replaceIndexes = config.dropIndexes
-    ) {
+class FeaturesRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
+  extends PlayMongoRepository[FeatureFlags](
+    mongoComponent = mongo,
+    domainFormat = FeatureFlags.formats,
+    collectionName = "features",
+    indexes = Seq(),
+    replaceIndexes = true) {
+
+  //feature flags don't need ttl
+  override lazy val requiresTtlIndex: Boolean = false
+
   private val featureFlagDocumentId = "feature-flags"
-  private val selector              = equal("_id", featureFlagDocumentId)
+  private val selector = equal("_id", featureFlagDocumentId)
 
   def getFeatureFlags: Future[Seq[FeatureFlag]] =
     collection.find(selector).headOption().map(_.map(_.flags).getOrElse(Seq.empty[FeatureFlag]))
