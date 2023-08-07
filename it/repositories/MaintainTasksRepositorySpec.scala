@@ -1,15 +1,31 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package repositories
 
 import models.tasks.TaskStatus._
-import models.tasks.Tasks
-import uk.gov.hmrc.mongo.test.MongoSupport
+import models.tasks.{MaintainTaskCache, Tasks}
+import uk.gov.hmrc.mongo.test.PlayMongoRepositorySupport
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class MaintainTasksRepositorySpec extends RepositoriesBaseSpec with MongoSupport {
+class MaintainTasksRepositorySpec extends RepositoriesBaseSpec with PlayMongoRepositorySupport[MaintainTaskCache] {
 
-  val internalId = "Int-328969d0-557e-4559-96ba-074d0597107e"
-  val identifier = "newId"
+  val internalId        = "Int-328969d0-557e-4559-96ba-074d0597107e"
+  val identifier        = "newId"
   val sessionId: String = "session-d41ebbc3-38bc-4276-86da-5533eb878e37"
 
   val defaultTask: Tasks = Tasks()
