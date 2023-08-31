@@ -25,7 +25,6 @@ import play.api.libs.json.Json
 class ErrorResponseSpec extends BaseSpec {
 
   "ErrorResponse" should {
-
     "be able to provide a minimal json object with an error" in {
 
       val expectedJson =
@@ -45,6 +44,15 @@ class ErrorResponseSpec extends BaseSpec {
     }
 
     "be able to provide a json object of with additional storage errors" in {
+      val errors = Json.arr(
+        Json.obj("index 2" -> Json.arr(Json.obj("code" -> 50, "message" -> "some other mongo write error!"))),
+        Json.obj(
+          "index 1"        -> Json.arr(
+            Json.obj("code" -> 50, "message"  -> "some mongo write error!"),
+            Json.obj("code" -> 120, "message" -> "another mongo write error!")
+          )
+        )
+      )
 
       val expectedJson =
         Json.parse(
@@ -54,7 +62,7 @@ class ErrorResponseSpec extends BaseSpec {
             |  "message": "unable to store to trusts store",
             |  "errors": [
             |    {
-            |      "index 2": [{ "code": 50, "message": "some other mongo write error :(!" }]
+            |      "index 2": [{ "code": 50, "message": "some other mongo write error!" }]
             |    },
             |    {
             |      "index 1": [
@@ -67,6 +75,10 @@ class ErrorResponseSpec extends BaseSpec {
           """.stripMargin
         )
 
+      val errorResponseJson =
+        Json.toJson(ErrorResponse(status = INTERNAL_SERVER_ERROR, message = UNABLE_TO_STORE, errors = Some(errors)))
+
+      errorResponseJson mustBe expectedJson
     }
   }
 }
