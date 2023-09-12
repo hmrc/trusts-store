@@ -27,7 +27,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class FeaturesRepository @Inject() (mongo: MongoComponent)(implicit ec: ExecutionContext)
+class FeaturesRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
     extends PlayMongoRepository[FeatureFlags](
       mongoComponent = mongo,
       domainFormat = FeatureFlags.formats,
