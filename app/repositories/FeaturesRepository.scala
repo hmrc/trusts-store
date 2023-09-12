@@ -39,7 +39,7 @@ class FeaturesRepository @Inject()(mongo: MongoComponent)(implicit ec: Execution
   override lazy val requiresTtlIndex: Boolean = false
 
   private val featureFlagDocumentId = "feature-flags"
-  private val selector = equal("_id", featureFlagDocumentId)
+  private val selector              = equal("_id", featureFlagDocumentId)
 
   def getFeatureFlags: Future[Seq[FeatureFlag]] =
     collection.find(selector).headOption().map(_.map(_.flags).getOrElse(Seq.empty[FeatureFlag]))

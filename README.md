@@ -161,9 +161,14 @@ NoActionNeeded // the task does not require completion in order for the user to 
 
 # Running the Service
 * Start the service locally with `sbt run` in the root directory
-* The service can be started via service manager with `sm --start TRUSTS_STORE` or as part of the `TRUSTS_ALL` profile
+* The service can be started via service manager with `sm2 --start TRUSTS_STORE` or as part of the `TRUSTS_ALL` profile
 
 # Testing the Service
+
+To test the service locally run use the following script, this will run both the unit and integration tests (requires `MongoDB`) as well as check for dependency updates and check the coverage of the tests.
+
+`./run_all_tests.sh`
+
 * Run the unit tests by running `sbt test` in the root directory
 * Run the integration tests (requires `MongoDB`) by running `it:test` in the root directory
 
