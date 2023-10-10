@@ -15,7 +15,7 @@ lazy val scoverageSettings = {
 }
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(SbtAutoBuildPlugin, play.sbt.PlayScala, SbtDistributablesPlugin)
+  .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .configs(IntegrationTest)
   .settings(
@@ -24,7 +24,7 @@ lazy val microservice = Project(appName, file("."))
     RoutesKeys.routesImport += "models.flags.FeatureFlagName",
     PlayKeys.playDefaultPort := 9783,
     majorVersion := 0,
-    scalaVersion := "2.13.11",
+    scalaVersion := "2.13.12",
     // To resolve a bug with version 2.x.x of the scoverage plugin - https://github.com/sbt/sbt/issues/6997
     libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
