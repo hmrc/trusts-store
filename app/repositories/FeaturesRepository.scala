@@ -27,13 +27,14 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class FeaturesRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[FeatureFlags](
-    mongoComponent = mongo,
-    domainFormat = FeatureFlags.formats,
-    collectionName = "features",
-    indexes = Seq(),
-    replaceIndexes = true) {
+class FeaturesRepository @Inject() (mongo: MongoComponent)(implicit ec: ExecutionContext)
+    extends PlayMongoRepository[FeatureFlags](
+      mongoComponent = mongo,
+      domainFormat = FeatureFlags.formats,
+      collectionName = "features",
+      indexes = Seq(),
+      replaceIndexes = true
+    ) {
 
   //feature flags don't need ttl
   override lazy val requiresTtlIndex: Boolean = false
