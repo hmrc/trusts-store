@@ -3,12 +3,19 @@ import uk.gov.hmrc.DefaultBuildSettings
 
 val appName = "trusts-store"
 
+ThisBuild / scalaVersion := "2.13.13"
+ThisBuild / majorVersion := 0
+
+val excludedPackages = Seq(
+  "<empty>",
+  ".*Routes.*"
+)
+
 lazy val scoverageSettings = {
   import scoverage.ScoverageKeys
   Seq(
-    ScoverageKeys.coverageExcludedPackages := "<empty>;.*Reverse.*;.*.Routes.*;prod.*;testOnlyDoNotUseInProd.*;testOnlyDoNotUseInAppConf.*;" +
-      ".*BuildInfo.*;app.*;prod.*;config.*",
-    ScoverageKeys.coverageMinimumStmtTotal := 95,
+    ScoverageKeys.coverageExcludedFiles := excludedPackages.mkString(";"),
+    ScoverageKeys.coverageMinimumStmtTotal := 97,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true
   )
@@ -17,21 +24,21 @@ lazy val scoverageSettings = {
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
-  .configs(IntegrationTest)
   .settings(
-    inConfig(IntegrationTest)(DefaultBuildSettings.integrationTestSettings()),
     scoverageSettings,
     RoutesKeys.routesImport += "models.flags.FeatureFlagName",
     PlayKeys.playDefaultPort := 9783,
-    majorVersion := 0,
-    scalaVersion := "2.13.12",
-    // To resolve a bug with version 2.x.x of the scoverage plugin - https://github.com/sbt/sbt/issues/6997
-    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
-    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
+    libraryDependencies ++= AppDependencies(),
     scalacOptions ++= Seq(
+      "-feature",
       "-Wconf:src=routes/.*:s"
     )
   )
 
-addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle IntegrationTest/scalastyle")
-addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt Test/scalafmt IntegrationTest/scalafmt")
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test")
+  .settings(DefaultBuildSettings.itSettings())
+
+addCommandAlias("scalastyleAll", "all scalastyle Test/scalastyle it/Test/scalastyle")
+addCommandAlias("scalafmtAll", "all scalafmtSbt scalafmt Test/scalafmt it/Test/scalafmt")

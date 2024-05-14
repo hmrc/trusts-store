@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package repositories
 import models.claim_a_trust.TrustClaim
 import org.mongodb.scala.model.Filters
 import play.api.Logging
-import uk.gov.hmrc.mongo.test.PlayMongoRepositorySupport
+import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -27,7 +27,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class ClaimedTrustsRepositorySpec
     extends RepositoriesBaseSpec
-    with PlayMongoRepositorySupport[TrustClaim]
+    with DefaultPlayMongoRepositorySupport[TrustClaim]
     with Logging {
 
   val internalId                               = "Int-328969d0-557e-4559-96ba-074d0597107e"
