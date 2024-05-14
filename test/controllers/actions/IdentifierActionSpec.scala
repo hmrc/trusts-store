@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package controllers.actions
 
-import akka.stream.Materializer
 import base.BaseSpec
 import com.google.inject.Inject
 import play.api.libs.json.JsValue
@@ -32,8 +31,6 @@ import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.{ExecutionContext, Future}
 
 class IdentifierActionSpec extends BaseSpec {
-
-  implicit lazy val mtrlzr: Materializer = injector.instanceOf[Materializer]
 
   val playBodyParsers: PlayBodyParsers = injector.instanceOf[PlayBodyParsers]
 

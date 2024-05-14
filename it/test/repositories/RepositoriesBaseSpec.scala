@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,13 @@ class RepositoriesBaseSpec
   def cleanData(collection: MongoCollection[_]): Unit =
     collection.deleteMany(BsonDocument()).toFuture().futureValue
 
-  val application: Application = new GuiceApplicationBuilder().build()
+  val application: Application = new GuiceApplicationBuilder()
+    .configure(
+      "auditing.enabled" -> false,
+      "metrics.enabled"  -> false,
+      "mongodb.uri"      -> "mongodb://localhost:27017/trusts-store-test-it"
+    )
+    .build()
   val appConfig: AppConfig     = application.injector.instanceOf[AppConfig]
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ package repositories
 import models.flags.FeatureFlag.{Disabled, Enabled}
 import models.flags.FeatureFlagName.{NonTaxableAccessCode, `5MLD`}
 import models.flags.FeatureFlags
-import uk.gov.hmrc.mongo.test.PlayMongoRepositorySupport
+import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class FeaturesRepositorySpec extends RepositoriesBaseSpec with PlayMongoRepositorySupport[FeatureFlags] {
+class FeaturesRepositorySpec extends RepositoriesBaseSpec with DefaultPlayMongoRepositorySupport[FeatureFlags] {
 
   lazy val repository: FeaturesRepository = new FeaturesRepository(mongoComponent)
 
