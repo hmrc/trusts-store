@@ -47,8 +47,6 @@ class ClaimedTrustsRepositorySpec
 
       val lastUpdated = Instant.parse("2000-01-01T12:30:00Z")
 
-      println("lastUpdated " + lastUpdated)
-
       val trustClaim = TrustClaim(internalId, "1234567890", managedByAgent = true, lastUpdated = lastUpdated)
 
       val storedClaim = repository.store(trustClaim).futureValue
