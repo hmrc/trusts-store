@@ -16,18 +16,18 @@
 
 package models.claim_a_trust
 
-import models.MongoDateTimeFormats
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
-import java.time.LocalDateTime
+import java.time.Instant
 
 case class TrustClaim(
   internalId: String,
   identifier: String,
   managedByAgent: Boolean,
   trustLocked: Boolean = false,
-  lastUpdated: LocalDateTime = LocalDateTime.now
+  lastUpdated: Instant = Instant.now
 ) {
 
   def toResponse: JsObject =
@@ -39,14 +39,14 @@ case class TrustClaim(
     )
 }
 
-object TrustClaim extends MongoDateTimeFormats {
+object TrustClaim {
   implicit lazy val reads: Reads[TrustClaim] =
     (
       (__ \ "_id").read[String] and
         (__ \ "id").read[String] and
         (__ \ "managedByAgent").read[Boolean] and
         (__ \ "trustLocked").read[Boolean] and
-        (__ \ "lastUpdated").read(localDateTimeRead)
+        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
     )(TrustClaim.apply _)
 
   implicit lazy val writes: OWrites[TrustClaim] =
@@ -55,6 +55,6 @@ object TrustClaim extends MongoDateTimeFormats {
         (__ \ "id").write[String] and
         (__ \ "managedByAgent").write[Boolean] and
         (__ \ "trustLocked").write[Boolean] and
-        (__ \ "lastUpdated").write(localDateTimeWrite)
+        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
     )(unlift(TrustClaim.unapply))
 }

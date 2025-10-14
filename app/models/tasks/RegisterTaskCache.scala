@@ -16,10 +16,10 @@
 
 package models.tasks
 
-import models.MongoDateTimeFormats
 import play.api.libs.json.{OWrites, Reads, __}
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
-import java.time.LocalDateTime
+import java.time.Instant
 
 case class RegisterTaskCache(
   internalId: String,
@@ -27,10 +27,10 @@ case class RegisterTaskCache(
   id: String,
   sessionId: String,
   task: Tasks,
-  lastUpdated: LocalDateTime = LocalDateTime.now
+  lastUpdated: Instant = Instant.now
 )
 
-object RegisterTaskCache extends MongoDateTimeFormats {
+object RegisterTaskCache {
 
   import play.api.libs.functional.syntax._
 
@@ -41,7 +41,7 @@ object RegisterTaskCache extends MongoDateTimeFormats {
         (__ \ "draftId").read[String] and
         (__ \ "sessionId").readWithDefault[String]("") and
         (__ \ "task").read[Tasks] and
-        (__ \ "lastUpdated").read(localDateTimeRead)
+        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
     )(RegisterTaskCache.apply _)
 
   implicit lazy val writes: OWrites[RegisterTaskCache] =
@@ -51,6 +51,6 @@ object RegisterTaskCache extends MongoDateTimeFormats {
         (__ \ "draftId").write[String] and
         (__ \ "sessionId").write[String] and
         (__ \ "task").write[Tasks] and
-        (__ \ "lastUpdated").write(localDateTimeWrite)
+        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
     )(unlift(RegisterTaskCache.unapply))
 }

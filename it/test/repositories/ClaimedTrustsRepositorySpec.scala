@@ -21,8 +21,7 @@ import org.mongodb.scala.model.Filters
 import play.api.Logging
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.Instant
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class ClaimedTrustsRepositorySpec
@@ -46,7 +45,7 @@ class ClaimedTrustsRepositorySpec
 
       cleanData(repository.collection)
 
-      val lastUpdated = LocalDateTime.parse("2000-01-01 12:30", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+      val lastUpdated = Instant.parse("2000-01-01T12:30:00Z")
 
       val trustClaim = TrustClaim(internalId, "1234567890", managedByAgent = true, lastUpdated = lastUpdated)
 
@@ -65,7 +64,7 @@ class ClaimedTrustsRepositorySpec
 
       cleanData(repository.collection)
 
-      val lastUpdated = LocalDateTime.parse("2000-01-01 12:30", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+      val lastUpdated = Instant.parse("2000-01-01T12:30:00Z")
 
       val trustClaim = TrustClaim(internalId, "1234567890", managedByAgent = true, lastUpdated = lastUpdated)
 
