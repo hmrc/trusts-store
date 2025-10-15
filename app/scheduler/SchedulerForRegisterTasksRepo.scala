@@ -18,15 +18,15 @@ package scheduler
 
 import jakarta.inject.Inject
 import models.UpdatedCounterValues
-import org.apache.pekko.stream.{ActorAttributes, Materializer}
 import org.apache.pekko.stream.scaladsl.{Keep, Sink, SinkQueueWithCancel, Source}
+import org.apache.pekko.stream.{ActorAttributes, Materializer}
 import org.bson.types.ObjectId
 import play.api.{Configuration, Logger}
-import repositories.MaintainTasksRepository
+import repositories.RegisterTasksRepository
 
 import scala.concurrent.duration.FiniteDuration
 
-class SchedulerForMaintainTasksRepo @Inject() (maintainTasksRepository: MaintainTasksRepository, config: Configuration)(
+class SchedulerForRegisterTasksRepo @Inject() (registerTasksRepository: RegisterTasksRepository, config: Configuration)(
   implicit mat: Materializer
 ) extends WorkerConfig {
 
@@ -36,7 +36,7 @@ class SchedulerForMaintainTasksRepo @Inject() (maintainTasksRepository: Maintain
   private val queryLimit: Int              = config.get[Int]("schedulers.queryLimit")
 
   val tap: SinkQueueWithCancel[Unit] = {
-    logger.info("[SchedulerForMaintainTasksRepo][Tap] init")
+    logger.info("[SchedulerForRegisterTasksRepo][Tap] init")
     Source
       .tick(initialDelay, interval, fixBadUpdatedAt(queryLimit))
       .flatMapConcat(identity)
@@ -49,27 +49,27 @@ class SchedulerForMaintainTasksRepo @Inject() (maintainTasksRepository: Maintain
 
   def fixBadUpdatedAt(limit: Int): Source[Unit, _] = {
     logger.info(
-      s"started [SchedulerForMaintainTasksRepo][fixBadUpdatedAt] [$maintainTasksRepository] method with limit = $limit"
+      s"started [SchedulerForRegisterTasksRepo][fixBadUpdatedAt] [$registerTasksRepository] method with limit = $limit"
     )
     Source
-      .fromPublisher(maintainTasksRepository.getAllInvalidDateDocuments(limit = limit))
+      .fromPublisher(registerTasksRepository.getAllInvalidDateDocuments(limit = limit))
       .fold(List.empty[ObjectId])((acc, id) => id :: acc)
       .mapAsync(parallelism = 1) { ids =>
         if (ids.isEmpty) {
 
           scala.concurrent.Future
             .successful(UpdatedCounterValues(0, 0, 0))
-            .map(_.report(maintainTasksRepository.className))(mat.executionContext)
+            .map(_.report(registerTasksRepository.className))(mat.executionContext)
 
         } else {
 
-          maintainTasksRepository
+          registerTasksRepository
             .updateAllInvalidDateDocuments(ids)
-            .map(_.report(maintainTasksRepository.className))(mat.executionContext)
+            .map(_.report(registerTasksRepository.className))(mat.executionContext)
         }
       }
       .map { repo =>
-        logger.info(s"[SchedulerForMaintainTasksRepo][fixBadUpdatedAt] ended $repo")
+        logger.info(s"[SchedulerForRegisterTasksRepo][fixBadUpdatedAt] ended $repo")
         repo
       }
 

@@ -19,7 +19,7 @@ package config
 import com.google.inject.AbstractModule
 import controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
 import play.api.{Configuration, Environment}
-import scheduler.SchedulerForMaintainTasksRepo
+import scheduler.SchedulerForRegisterTasksRepo
 
 class Module(environment: Environment, configuration: Configuration) extends AbstractModule {
 
@@ -30,7 +30,7 @@ class Module(environment: Environment, configuration: Configuration) extends Abs
     val schedulerEnabled: Boolean = configuration.getOptional[Boolean]("schedulers.enabled").getOrElse(false)
 
     if (schedulerEnabled) {
-      bind(classOf[SchedulerForMaintainTasksRepo]).asEagerSingleton()
+      bind(classOf[SchedulerForRegisterTasksRepo]).asEagerSingleton()
     }
 
   }
