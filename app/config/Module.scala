@@ -19,19 +19,12 @@ package config
 import com.google.inject.AbstractModule
 import controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
 import play.api.{Configuration, Environment}
-import scheduler.SchedulerForRegisterTasksRepo
 
 class Module(environment: Environment, configuration: Configuration) extends AbstractModule {
 
   override def configure(): Unit = {
     // For session based storage instead of cred based, change to SessionIdentifierAction
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
-
-    val schedulerEnabled: Boolean = configuration.getOptional[Boolean]("schedulers.enabled").getOrElse(false)
-
-    if (schedulerEnabled) {
-      bind(classOf[SchedulerForRegisterTasksRepo]).asEagerSingleton()
-    }
 
   }
 

@@ -17,12 +17,7 @@
 package repositories
 
 import config.AppConfig
-import models.UpdatedCounterValues
 import models.tasks.{RegisterTaskCache, Tasks}
-import org.bson.BsonType
-import org.bson.types.ObjectId
-import org.mongodb.scala.Observable
-import org.mongodb.scala.bson.{BsonDateTime, BsonDocument}
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.{and, equal}
 import org.mongodb.scala.model._
@@ -31,11 +26,10 @@ import play.api.libs.json.Format
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import java.time.{Instant, LocalDateTime}
+import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
 
 @Singleton()
 class RegisterTasksRepository @Inject() (mongo: MongoComponent, config: AppConfig)(implicit ec: ExecutionContext)
@@ -99,33 +93,4 @@ class RegisterTasksRepository @Inject() (mongo: MongoComponent, config: AppConfi
 
   def reset(internalId: String, identifier: String, sessionId: String): Future[Option[Tasks]] =
     set(internalId, identifier, sessionId, Tasks())
-
-  def getAllInvalidDateDocuments(limit: Int): Observable[ObjectId] = {
-    logger.info(s"[$className][getAllInvalidDateDocuments] started fetching invalid documents")
-    val selector = Filters.not(Filters.`type`("lastUpdated", BsonType.DATE_TIME))
-    val sortById = Sorts.ascending("_id")
-    collection
-      .find[BsonDocument](selector)
-      .sort(sortById)
-      .limit(limit)
-      .map(jsToObjectId)
-  }
-
-  private def jsToObjectId(js: BsonDocument): ObjectId =
-    Try(js.getObjectId("_id").getValue) match {
-      case Failure(exception) =>
-        logger.error(s"[$className][jsToObjectId] failed to fetch id from : $collectionName", exception)
-        throw new Exception("_id is not found")
-      case Success(value)     => value
-    }
-
-  def updateAllInvalidDateDocuments(ids: Seq[ObjectId]): Future[UpdatedCounterValues] = {
-    val update   = Updates.set("lastUpdated", BsonDateTime(Instant.now().toEpochMilli))
-    val filterIn = Filters.in("_id", ids: _*)
-    collection
-      .updateMany(filterIn, update)
-      .toFuture()
-      .map(_ => UpdatedCounterValues(matched = ids.size, updated = ids.size, errors = 0))
-      .recover { case _ => UpdatedCounterValues(matched = ids.size, updated = 0, errors = ids.size) }
-  }
 }
