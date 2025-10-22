@@ -1,4 +1,10 @@
-digital-service: Trusts
+digital-service: TRS/Trusts
+description: This service is used to store claimed trusts for use within the claim a trust journey.
 repoVisibility: public_0C3F0CE3E6E6448FAD341E7BFA50FCD333E06A20CFF05FCACE61154DDBBADF71
+type: Service
+service-type: Backend
 test-repositories:
   - trusts-acceptance-tests
+  - trusts-performance-tests
+  - trusts-iv-perf-tests
+  - trusts-iv-ui-tests
