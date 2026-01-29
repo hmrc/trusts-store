@@ -106,4 +106,5 @@ class FeatureFlagServiceSpec extends BaseSpec {
       }
     }
   }
+
 }

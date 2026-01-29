@@ -36,8 +36,7 @@ class RegisterTaskListController @Inject() (
   val tasksService: RegisterTasksService,
   val authAction: IdentifierAction
 )(implicit val ec: ExecutionContext)
-    extends BackendController(cc)
-    with Logging {
+    extends BackendController(cc) with Logging {
 
   def get(identifier: String): Action[AnyContent] = authAction.async { implicit request =>
     tasksService.get(request.internalId, identifier).map { task =>
@@ -66,6 +65,7 @@ class RegisterTaskListController @Inject() (
   def updateBeneficiariesStatus(identifier: String): Action[JsValue]    = updateTaskStatus(identifier, Task.Beneficiaries)
   def updateSettlorsStatus(identifier: String): Action[JsValue]         = updateTaskStatus(identifier, Task.Settlors)
   def updateProtectorsStatus(identifier: String): Action[JsValue]       = updateTaskStatus(identifier, Task.Protectors)
+
   def updateOtherIndividualsStatus(identifier: String): Action[JsValue] =
     updateTaskStatus(identifier, Task.OtherIndividuals)
 

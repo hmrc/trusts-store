@@ -132,4 +132,5 @@ class MaintainTasksServiceSpec extends BaseSpec {
       }
     }
   }
+
 }

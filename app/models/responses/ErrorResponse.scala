@@ -30,4 +30,5 @@ object ErrorResponse {
       (JsPath \ "message").write[String] and
       (JsPath \ "errors").writeNullable[JsValue]
   )(unlift(ErrorResponse.unapply))
+
 }

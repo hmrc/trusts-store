@@ -35,9 +35,7 @@ class AuthenticatedIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   val parser: BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
-    extends IdentifierAction
-    with AuthorisedFunctions
-    with Logging {
+    extends IdentifierAction with AuthorisedFunctions with Logging {
 
   def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
@@ -67,5 +65,4 @@ class AuthenticatedIdentifierAction @Inject() (
 }
 
 trait IdentifierAction
-    extends ActionBuilder[IdentifierRequest, AnyContent]
-    with ActionFunction[Request, IdentifierRequest]
+    extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]

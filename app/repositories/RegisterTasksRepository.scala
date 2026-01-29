@@ -93,4 +93,5 @@ class RegisterTasksRepository @Inject() (mongo: MongoComponent, config: AppConfi
 
   def reset(internalId: String, identifier: String, sessionId: String): Future[Option[Tasks]] =
     set(internalId, identifier, sessionId, Tasks())
+
 }

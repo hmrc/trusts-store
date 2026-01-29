@@ -37,9 +37,11 @@ case class TrustClaim(
       "managedByAgent" -> this.managedByAgent,
       "trustLocked"    -> this.trustLocked
     )
+
 }
 
 object TrustClaim {
+
   implicit lazy val reads: Reads[TrustClaim] =
     (
       (__ \ "_id").read[String] and
@@ -57,4 +59,5 @@ object TrustClaim {
         (__ \ "trustLocked").write[Boolean] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
     )(unlift(TrustClaim.unapply))
+
 }

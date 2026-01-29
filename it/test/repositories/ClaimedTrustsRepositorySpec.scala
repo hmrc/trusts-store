@@ -25,9 +25,7 @@ import java.time.Instant
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class ClaimedTrustsRepositorySpec
-    extends RepositoriesBaseSpec
-    with DefaultPlayMongoRepositorySupport[TrustClaim]
-    with Logging {
+    extends RepositoriesBaseSpec with DefaultPlayMongoRepositorySupport[TrustClaim] with Logging {
 
   val internalId                               = "Int-328969d0-557e-4559-96ba-074d0597107e"
   lazy val repository: ClaimedTrustsRepository = new ClaimedTrustsRepository(mongoComponent, appConfig)
@@ -73,9 +71,10 @@ class ClaimedTrustsRepositorySpec
       val toUpdate     = trustClaim.copy(identifier = "0987654321")
       val updatedClaim = repository.store(toUpdate).futureValue
 
-      toUpdate mustBe updatedClaim
+      toUpdate                                     mustBe updatedClaim
       repository.get(internalId).futureValue.value mustBe toUpdate
       repository.get(internalId).futureValue.value mustBe updatedClaim
     }
   }
+
 }

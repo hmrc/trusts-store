@@ -39,7 +39,7 @@ class FeatureFlagSpec extends BaseSpec {
               |""".stripMargin
           )
           val result = json.as[FeatureFlag]
-          result mustBe Enabled(`5MLD`)
+          result              mustBe Enabled(`5MLD`)
           Json.toJson(result) mustBe json
         }
 
@@ -53,7 +53,7 @@ class FeatureFlagSpec extends BaseSpec {
               |""".stripMargin
           )
           val result = json.as[FeatureFlag]
-          result mustBe Disabled(`5MLD`)
+          result              mustBe Disabled(`5MLD`)
           Json.toJson(result) mustBe json
         }
       }
@@ -70,7 +70,7 @@ class FeatureFlagSpec extends BaseSpec {
               |""".stripMargin
           )
           val result = json.as[FeatureFlag]
-          result mustBe Enabled(NonTaxableAccessCode)
+          result              mustBe Enabled(NonTaxableAccessCode)
           Json.toJson(result) mustBe json
         }
 
@@ -84,10 +84,11 @@ class FeatureFlagSpec extends BaseSpec {
               |""".stripMargin
           )
           val result = json.as[FeatureFlag]
-          result mustBe Disabled(NonTaxableAccessCode)
+          result              mustBe Disabled(NonTaxableAccessCode)
           Json.toJson(result) mustBe json
         }
       }
     }
   }
+
 }

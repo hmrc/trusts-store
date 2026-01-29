@@ -59,4 +59,5 @@ class FeaturesRepositorySpec extends RepositoriesBaseSpec with DefaultPlayMongoR
       result mustBe data
     }
   }
+
 }

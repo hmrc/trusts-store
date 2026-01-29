@@ -81,4 +81,5 @@ class ErrorResponseSpec extends BaseSpec {
       errorResponseJson mustBe expectedJson
     }
   }
+
 }

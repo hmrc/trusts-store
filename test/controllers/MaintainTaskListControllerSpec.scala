@@ -69,7 +69,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val result = route(application, request).value
 
-      status(result) mustBe Status.OK
+      status(result)        mustBe Status.OK
       contentAsJson(result) mustBe Json.toJson(tasks)
     }
 
@@ -95,7 +95,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
       val result = route(application, request).value
 
-      status(result) mustBe Status.OK
+      status(result)        mustBe Status.OK
       contentAsJson(result) mustBe Json.toJson(tasks)
       verify(service).set("id", "utr", sessionId, tasks)
 
@@ -130,8 +130,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   "invoking POST /maintain/task/update-trust-details" should {
 
-    "return Ok and the updated tasks" in {
-
+    "return Ok and the updated tasks" in
       forAll(arbitrary[TaskStatus]) { taskStatus =>
         reset(service)
 
@@ -147,13 +146,12 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val result = route(application, request).value
 
-        status(result) mustBe Status.OK
+        status(result)        mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
         verify(service)
           .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.TrustDetails), ArgumentMatchers.eq(taskStatus))
       }
-    }
 
     "return Bad Request when invalid request body" in {
 
@@ -169,8 +167,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   "invoking POST /maintain/task/update-assets" should {
 
-    "return Ok and the updated tasks" in {
-
+    "return Ok and the updated tasks" in
       forAll(arbitrary[TaskStatus]) { taskStatus =>
         reset(service)
 
@@ -186,13 +183,12 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val result = route(application, request).value
 
-        status(result) mustBe Status.OK
+        status(result)        mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
         verify(service)
           .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Assets), ArgumentMatchers.eq(taskStatus))
       }
-    }
 
     "return Bad Request when invalid request body" in {
 
@@ -208,8 +204,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   "invoking POST /maintain/task/update-tax-liability" should {
 
-    "return Ok and the updated tasks" in {
-
+    "return Ok and the updated tasks" in
       forAll(arbitrary[TaskStatus]) { taskStatus =>
         reset(service)
 
@@ -225,13 +220,12 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val result = route(application, request).value
 
-        status(result) mustBe Status.OK
+        status(result)        mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
         verify(service)
           .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.TaxLiability), ArgumentMatchers.eq(taskStatus))
       }
-    }
 
     "return Bad Request when invalid request body" in {
 
@@ -247,8 +241,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   "invoking POST /maintain/task/update-trustees" should {
 
-    "return Ok and the updated tasks" in {
-
+    "return Ok and the updated tasks" in
       forAll(arbitrary[TaskStatus]) { taskStatus =>
         reset(service)
 
@@ -264,13 +257,12 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val result = route(application, request).value
 
-        status(result) mustBe Status.OK
+        status(result)        mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
         verify(service)
           .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Trustees), ArgumentMatchers.eq(taskStatus))
       }
-    }
 
     "return Bad Request when invalid request body" in {
 
@@ -286,8 +278,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   "invoking POST /maintain/task/update-beneficiaries" should {
 
-    "return Ok and the updated tasks" in {
-
+    "return Ok and the updated tasks" in
       forAll(arbitrary[TaskStatus]) { taskStatus =>
         reset(service)
 
@@ -303,13 +294,12 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val result = route(application, request).value
 
-        status(result) mustBe Status.OK
+        status(result)        mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
         verify(service)
           .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Beneficiaries), ArgumentMatchers.eq(taskStatus))
       }
-    }
 
     "return Bad Request when invalid request body" in {
 
@@ -325,8 +315,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   "invoking POST /maintain/task/update-settlors" should {
 
-    "return Ok and the updated tasks" in {
-
+    "return Ok and the updated tasks" in
       forAll(arbitrary[TaskStatus]) { taskStatus =>
         reset(service)
 
@@ -342,13 +331,12 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val result = route(application, request).value
 
-        status(result) mustBe Status.OK
+        status(result)        mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
         verify(service)
           .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Settlors), ArgumentMatchers.eq(taskStatus))
       }
-    }
 
     "return Bad Request when invalid request body" in {
 
@@ -364,8 +352,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   "invoking POST /maintain/task/update-protectors" should {
 
-    "return Ok and the updated tasks" in {
-
+    "return Ok and the updated tasks" in
       forAll(arbitrary[TaskStatus]) { taskStatus =>
         reset(service)
 
@@ -381,13 +368,12 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val result = route(application, request).value
 
-        status(result) mustBe Status.OK
+        status(result)        mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
         verify(service)
           .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.Protectors), ArgumentMatchers.eq(taskStatus))
       }
-    }
 
     "return Bad Request when invalid request body" in {
 
@@ -403,8 +389,7 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
   "invoking POST /maintain/task/update-other-individuals" should {
 
-    "return Ok and the updated tasks" in {
-
+    "return Ok and the updated tasks" in
       forAll(arbitrary[TaskStatus]) { taskStatus =>
         reset(service)
 
@@ -421,13 +406,12 @@ class MaintainTaskListControllerSpec extends BaseSpec {
 
         val result = route(application, request).value
 
-        status(result) mustBe Status.OK
+        status(result)        mustBe Status.OK
         contentAsJson(result) mustBe Json.toJson(tasksAfterUpdate)
 
         verify(service)
           .modifyTask(any(), any(), any(), ArgumentMatchers.eq(Task.OtherIndividuals), ArgumentMatchers.eq(taskStatus))
       }
-    }
 
     "return Bad Request when invalid request body" in {
 
@@ -440,4 +424,5 @@ class MaintainTaskListControllerSpec extends BaseSpec {
     }
 
   }
+
 }

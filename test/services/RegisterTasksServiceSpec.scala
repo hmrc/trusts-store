@@ -135,4 +135,5 @@ class RegisterTasksServiceSpec extends BaseSpec {
       }
     }
   }
+
 }
