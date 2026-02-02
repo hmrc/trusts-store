@@ -58,13 +58,13 @@ class MaintainTaskListController @Inject() (
     tasksService.reset(request.internalId, identifier, Session.id(hc)).map(_ => Ok)
   }
 
-  def updateTrustDetailsStatus(identifier: String): Action[JsValue]     = updateTaskStatus(identifier, Task.TrustDetails)
-  def updateAssetsStatus(identifier: String): Action[JsValue]           = updateTaskStatus(identifier, Task.Assets)
-  def updateTaxLiabilityStatus(identifier: String): Action[JsValue]     = updateTaskStatus(identifier, Task.TaxLiability)
-  def updateTrusteesStatus(identifier: String): Action[JsValue]         = updateTaskStatus(identifier, Task.Trustees)
-  def updateBeneficiariesStatus(identifier: String): Action[JsValue]    = updateTaskStatus(identifier, Task.Beneficiaries)
-  def updateSettlorsStatus(identifier: String): Action[JsValue]         = updateTaskStatus(identifier, Task.Settlors)
-  def updateProtectorsStatus(identifier: String): Action[JsValue]       = updateTaskStatus(identifier, Task.Protectors)
+  def updateTrustDetailsStatus(identifier: String): Action[JsValue]  = updateTaskStatus(identifier, Task.TrustDetails)
+  def updateAssetsStatus(identifier: String): Action[JsValue]        = updateTaskStatus(identifier, Task.Assets)
+  def updateTaxLiabilityStatus(identifier: String): Action[JsValue]  = updateTaskStatus(identifier, Task.TaxLiability)
+  def updateTrusteesStatus(identifier: String): Action[JsValue]      = updateTaskStatus(identifier, Task.Trustees)
+  def updateBeneficiariesStatus(identifier: String): Action[JsValue] = updateTaskStatus(identifier, Task.Beneficiaries)
+  def updateSettlorsStatus(identifier: String): Action[JsValue]      = updateTaskStatus(identifier, Task.Settlors)
+  def updateProtectorsStatus(identifier: String): Action[JsValue]    = updateTaskStatus(identifier, Task.Protectors)
 
   def updateOtherIndividualsStatus(identifier: String): Action[JsValue] =
     updateTaskStatus(identifier, Task.OtherIndividuals)
