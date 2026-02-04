@@ -22,10 +22,8 @@ import play.api.{Configuration, Environment}
 
 class Module(environment: Environment, configuration: Configuration) extends AbstractModule {
 
-  override def configure(): Unit = {
+  override def configure(): Unit =
     // For session based storage instead of cred based, change to SessionIdentifierAction
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
-
-  }
 
 }

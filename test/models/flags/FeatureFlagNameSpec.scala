@@ -29,14 +29,14 @@ class FeatureFlagNameSpec extends BaseSpec {
       "5MLD feature flag" in {
         val json   = JsString("5mld")
         val result = json.validate[FeatureFlagName]
-        result mustBe JsSuccess(`5MLD`)
+        result                  mustBe JsSuccess(`5MLD`)
         Json.toJson(result.get) mustBe json
       }
 
       "NonTaxableAccessCode feature flag" in {
         val json   = JsString("non-taxable.access-code")
         val result = json.validate[FeatureFlagName]
-        result mustBe JsSuccess(NonTaxableAccessCode)
+        result                  mustBe JsSuccess(NonTaxableAccessCode)
         Json.toJson(result.get) mustBe json
       }
 
@@ -47,4 +47,5 @@ class FeatureFlagNameSpec extends BaseSpec {
       }
     }
   }
+
 }

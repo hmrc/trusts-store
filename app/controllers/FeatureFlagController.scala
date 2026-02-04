@@ -38,4 +38,5 @@ class FeatureFlagController @Inject() (ffService: FeatureFlagService, cc: Contro
       case _                        => Future.successful(BadRequest)
     }
   }
+
 }

@@ -57,4 +57,5 @@ class ClaimedTrustsRepository @Inject() (mongo: MongoComponent, config: AppConfi
 
     collection.findOneAndReplace(selector, trustClaim, updateOption).toFuture()
   }
+
 }

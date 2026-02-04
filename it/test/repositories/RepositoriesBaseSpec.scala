@@ -27,11 +27,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 
 class RepositoriesBaseSpec
-    extends AnyWordSpec
-    with Matchers
-    with ScalaFutures
-    with OptionValues
-    with BeforeAndAfterAll {
+    extends AnyWordSpec with Matchers with ScalaFutures with OptionValues with BeforeAndAfterAll {
 
   def cleanData(collection: MongoCollection[_]): Unit =
     collection.deleteMany(BsonDocument()).toFuture().futureValue
@@ -43,6 +39,7 @@ class RepositoriesBaseSpec
       "mongodb.uri"      -> "mongodb://localhost:27017/trusts-store-test-it"
     )
     .build()
+
   val appConfig: AppConfig     = application.injector.instanceOf[AppConfig]
 
 }

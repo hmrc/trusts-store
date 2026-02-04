@@ -23,8 +23,7 @@ import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class RegisterTasksRepositorySpec
-    extends RepositoriesBaseSpec
-    with DefaultPlayMongoRepositorySupport[RegisterTaskCache] {
+    extends RepositoriesBaseSpec with DefaultPlayMongoRepositorySupport[RegisterTaskCache] {
 
   val internalId        = "Int-328969d0-557e-4559-96ba-074d0597107e"
   val draftId           = "draftId"
@@ -73,4 +72,5 @@ class RegisterTasksRepositorySpec
       repository.get(internalId, draftId).futureValue.value mustBe defaultTask
     }
   }
+
 }

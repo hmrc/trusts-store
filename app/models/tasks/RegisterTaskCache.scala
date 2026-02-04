@@ -53,4 +53,5 @@ object RegisterTaskCache {
         (__ \ "task").write[Tasks] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
     )(unlift(RegisterTaskCache.unapply))
+
 }

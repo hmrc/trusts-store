@@ -55,7 +55,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
 
       val result = route(application, request).value
 
-      status(result) mustBe Status.OK
+      status(result)        mustBe Status.OK
       contentAsJson(result) mustBe trustClaim.toResponse
     }
 
@@ -75,7 +75,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
 
       val result = route(application, request).value
 
-      status(result) mustBe Status.NOT_FOUND
+      status(result)        mustBe Status.NOT_FOUND
       contentAsJson(result) mustBe expectedJson
     }
   }
@@ -98,7 +98,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
 
       val result = route(application, request).value
 
-      status(result) mustBe Status.CREATED
+      status(result)        mustBe Status.CREATED
       contentAsJson(result) mustBe trustClaim.toResponse
     }
 
@@ -123,7 +123,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
 
       val result = route(application, request).value
 
-      status(result) mustBe Status.BAD_REQUEST
+      status(result)        mustBe Status.BAD_REQUEST
       contentAsJson(result) mustBe expectedJson
     }
   }

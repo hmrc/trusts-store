@@ -36,7 +36,7 @@ class FeaturesRepository @Inject() (mongo: MongoComponent)(implicit ec: Executio
       replaceIndexes = true
     ) {
 
-  //feature flags don't need ttl
+  // feature flags don't need ttl
   override lazy val requiresTtlIndex: Boolean = false
 
   private val featureFlagDocumentId = "feature-flags"
@@ -52,4 +52,5 @@ class FeaturesRepository @Inject() (mongo: MongoComponent)(implicit ec: Executio
 
     collection.findOneAndReplace(selector, FeatureFlags(flags), options).toFutureOption().map(_.isDefined)
   }
+
 }

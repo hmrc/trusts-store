@@ -23,8 +23,7 @@ import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class MaintainTasksRepositorySpec
-    extends RepositoriesBaseSpec
-    with DefaultPlayMongoRepositorySupport[MaintainTaskCache] {
+    extends RepositoriesBaseSpec with DefaultPlayMongoRepositorySupport[MaintainTaskCache] {
 
   val internalId        = "Int-328969d0-557e-4559-96ba-074d0597107e"
   val identifier        = "newId"
