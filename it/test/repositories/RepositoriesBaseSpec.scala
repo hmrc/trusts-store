@@ -40,6 +40,6 @@ class RepositoriesBaseSpec
     )
     .build()
 
-  val appConfig: AppConfig     = application.injector.instanceOf[AppConfig]
+  val appConfig: AppConfig = application.injector.instanceOf[AppConfig]
 
 }
