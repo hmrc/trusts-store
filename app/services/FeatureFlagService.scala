@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class FeatureFlagService @Inject() (
   featuresRepository: FeaturesRepository,
   config: AppConfig
-)(implicit ec: ExecutionContext) {
+)(using ec: ExecutionContext) {
 
   def get(name: FeatureFlagName): Future[FeatureFlag] =
     config.getFeature(name) match {

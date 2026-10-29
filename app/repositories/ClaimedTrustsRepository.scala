@@ -29,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class ClaimedTrustsRepository @Inject() (mongo: MongoComponent, config: AppConfig)(implicit ec: ExecutionContext)
+class ClaimedTrustsRepository @Inject() (mongo: MongoComponent, config: AppConfig)(using ec: ExecutionContext)
     extends PlayMongoRepository[TrustClaim](
       mongoComponent = mongo,
       domainFormat = Format(TrustClaim.reads, TrustClaim.writes),

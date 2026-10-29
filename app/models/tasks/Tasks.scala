@@ -43,6 +43,6 @@ object Tasks {
     other = NotStarted
   )
 
-  implicit val formats: Format[Tasks] = Json.format[Tasks]
+  given formats: Format[Tasks] = Json.format[Tasks]
 
 }

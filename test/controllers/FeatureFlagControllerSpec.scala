@@ -55,7 +55,7 @@ class FeatureFlagControllerSpec extends BaseSpec {
       "config for the flag does not exist" in {
 
         val mockService = mock[FeatureFlagService]
-        when(mockService.get(`5MLD`)) thenReturn Future.successful(Enabled(`5MLD`))
+        when(mockService.get(`5MLD`)).thenReturn(Future.successful(Enabled(`5MLD`)))
 
         val app = applicationBuilder()
           .overrides(bind[FeatureFlagService].toInstance(mockService))
@@ -79,7 +79,7 @@ class FeatureFlagControllerSpec extends BaseSpec {
     "set a flag and return NO_CONTENT when sent a valid payload" in {
 
       val mockService = mock[FeatureFlagService]
-      when(mockService.set(any(), any())) thenReturn Future.successful(true)
+      when(mockService.set(any(), any())).thenReturn(Future.successful(true))
 
       val app = applicationBuilder()
         .overrides(bind[FeatureFlagService].toInstance(mockService))
@@ -100,7 +100,7 @@ class FeatureFlagControllerSpec extends BaseSpec {
     "return BAD_REQUEST when sent a valid payload" in {
 
       val mockService = mock[FeatureFlagService]
-      when(mockService.set(any(), any())) thenReturn Future.successful(true)
+      when(mockService.set(any(), any())).thenReturn(Future.successful(true))
 
       val app = applicationBuilder()
         .overrides(bind[FeatureFlagService].toInstance(mockService))

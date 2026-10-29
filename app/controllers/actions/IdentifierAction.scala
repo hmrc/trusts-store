@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuthenticatedIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   val parser: BodyParsers.Default
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends IdentifierAction with AuthorisedFunctions with Logging {
 
   def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {

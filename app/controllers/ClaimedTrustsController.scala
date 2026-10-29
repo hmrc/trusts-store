@@ -34,7 +34,7 @@ class ClaimedTrustsController @Inject() (
   cc: ControllerComponents,
   service: ClaimedTrustsService,
   authAction: IdentifierAction
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends BackendController(cc) {
 
   def get(): Action[AnyContent] = authAction.async { implicit request =>

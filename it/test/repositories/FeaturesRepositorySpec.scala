@@ -25,7 +25,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class FeaturesRepositorySpec extends RepositoriesBaseSpec with DefaultPlayMongoRepositorySupport[FeatureFlags] {
 
-  lazy val repository: FeaturesRepository = new FeaturesRepository(mongoComponent)
+  override val repository: FeaturesRepository = new FeaturesRepository(mongoComponent)
 
   "Features Repository" should {
 

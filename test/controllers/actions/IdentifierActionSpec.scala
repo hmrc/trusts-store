@@ -131,7 +131,7 @@ class IdentifierActionSpec extends BaseSpec {
 
 class FakeFailingAuthConnector @Inject() (exceptionToReturn: Throwable) extends AuthConnector {
 
-  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit
+  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(using
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[A] =
@@ -139,12 +139,12 @@ class FakeFailingAuthConnector @Inject() (exceptionToReturn: Throwable) extends 
 
 }
 
-class FakeAuthConnector(stubbedRetrievalResult: Future[_]) extends AuthConnector {
+class FakeAuthConnector(stubbedRetrievalResult: Future[?]) extends AuthConnector {
 
-  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit
+  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(using
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[A] =
-    stubbedRetrievalResult.map(_.asInstanceOf[A])(ec)
+    stubbedRetrievalResult.map(_.asInstanceOf[A])(using ec)
 
 }

@@ -28,12 +28,12 @@ object TaskStatus extends Enumeration {
   val CannotStartYet: Value = Value("cannot-start-yet")
   val NoActionNeeded: Value = Value("no-action-needed")
 
-  implicit val reads: Reads[Value] = JsPath.read[Boolean].map {
+  given reads: Reads[Value] = JsPath.read[Boolean].map {
     case true  => Completed
     case false => NotStarted
   } orElse Reads.enumNameReads(TaskStatus)
 
-  implicit val writes: Writes[Value]  = Writes.enumNameWrites
-  implicit val formats: Format[Value] = Format.apply(reads, writes)
+  given writes: Writes[Value]  = Writes.enumNameWrites[TaskStatus.type]
+  given formats: Format[Value] = Format.apply(reads, writes)
 
 }

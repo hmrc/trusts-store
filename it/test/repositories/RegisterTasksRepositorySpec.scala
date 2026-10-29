@@ -31,7 +31,7 @@ class RegisterTasksRepositorySpec
 
   val defaultTask: Tasks = Tasks()
 
-  lazy val repository: RegisterTasksRepository = new RegisterTasksRepository(mongoComponent, appConfig)
+  override val repository: RegisterTasksRepository = new RegisterTasksRepository(mongoComponent, appConfig)
 
   "a register tasks repository" should {
 

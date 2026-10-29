@@ -32,7 +32,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class RegisterTasksRepository @Inject() (mongo: MongoComponent, config: AppConfig)(implicit ec: ExecutionContext)
+class RegisterTasksRepository @Inject() (mongo: MongoComponent, config: AppConfig)(using ec: ExecutionContext)
     extends PlayMongoRepository[RegisterTaskCache](
       mongoComponent = mongo,
       domainFormat = Format(RegisterTaskCache.reads, RegisterTaskCache.writes),

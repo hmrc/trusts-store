@@ -34,24 +34,24 @@ object MaintainTaskCache {
 
   import play.api.libs.functional.syntax._
 
-  implicit lazy val reads: Reads[MaintainTaskCache] =
+  given reads: Reads[MaintainTaskCache] =
     (
       (__ \ "internalId").read[String] and
         (__ \ "id").read[String] and
         (__ \ "newId").read[String] and
         (__ \ "sessionId").readWithDefault[String]("") and
         (__ \ "task").read[Tasks] and
-        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
-    )(MaintainTaskCache.apply _)
+        (__ \ "lastUpdated").read(using MongoJavatimeFormats.instantFormat)
+    )(MaintainTaskCache.apply)
 
-  implicit lazy val writes: OWrites[MaintainTaskCache] =
+  given writes: OWrites[MaintainTaskCache] =
     (
       (__ \ "internalId").write[String] and
         (__ \ "id").write[String] and
         (__ \ "newId").write[String] and
         (__ \ "sessionId").write[String] and
         (__ \ "task").write[Tasks] and
-        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-    )(unlift(MaintainTaskCache.unapply))
+        (__ \ "lastUpdated").write(using MongoJavatimeFormats.instantFormat)
+    )(tc => (tc.internalId, tc.id, tc.newId, tc.sessionId, tc.task, tc.lastUpdated))
 
 }

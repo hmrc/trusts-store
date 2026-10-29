@@ -35,7 +35,7 @@ class MaintainTaskListController @Inject() (
   cc: ControllerComponents,
   val tasksService: MaintainTasksService,
   val authAction: IdentifierAction
-)(implicit val ec: ExecutionContext)
+)(using val ec: ExecutionContext)
     extends BackendController(cc) with Logging {
 
   def get(identifier: String): Action[AnyContent] = authAction.async { implicit request =>

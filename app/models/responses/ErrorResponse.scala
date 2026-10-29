@@ -29,6 +29,6 @@ object ErrorResponse {
     (JsPath \ "status").write[Int] and
       (JsPath \ "message").write[String] and
       (JsPath \ "errors").writeNullable[JsValue]
-  )(unlift(ErrorResponse.unapply))
+  )(tc => (tc.status, tc.message, tc.errors))
 
 }
