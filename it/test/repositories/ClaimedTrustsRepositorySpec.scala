@@ -17,6 +17,7 @@
 package repositories
 
 import models.claim_a_trust.TrustClaim
+import org.mongodb.scala.SingleObservableFuture
 import org.mongodb.scala.model.Filters
 import play.api.Logging
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
@@ -27,8 +28,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class ClaimedTrustsRepositorySpec
     extends RepositoriesBaseSpec with DefaultPlayMongoRepositorySupport[TrustClaim] with Logging {
 
-  val internalId                               = "Int-328969d0-557e-4559-96ba-074d0597107e"
-  lazy val repository: ClaimedTrustsRepository = new ClaimedTrustsRepository(mongoComponent, appConfig)
+  val internalId                                   = "Int-328969d0-557e-4559-96ba-074d0597107e"
+  override val repository: ClaimedTrustsRepository = new ClaimedTrustsRepository(mongoComponent, appConfig)
 
   private def remove(internalId: String): Boolean = {
     logger.info(s"Delete Claim with internalId=$internalId")

@@ -26,7 +26,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class MaintainTasksService @Inject() (maintainTasksRepository: MaintainTasksRepository)(implicit ec: ExecutionContext) {
+class MaintainTasksService @Inject() (maintainTasksRepository: MaintainTasksRepository)(using ec: ExecutionContext) {
 
   def get(internalId: String, identifier: String, sessionId: String): Future[Tasks] =
     maintainTasksRepository.get(internalId, identifier, sessionId) map {

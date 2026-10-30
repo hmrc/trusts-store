@@ -24,7 +24,7 @@ import services.FeatureFlagService
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FeatureFlagController @Inject() (ffService: FeatureFlagService, cc: ControllerComponents)(implicit
+class FeatureFlagController @Inject() (ffService: FeatureFlagService, cc: ControllerComponents)(using
   ec: ExecutionContext
 ) extends AbstractController(cc) {
 

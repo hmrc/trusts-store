@@ -17,7 +17,7 @@
 package services
 
 import models.claim_a_trust.TrustClaim
-import models.claim_a_trust.responses._
+import models.claim_a_trust.responses.*
 import play.api.Logging
 import repositories.ClaimedTrustsRepository
 import uk.gov.hmrc.http.HeaderCarrier
@@ -27,7 +27,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class ClaimedTrustsService @Inject() (private val claimedTrustsRepository: ClaimedTrustsRepository)(implicit
+class ClaimedTrustsService @Inject() (private val claimedTrustsRepository: ClaimedTrustsRepository)(using
   ec: ExecutionContext
 ) extends Logging {
 
@@ -44,7 +44,7 @@ class ClaimedTrustsService @Inject() (private val claimedTrustsRepository: Claim
     identifier: Option[String],
     maybeManagedByAgent: Option[Boolean],
     maybeTrustLocked: Option[Boolean]
-  )(implicit hc: HeaderCarrier): Future[ClaimedTrustResponse] = {
+  )(using hc: HeaderCarrier): Future[ClaimedTrustResponse] = {
 
     val trustClaim = (identifier, maybeManagedByAgent, maybeTrustLocked) match {
       case (Some(id), Some(managedByAgent), None) =>
@@ -64,7 +64,7 @@ class ClaimedTrustsService @Inject() (private val claimedTrustsRepository: Claim
     trustClaim match {
       case Some(tc) =>
         claimedTrustsRepository.store(tc).map {
-          StoreSuccessResponse
+          StoreSuccessResponse.apply
         }
       case None     => Future.successful(StoreParsingError)
     }

@@ -19,7 +19,7 @@ package base
 import config.AppConfig
 import controllers.actions.{FakeIdentifierAction, IdentifierAction}
 import generators.ModelGenerators
-import org.scalatest._
+import org.scalatest.*
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec

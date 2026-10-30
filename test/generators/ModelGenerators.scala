@@ -22,7 +22,7 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
-  implicit lazy val arbitraryTaskStatus: Arbitrary[TaskStatus] = Arbitrary {
+  given arbitraryTaskStatus: Arbitrary[TaskStatus] = Arbitrary {
     Gen.oneOf(TaskStatus.values)
   }
 

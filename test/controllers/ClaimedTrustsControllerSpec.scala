@@ -18,16 +18,16 @@ package controllers
 
 import base.BaseSpec
 import models.claim_a_trust.TrustClaim
-import models.claim_a_trust.responses._
+import models.claim_a_trust.responses.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import play.api.Application
 import play.api.http.Status
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.ClaimedTrustsService
 
 import scala.concurrent.Future
@@ -93,7 +93,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
 
       val trustClaim = TrustClaim(internalId = fakeInternalId, identifier = fakeUtr, managedByAgent = true)
 
-      when(service.store(any(), any(), any(), any())(any()))
+      when(service.store(any(), any(), any(), any())(using any()))
         .thenReturn(Future.successful(StoreSuccessResponse(trustClaim)))
 
       val result = route(application, request).value
@@ -119,7 +119,7 @@ class ClaimedTrustsControllerSpec extends BaseSpec {
         """.stripMargin
       )
 
-      when(service.store(any(), any(), any(), any())(any())).thenReturn(Future.successful(StoreParsingError))
+      when(service.store(any(), any(), any(), any())(using any())).thenReturn(Future.successful(StoreParsingError))
 
       val result = route(application, request).value
 

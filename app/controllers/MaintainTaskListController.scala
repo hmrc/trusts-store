@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions.IdentifierAction
-import play.api.mvc._
+import play.api.mvc.*
 import services.MaintainTasksService
 import javax.inject.{Inject, Singleton}
 import models.tasks.Task.Task
@@ -35,7 +35,7 @@ class MaintainTaskListController @Inject() (
   cc: ControllerComponents,
   val tasksService: MaintainTasksService,
   val authAction: IdentifierAction
-)(implicit val ec: ExecutionContext)
+)(using val ec: ExecutionContext)
     extends BackendController(cc) with Logging {
 
   def get(identifier: String): Action[AnyContent] = authAction.async { implicit request =>

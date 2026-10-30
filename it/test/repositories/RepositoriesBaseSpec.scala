@@ -25,11 +25,12 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterAll, OptionValues}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
+import org.mongodb.scala.SingleObservableFuture
 
 class RepositoriesBaseSpec
     extends AnyWordSpec with Matchers with ScalaFutures with OptionValues with BeforeAndAfterAll {
 
-  def cleanData(collection: MongoCollection[_]): Unit =
+  def cleanData(collection: MongoCollection[?]): Unit =
     collection.deleteMany(BsonDocument()).toFuture().futureValue
 
   val application: Application = new GuiceApplicationBuilder()

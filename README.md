@@ -170,7 +170,7 @@ To test the service locally run use the following script, this will run both the
 `./run_all_tests.sh`
 
 * Run the unit tests by running `sbt test` in the root directory
-* Run the integration tests (requires `MongoDB`) by running `it:test` in the root directory
+* Run the integration tests (requires `MongoDB`) by running `it/Test/test` in the root directory
 
 ### License
 

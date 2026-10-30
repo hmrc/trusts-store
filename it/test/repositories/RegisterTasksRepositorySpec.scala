@@ -16,7 +16,7 @@
 
 package repositories
 
-import models.tasks.TaskStatus._
+import models.tasks.TaskStatus.*
 import models.tasks.{RegisterTaskCache, Tasks}
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
@@ -31,7 +31,7 @@ class RegisterTasksRepositorySpec
 
   val defaultTask: Tasks = Tasks()
 
-  lazy val repository: RegisterTasksRepository = new RegisterTasksRepository(mongoComponent, appConfig)
+  override val repository: RegisterTasksRepository = new RegisterTasksRepository(mongoComponent, appConfig)
 
   "a register tasks repository" should {
 

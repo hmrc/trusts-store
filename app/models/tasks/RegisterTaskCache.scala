@@ -23,8 +23,8 @@ import java.time.Instant
 
 case class RegisterTaskCache(
   internalId: String,
-  draftId: String,
   id: String,
+  draftId: String,
   sessionId: String,
   task: Tasks,
   lastUpdated: Instant = Instant.now
@@ -32,26 +32,26 @@ case class RegisterTaskCache(
 
 object RegisterTaskCache {
 
-  import play.api.libs.functional.syntax._
+  import play.api.libs.functional.syntax.*
 
-  implicit lazy val reads: Reads[RegisterTaskCache] =
+  given reads: Reads[RegisterTaskCache] =
     (
       (__ \ "internalId").read[String] and
         (__ \ "id").read[String] and
         (__ \ "draftId").read[String] and
         (__ \ "sessionId").readWithDefault[String]("") and
         (__ \ "task").read[Tasks] and
-        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
-    )(RegisterTaskCache.apply _)
+        (__ \ "lastUpdated").read(using MongoJavatimeFormats.instantFormat)
+    )(RegisterTaskCache.apply)
 
-  implicit lazy val writes: OWrites[RegisterTaskCache] =
+  given writes: OWrites[RegisterTaskCache] =
     (
       (__ \ "internalId").write[String] and
         (__ \ "id").write[String] and
         (__ \ "draftId").write[String] and
         (__ \ "sessionId").write[String] and
         (__ \ "task").write[Tasks] and
-        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-    )(unlift(RegisterTaskCache.unapply))
+        (__ \ "lastUpdated").write(using MongoJavatimeFormats.instantFormat)
+    )(tc => (tc.internalId, tc.id, tc.draftId, tc.sessionId, tc.task, tc.lastUpdated))
 
 }

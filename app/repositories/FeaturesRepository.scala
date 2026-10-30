@@ -18,7 +18,7 @@ package repositories
 
 import com.mongodb.client.model.FindOneAndReplaceOptions
 import models.flags.{FeatureFlag, FeatureFlags}
-import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.model.Filters.*
 import org.mongodb.scala.model.ReturnDocument
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -27,7 +27,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class FeaturesRepository @Inject() (mongo: MongoComponent)(implicit ec: ExecutionContext)
+class FeaturesRepository @Inject() (mongo: MongoComponent)(using ec: ExecutionContext)
     extends PlayMongoRepository[FeatureFlags](
       mongoComponent = mongo,
       domainFormat = FeatureFlags.formats,

@@ -16,8 +16,8 @@
 
 package models.claim_a_trust
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.*
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
@@ -42,22 +42,22 @@ case class TrustClaim(
 
 object TrustClaim {
 
-  implicit lazy val reads: Reads[TrustClaim] =
+  given reads: Reads[TrustClaim] =
     (
       (__ \ "_id").read[String] and
         (__ \ "id").read[String] and
         (__ \ "managedByAgent").read[Boolean] and
         (__ \ "trustLocked").read[Boolean] and
-        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
-    )(TrustClaim.apply _)
+        (__ \ "lastUpdated").read(using MongoJavatimeFormats.instantFormat)
+    )(TrustClaim.apply)
 
-  implicit lazy val writes: OWrites[TrustClaim] =
+  given writes: OWrites[TrustClaim] =
     (
       (__ \ "_id").write[String] and
         (__ \ "id").write[String] and
         (__ \ "managedByAgent").write[Boolean] and
         (__ \ "trustLocked").write[Boolean] and
-        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-    )(unlift(TrustClaim.unapply))
+        (__ \ "lastUpdated").write(using MongoJavatimeFormats.instantFormat)
+    )(tc => (tc.internalId, tc.identifier, tc.managedByAgent, tc.trustLocked, tc.lastUpdated))
 
 }
