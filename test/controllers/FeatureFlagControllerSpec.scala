@@ -25,7 +25,7 @@ import org.mockito.Mockito.{times, verify, when}
 import play.api.inject.bind
 import play.api.libs.json.{JsBoolean, JsString, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.FeatureFlagService
 
 import scala.concurrent.Future

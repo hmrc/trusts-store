@@ -16,7 +16,7 @@
 
 package repositories
 
-import models.tasks.TaskStatus._
+import models.tasks.TaskStatus.*
 import models.tasks.{RegisterTaskCache, Tasks}
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 

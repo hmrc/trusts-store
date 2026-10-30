@@ -16,10 +16,10 @@
 
 package models.flags
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 case class FeatureFlags(flags: Seq[FeatureFlag])
 
 object FeatureFlags {
-  implicit val formats: Format[FeatureFlags] = Json.format[FeatureFlags]
+  given formats: Format[FeatureFlags] = Json.format[FeatureFlags]
 }

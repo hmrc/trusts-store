@@ -18,16 +18,16 @@ package controllers
 
 import base.BaseSpec
 import models.claim_a_trust.TrustClaim
-import models.claim_a_trust.responses._
+import models.claim_a_trust.responses.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import play.api.Application
 import play.api.http.Status
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.ClaimedTrustsService
 
 import scala.concurrent.Future

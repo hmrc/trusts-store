@@ -16,8 +16,8 @@
 
 package models.claim_a_trust
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.*
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant

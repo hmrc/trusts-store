@@ -17,12 +17,11 @@
 package controllers
 
 import controllers.actions.IdentifierAction
-import models.claim_a_trust.responses.ClaimedTrustResponse._
-import models.claim_a_trust.responses._
+import models.claim_a_trust.responses.ClaimedTrustResponse.*
+import models.claim_a_trust.responses.*
 import models.responses.ErrorResponse
-import models.responses.ErrorResponse._
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc._
+import play.api.mvc.*
 import services.ClaimedTrustsService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 

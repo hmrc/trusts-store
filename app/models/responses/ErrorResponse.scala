@@ -16,7 +16,7 @@
 
 package models.responses
 
-import play.api.libs.functional.syntax._
+import play.api.libs.functional.syntax.*
 import play.api.libs.json.{JsPath, JsValue, OWrites}
 
 case class ErrorResponse(status: Int, message: String, errors: Option[JsValue] = None)
@@ -25,7 +25,7 @@ object ErrorResponse {
 
   val UNABLE_TO_STORE = "unable to store to trusts store"
 
-  implicit val errorResponseWrites: OWrites[ErrorResponse] = (
+  given errorResponseWrites: OWrites[ErrorResponse] = (
     (JsPath \ "status").write[Int] and
       (JsPath \ "message").write[String] and
       (JsPath \ "errors").writeNullable[JsValue]

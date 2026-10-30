@@ -17,10 +17,10 @@
 package controllers
 
 import base.BaseSpec
-import models.tasks.TaskStatus._
+import models.tasks.TaskStatus.*
 import models.tasks.{Task, Tasks}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalacheck.Arbitrary.arbitrary
 import play.api.Application
@@ -28,7 +28,7 @@ import play.api.http.Status
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.MaintainTasksService
 import utils.Session
 

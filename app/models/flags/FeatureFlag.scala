@@ -16,8 +16,8 @@
 
 package models.flags
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.*
 
 sealed trait FeatureFlag {
   def name: FeatureFlagName
@@ -41,13 +41,13 @@ object FeatureFlag {
       Disabled(name)
     }
 
-  implicit val reads: Reads[FeatureFlag] =
+  given reads: Reads[FeatureFlag] =
     (__ \ "isEnabled").read[Boolean].flatMap {
       case true  => (__ \ "name").read[FeatureFlagName].map(Enabled(_).asInstanceOf[FeatureFlag])
       case false => (__ \ "name").read[FeatureFlagName].map(Disabled(_).asInstanceOf[FeatureFlag])
     }
 
-  implicit val writes: Writes[FeatureFlag] = (
+  given writes: Writes[FeatureFlag] = (
     (__ \ "name").write[FeatureFlagName] and
       (__ \ "isEnabled").write[Boolean]
   ).apply(ff => (ff.name, ff.isEnabled))

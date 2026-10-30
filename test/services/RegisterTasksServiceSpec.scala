@@ -17,14 +17,13 @@
 package services
 
 import base.BaseSpec
-import models.tasks.TaskStatus._
+import models.tasks.TaskStatus.*
 import models.tasks.{Task, TaskStatus, Tasks}
-import org.mockito.ArgumentMatchers.{eq => mEq, _}
+import org.mockito.ArgumentMatchers.{eq => mEq, *}
 import org.mockito.Mockito
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import play.api.libs.json.Json
 import repositories.RegisterTasksRepository
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 

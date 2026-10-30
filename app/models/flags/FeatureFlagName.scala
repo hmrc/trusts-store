@@ -16,7 +16,7 @@
 
 package models.flags
 
-import play.api.libs.json._
+import play.api.libs.json.*
 import play.api.mvc.PathBindable
 
 sealed trait FeatureFlagName {
@@ -33,16 +33,16 @@ object FeatureFlagName {
     override val asString: String = "non-taxable.access-code"
   }
 
-  implicit val reads: Reads[FeatureFlagName] = Reads {
+  given reads: Reads[FeatureFlagName] = Reads {
     case JsString(`5MLD`.asString)               => JsSuccess(`5MLD`)
     case JsString(NonTaxableAccessCode.asString) => JsSuccess(NonTaxableAccessCode)
     case _                                       => JsError("Unrecognised feature flag name")
   }
 
-  implicit val writes: Writes[FeatureFlagName] =
+  given writes: Writes[FeatureFlagName] =
     Writes(value => JsString(value.asString))
 
-  implicit val pathBinder: PathBindable[FeatureFlagName] = new PathBindable[FeatureFlagName] {
+  given pathBinder: PathBindable[FeatureFlagName] = new PathBindable[FeatureFlagName] {
     override def bind(key: String, value: String): Either[String, FeatureFlagName] =
       JsString(value).validate[FeatureFlagName] match {
         case JsSuccess(name, _) => Right(name)

@@ -20,14 +20,14 @@ import base.BaseSpec
 import com.google.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, BodyParsers, PlayBodyParsers, Results}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits._
+import scala.concurrent.ExecutionContext.Implicits.*
 import scala.concurrent.{ExecutionContext, Future}
 
 class IdentifierActionSpec extends BaseSpec {

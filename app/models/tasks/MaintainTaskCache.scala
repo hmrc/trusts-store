@@ -32,7 +32,7 @@ case class MaintainTaskCache(
 
 object MaintainTaskCache {
 
-  import play.api.libs.functional.syntax._
+  import play.api.libs.functional.syntax.*
 
   given reads: Reads[MaintainTaskCache] =
     (

@@ -17,7 +17,7 @@
 package services
 
 import models.claim_a_trust.TrustClaim
-import models.claim_a_trust.responses._
+import models.claim_a_trust.responses.*
 import play.api.Logging
 import repositories.ClaimedTrustsRepository
 import uk.gov.hmrc.http.HeaderCarrier

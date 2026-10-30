@@ -17,9 +17,9 @@
 package models.responses
 
 import base.BaseSpec
-import models.claim_a_trust.responses.ClaimedTrustResponse._
-import models.responses.ErrorResponse._
-import play.api.http.Status._
+import models.claim_a_trust.responses.ClaimedTrustResponse.*
+import models.responses.ErrorResponse.*
+import play.api.http.Status.*
 import play.api.libs.json.Json
 
 class ErrorResponseSpec extends BaseSpec {

@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions.IdentifierAction
-import play.api.mvc._
+import play.api.mvc.*
 import services.RegisterTasksService
 import javax.inject.{Inject, Singleton}
 import models.tasks.Task.Task
