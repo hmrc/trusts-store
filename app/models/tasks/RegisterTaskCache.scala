@@ -23,8 +23,8 @@ import java.time.Instant
 
 case class RegisterTaskCache(
   internalId: String,
-  draftId: String,
   id: String,
+  draftId: String,
   sessionId: String,
   task: Tasks,
   lastUpdated: Instant = Instant.now
